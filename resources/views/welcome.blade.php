@@ -4,13 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Index - Medilab Bootstrap Template</title>
+    <title>Hope - Hope centre for cancer surgery and research</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="{{ asset('website/assets/img/favicon.png')  }}" rel="icon">
+    <link href="{{ asset('website/assets/img/apple-touch-icon.png')  }}" rel="apple-touch-icon">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -68,28 +68,34 @@
             <nav id="navmenu" class="navmenu">
                 <ul>
                     <li><a href="#hero" class="active">Home<br></a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#departments">Departments</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#services">Treatment Area</a></li>
                     <li><a href="#doctors">Doctors</a></li>
-                    <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+{{--                    <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>--}}
+{{--                        <ul>--}}
+{{--                            <li><a href="#">Dropdown 1</a></li>--}}
+{{--                            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>--}}
+{{--                                <ul>--}}
+{{--                                    <li><a href="#">Deep Dropdown 1</a></li>--}}
+{{--                                    <li><a href="#">Deep Dropdown 2</a></li>--}}
+{{--                                    <li><a href="#">Deep Dropdown 3</a></li>--}}
+{{--                                    <li><a href="#">Deep Dropdown 4</a></li>--}}
+{{--                                    <li><a href="#">Deep Dropdown 5</a></li>--}}
+{{--                                </ul>--}}
+{{--                            </li>--}}
+{{--                            <li><a href="#">Dropdown 2</a></li>--}}
+{{--                            <li><a href="#">Dropdown 3</a></li>--}}
+{{--                            <li><a href="#">Dropdown 4</a></li>--}}
+{{--                        </ul>--}}
+{{--                    </li>--}}
+                    <li class="dropdown"><a href="#"><span>Gallery</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="#">Dropdown 1</a></li>
-                            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                                <ul>
-                                    <li><a href="#">Deep Dropdown 1</a></li>
-                                    <li><a href="#">Deep Dropdown 2</a></li>
-                                    <li><a href="#">Deep Dropdown 3</a></li>
-                                    <li><a href="#">Deep Dropdown 4</a></li>
-                                    <li><a href="#">Deep Dropdown 5</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Dropdown 2</a></li>
-                            <li><a href="#">Dropdown 3</a></li>
-                            <li><a href="#">Dropdown 4</a></li>
+                            <li><a href="#gallery">Image</a></li>
+                            <li><a href="#">Viewo</a></li>
                         </ul>
                     </li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#contact">Article</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -262,97 +268,98 @@
 
     <!-- Services Section -->
     <section id="services" class="services section">
-
+        <?php
+        $ctg = [
+            ['title' => 'Stomach Cancer', 'description' => 'Treatment and consultation for stomach (gastric) cancer.'],
+            ['title' => 'Esophageal Cancer', 'description' => 'Comprehensive care for cancer of the esophagus.'],
+            ['title' => 'Breast Cancer', 'description' => 'Diagnosis, surgery, and chemotherapy support for breast cancer.'],
+            ['title' => 'Colon Cancer', 'description' => 'Medical and surgical services for colon cancer.'],
+            ['title' => 'Rectal Cancer', 'description' => 'Specialized treatment for cancer in the rectum.'],
+            ['title' => 'Anal Cancer', 'description' => 'Consultation and management for anal cancer.'],
+            ['title' => 'Sarcoma', 'description' => 'Care and treatment for soft tissue and bone sarcomas.'],
+            ['title' => 'Skin Cancer', 'description' => 'Screening and surgical removal of skin cancers.'],
+            ['title' => 'Pancreatic and Peripancreatic Cancer', 'description' => 'Advanced support for pancreatic and surrounding area cancers.'],
+            ['title' => 'Pancreas Cancer', 'description' => 'Diagnosis and surgery for primary pancreatic cancer.'],
+            ['title' => 'Prostate Cancer', 'description' => 'Consultation, biopsy, and treatment options for prostate cancer.'],
+            ['title' => 'Ovarian Cancer', 'description' => 'Medical and surgical management for ovarian cancer.'],
+            ['title' => 'Kidney Cancer', 'description' => 'Treatment for cancer in one or both kidneys.'],
+            ['title' => 'Thyroid Cancer', 'description' => 'Consultation and surgical services for thyroid cancer.']
+        ];
+        $emergencyServices = [
+            [
+                'title' => 'Feeding Jejunostomy',
+                'description' => 'A surgical procedure to insert a feeding tube into the jejunum for patients unable to eat by mouth.'
+            ],
+            [
+                'title' => 'Esophageal Stenting',
+                'description' => 'Placement of a stent in the esophagus to relieve obstruction and help with swallowing in esophageal cancer patients.'
+            ],
+            [
+                'title' => 'DJ Stenting',
+                'description' => 'Insertion of a double J (DJ) stent to relieve blockage in the urinary tract, often used in kidney or ureteral obstructions.'
+            ],
+            [
+                'title' => 'Endoscopy',
+                'description' => 'A minimally invasive procedure used to examine internal organs, typically the digestive tract, using an endoscope.'
+            ],
+            [
+                'title' => 'Colonoscopy',
+                'description' => 'A diagnostic procedure that uses a colonoscope to view the inside of the colon and detect cancer or polyps.'
+            ],
+            [
+                'title' => 'Cystoscopy',
+                'description' => 'A procedure that allows doctors to examine the inside of the bladder and urethra using a cystoscope.'
+            ],
+            [
+                'title' => 'Core-Cut Biopsy',
+                'description' => 'A biopsy method where a core of tissue is extracted from a tumor using a special needle for accurate cancer diagnosis.'
+            ],
+            [
+                'title' => 'Chemoport Insertion',
+                'description' => 'Implantation of a chemoport under the skin to make it easier to deliver chemotherapy safely and efficiently.'
+            ]
+        ];
+        ?>
         <!-- Section Title -->
         <div class="container section-title" data-aos="fade-up">
-            <h2>Services</h2>
-            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-        </div><!-- End Section Title -->
-
+            <h2>Our Treatment Area</h2>
+        </div>
         <div class="container">
-
+            <h4 class="pb-2">Cancer Treatment & Consultation Services Provided For:</h4>
             <div class="row gy-4">
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-item  position-relative">
-                        <div class="icon">
-                            <i class="fas fa-heartbeat"></i>
+                @foreach($ctg as $key=> $row)
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-item  position-relative">
+                            <div class="icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>{{ $row['title'] }}</h3>
+                            </a>
+                            <p>{{ $row['description'] }}</p>
                         </div>
-                        <a href="#" class="stretched-link">
-                            <h3>Nesciunt Mete</h3>
-                        </a>
-                        <p>Provident nihil minus qui consequatur non omnis maiores. Eos accusantium minus dolores iure perferendis tempore et consequatur.</p>
                     </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="fas fa-pills"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                            <h3>Eosle Commodi</h3>
-                        </a>
-                        <p>Ut autem aut autem non a. Sint sint sit facilis nam iusto sint. Libero corrupti neque eum hic non ut nesciunt dolorem.</p>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="fas fa-hospital-user"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                            <h3>Ledo Markt</h3>
-                        </a>
-                        <p>Ut excepturi voluptatem nisi sed. Quidem fuga consequatur. Minus ea aut. Vel qui id voluptas adipisci eos earum corrupti.</p>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="fas fa-dna"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                            <h3>Asperiores Commodit</h3>
-                        </a>
-                        <p>Non et temporibus minus omnis sed dolor esse consequatur. Cupiditate sed error ea fuga sit provident adipisci neque.</p>
-                        <a href="#" class="stretched-link"></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="fas fa-wheelchair"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                            <h3>Velit Doloremque</h3>
-                        </a>
-                        <p>Cumque et suscipit saepe. Est maiores autem enim facilis ut aut ipsam corporis aut. Sed animi at autem alias eius labore.</p>
-                        <a href="#" class="stretched-link"></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="fas fa-notes-medical"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                            <h3>Dolori Architecto</h3>
-                        </a>
-                        <p>Hic molestias ea quibusdam eos. Fugiat enim doloremque aut neque non et debitis iure. Corrupti recusandae ducimus enim.</p>
-                        <a href="#" class="stretched-link"></a>
-                    </div>
-                </div><!-- End Service Item -->
-
+                @endforeach
             </div>
-
+            <h4 class="pt-4 pb-2">Emergency Services Provided:</h4>
+            <div class="row gy-4">
+                @foreach($emergencyServices as $key=> $row)
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-item  position-relative">
+                            <div class="icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>{{ $row['title'] }}</h3>
+                            </a>
+                            <p>{{ $row['description'] }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
-    </section><!-- /Services Section -->
+    </section>
 
     <!-- Appointment Section -->
     <section id="appointment" class="appointment section">
@@ -360,45 +367,36 @@
         <!-- Section Title -->
         <div class="container section-title" data-aos="fade-up">
             <h2>Appointment</h2>
-            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+            <p>Book an appointment with our expert cancer specialists for consultation, diagnosis, or treatment. We are committed to providing timely and compassionate care to every patient.</p>
+
         </div><!-- End Section Title -->
 
         <div class="container" data-aos="fade-up" data-aos-delay="100">
 
             <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
-                <div class="row">
-                    <div class="col-md-4 form-group">
-                        <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
-                    </div>
-                    <div class="col-md-4 form-group mt-3 mt-md-0">
-                        <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
-                    </div>
-                    <div class="col-md-4 form-group mt-3 mt-md-0">
-                        <input type="tel" class="form-control" name="phone" id="phone" placeholder="Your Phone" required="">
-                    </div>
+                <div class="form-group mt-3">
+                    <select name="doctor" id="doctor" class="form-select" required="">
+                        <option value="">Select Doctor</option>
+                        <option value="Doctor 1">Doctor 1</option>
+                    </select>
                 </div>
-                <div class="row">
-                    <div class="col-md-4 form-group mt-3">
-                        <input type="datetime-local" name="date" class="form-control datepicker" id="date" placeholder="Appointment Date" required="">
-                    </div>
-                    <div class="col-md-4 form-group mt-3">
-                        <select name="department" id="department" class="form-select" required="">
-                            <option value="">Select Department</option>
-                            <option value="Department 1">Department 1</option>
-                            <option value="Department 2">Department 2</option>
-                            <option value="Department 3">Department 3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4 form-group mt-3">
-                        <select name="doctor" id="doctor" class="form-select" required="">
-                            <option value="">Select Doctor</option>
-                            <option value="Doctor 1">Doctor 1</option>
-                            <option value="Doctor 2">Doctor 2</option>
-                            <option value="Doctor 3">Doctor 3</option>
-                        </select>
-                    </div>
+                <div class="form-group mt-3">
+                    <input type="datetime-local" name="date" class="form-control datepicker" id="date" placeholder="Appointment Date" required="">
                 </div>
-
+                <div class="form-group mt-3">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Patient Name" required="">
+                </div>
+                <div class="form-group mt-3">
+                    <input type="tel" class="form-control" name="phone" id="phone" placeholder="Mobile" required="">
+                </div>
+                <div class="form-group mt-3">
+                    <select name="doctor" id="doctor" class="form-select" required="">
+                        <option value="">Select Gender</option>
+                        <option value="1">Male</option>
+                        <option value="2">Female</option>
+                        <option value="3">Others</option>
+                    </select>
+                </div>
                 <div class="form-group mt-3">
                     <textarea class="form-control" name="message" rows="5" placeholder="Message (Optional)"></textarea>
                 </div>
@@ -406,195 +404,176 @@
                     <div class="loading">Loading</div>
                     <div class="error-message"></div>
                     <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
-                    <div class="text-center"><button type="submit">Make an Appointment</button></div>
+                    <div ><button type="submit">Submit</button></div>
                 </div>
             </form>
-
         </div>
-
     </section><!-- /Appointment Section -->
 
-    <!-- Departments Section -->
-    <section id="departments" class="departments section">
+{{--    <!-- Departments Section -->--}}
+{{--    <section id="departments" class="departments section">--}}
 
-        <!-- Section Title -->
-        <div class="container section-title" data-aos="fade-up">
-            <h2>Departments</h2>
-            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-        </div><!-- End Section Title -->
+{{--        <!-- Section Title -->--}}
+{{--        <div class="container section-title" data-aos="fade-up">--}}
+{{--            <h2>Departments</h2>--}}
+{{--            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>--}}
+{{--        </div><!-- End Section Title -->--}}
 
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
+{{--        <div class="container" data-aos="fade-up" data-aos-delay="100">--}}
 
-            <div class="row">
-                <div class="col-lg-3">
-                    <ul class="nav nav-tabs flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active show" data-bs-toggle="tab" href="#departments-tab-1">Cardiology</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-2">Neurology</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-3">Hepatology</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-4">Pediatrics</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-5">Eye Care</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-lg-9 mt-4 mt-lg-0">
-                    <div class="tab-content">
-                        <div class="tab-pane active show" id="departments-tab-1">
-                            <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Cardiology</h3>
-                                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                                    <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="{{ asset('website/assets/img/departments-1.jpg')}}" alt="" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="departments-tab-2">
-                            <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Et blanditiis nemo veritatis excepturi</h3>
-                                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                                    <p>Ea ipsum voluptatem consequatur quis est. Illum error ullam omnis quia et reiciendis sunt sunt est. Non aliquid repellendus itaque accusamus eius et velit ipsa voluptates. Optio nesciunt eaque beatae accusamus lerode pakto madirna desera vafle de nideran pal</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="{{ asset('website/assets/img/departments-2.jpg')}}" alt="" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="departments-tab-3">
-                            <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Impedit facilis occaecati odio neque aperiam sit</h3>
-                                    <p class="fst-italic">Eos voluptatibus quo. Odio similique illum id quidem non enim fuga. Qui natus non sunt dicta dolor et. In asperiores velit quaerat perferendis aut</p>
-                                    <p>Iure officiis odit rerum. Harum sequi eum illum corrupti culpa veritatis quisquam. Neque necessitatibus illo rerum eum ut. Commodi ipsam minima molestiae sed laboriosam a iste odio. Earum odit nesciunt fugiat sit ullam. Soluta et harum voluptatem optio quae</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="{{ asset('website/assets/img/departments-3.jpg')}}" alt="" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="departments-tab-4">
-                            <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Fuga dolores inventore laboriosam ut est accusamus laboriosam dolore</h3>
-                                    <p class="fst-italic">Totam aperiam accusamus. Repellat consequuntur iure voluptas iure porro quis delectus</p>
-                                    <p>Eaque consequuntur consequuntur libero expedita in voluptas. Nostrum ipsam necessitatibus aliquam fugiat debitis quis velit. Eum ex maxime error in consequatur corporis atque. Eligendi asperiores sed qui veritatis aperiam quia a laborum inventore</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="{{ asset('website/assets/img/departments-4.jpg')}}" alt="" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="departments-tab-5">
-                            <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Est eveniet ipsam sindera pad rone matrelat sando reda</h3>
-                                    <p class="fst-italic">Omnis blanditiis saepe eos autem qui sunt debitis porro quia.</p>
-                                    <p>Exercitationem nostrum omnis. Ut reiciendis repudiandae minus. Omnis recusandae ut non quam ut quod eius qui. Ipsum quia odit vero atque qui quibusdam amet. Occaecati sed est sint aut vitae molestiae voluptate vel</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="{{ asset('website/assets/img/departments-5.jpg')}}" alt="" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{--            <div class="row">--}}
+{{--                <div class="col-lg-3">--}}
+{{--                    <ul class="nav nav-tabs flex-column">--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a class="nav-link active show" data-bs-toggle="tab" href="#departments-tab-1">Cardiology</a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-2">Neurology</a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-3">Hepatology</a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-4">Pediatrics</a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-5">Eye Care</a>--}}
+{{--                        </li>--}}
+{{--                    </ul>--}}
+{{--                </div>--}}
+{{--                <div class="col-lg-9 mt-4 mt-lg-0">--}}
+{{--                    <div class="tab-content">--}}
+{{--                        <div class="tab-pane active show" id="departments-tab-1">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
+{{--                                    <h3>Cardiology</h3>--}}
+{{--                                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>--}}
+{{--                                    <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
+{{--                                    <img src="{{ asset('website/assets/img/departments-1.jpg')}}" alt="" class="img-fluid">--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="tab-pane" id="departments-tab-2">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
+{{--                                    <h3>Et blanditiis nemo veritatis excepturi</h3>--}}
+{{--                                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>--}}
+{{--                                    <p>Ea ipsum voluptatem consequatur quis est. Illum error ullam omnis quia et reiciendis sunt sunt est. Non aliquid repellendus itaque accusamus eius et velit ipsa voluptates. Optio nesciunt eaque beatae accusamus lerode pakto madirna desera vafle de nideran pal</p>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
+{{--                                    <img src="{{ asset('website/assets/img/departments-2.jpg')}}" alt="" class="img-fluid">--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="tab-pane" id="departments-tab-3">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
+{{--                                    <h3>Impedit facilis occaecati odio neque aperiam sit</h3>--}}
+{{--                                    <p class="fst-italic">Eos voluptatibus quo. Odio similique illum id quidem non enim fuga. Qui natus non sunt dicta dolor et. In asperiores velit quaerat perferendis aut</p>--}}
+{{--                                    <p>Iure officiis odit rerum. Harum sequi eum illum corrupti culpa veritatis quisquam. Neque necessitatibus illo rerum eum ut. Commodi ipsam minima molestiae sed laboriosam a iste odio. Earum odit nesciunt fugiat sit ullam. Soluta et harum voluptatem optio quae</p>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
+{{--                                    <img src="{{ asset('website/assets/img/departments-3.jpg')}}" alt="" class="img-fluid">--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="tab-pane" id="departments-tab-4">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
+{{--                                    <h3>Fuga dolores inventore laboriosam ut est accusamus laboriosam dolore</h3>--}}
+{{--                                    <p class="fst-italic">Totam aperiam accusamus. Repellat consequuntur iure voluptas iure porro quis delectus</p>--}}
+{{--                                    <p>Eaque consequuntur consequuntur libero expedita in voluptas. Nostrum ipsam necessitatibus aliquam fugiat debitis quis velit. Eum ex maxime error in consequatur corporis atque. Eligendi asperiores sed qui veritatis aperiam quia a laborum inventore</p>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
+{{--                                    <img src="{{ asset('website/assets/img/departments-4.jpg')}}" alt="" class="img-fluid">--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="tab-pane" id="departments-tab-5">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
+{{--                                    <h3>Est eveniet ipsam sindera pad rone matrelat sando reda</h3>--}}
+{{--                                    <p class="fst-italic">Omnis blanditiis saepe eos autem qui sunt debitis porro quia.</p>--}}
+{{--                                    <p>Exercitationem nostrum omnis. Ut reiciendis repudiandae minus. Omnis recusandae ut non quam ut quod eius qui. Ipsum quia odit vero atque qui quibusdam amet. Occaecati sed est sint aut vitae molestiae voluptate vel</p>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
+{{--                                    <img src="{{ asset('website/assets/img/departments-5.jpg')}}" alt="" class="img-fluid">--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
 
-        </div>
+{{--        </div>--}}
 
-    </section><!-- /Departments Section -->
+{{--    </section><!-- /Departments Section -->--}}
 
     <!-- Doctors Section -->
     <section id="doctors" class="doctors section">
+        <?php
+            $doctors = [
+                [
+                    'title' => 'Dr. Md. Ashiqur Rahman',
+                    'qualifications' => 'MBBS (CMC),FCPS(Surgery)  MS (Surgical Oncology), FACS (America)',
+                    'special_training' => 'Tata Memorial Hospital, Mumbai, India & UKM Hospital, Malaysia',
+                    'positions' => [
+                        'Associate Professor, Institute of Cancer Research & Hospital, Dhaka'
+                    ]
+                ],
+                [
+                    'title' => 'Dr. Mitun Kumar Mallick',
+                    'qualifications' => 'MBBS, BCS(Health), MS (Surgical Oncology)',
+                    'special_training' => 'Genito Unrinary Surgical Oncology Institute of Cancer Research & Hospital, Dhaka',
+                    'positions' => [
+                        'Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka'
+                    ]
+                ],
+                [
+                    'title' => 'Dr. Muhammad Syeef Khalid',
+                    'qualifications' => 'MBBS, MS (Surgical Oncology), MRCS (England)',
+                    'special_training' => 'Endoscopy and Colonscopy Basic Laparospic Surgery',
+                    'positions' => [
+                        'Ex-Registrar, Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka',
+                        'Life Member, Society of Endro-laparoscopic Surgeons of Bangladesh',
+                    ]
+                ],
+            ];
 
-        <!-- Section Title -->
+            ?>
         <div class="container section-title" data-aos="fade-up">
             <h2>Doctors</h2>
-            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+            <p>Meet our team of highly qualified and experienced cancer surgeons dedicated to providing compassionate, advanced, and personalized care for every patient.</p>
         </div><!-- End Section Title -->
-
         <div class="container">
-
             <div class="row gy-4">
-
-                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="team-member d-flex align-items-start">
-                        <div class="pic"><img src="{{ asset('website/assets/img/doctors/doctors-1.jpg')}}" class="img-fluid" alt=""></div>
-                        <div class="member-info">
-                            <h4>Walter White</h4>
-                            <span>Chief Medical Officer</span>
-                            <p>Explicabo voluptatem mollitia et repellat qui dolorum quasi</p>
-                            <div class="social">
-                                <a href=""><i class="bi bi-twitter-x"></i></a>
-                                <a href=""><i class="bi bi-facebook"></i></a>
-                                <a href=""><i class="bi bi-instagram"></i></a>
-                                <a href=""> <i class="bi bi-linkedin"></i> </a>
+                @foreach($doctors as $index => $doctor)
+                    <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
+                        <div class="team-member d-flex align-items-start">
+                            <div class="pic">
+                                <img src="{{ asset('website/assets/img/doctors/doctors-3.jpg') }}" class="img-fluid" alt="{{ $doctor['title'] }}">
+                            </div>
+                            <div class="member-info">
+                                <h4>{{ $doctor['title'] }}</h4>
+                                <span>{{ $doctor['qualifications'] }}</span>
+                                <p>Special Training: {{ $doctor['special_training'] }}</p>
+                                <ul>
+                                    @foreach($doctor['positions'] as $position)
+                                        <li>{{ $position }}</li>
+                                    @endforeach
+                                </ul>
+                                <div class="social">
+                                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                                    <a href="#"><i class="bi bi-facebook"></i></a>
+                                    <a href="#"><i class="bi bi-instagram"></i></a>
+                                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div><!-- End Team Member -->
-
-                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="team-member d-flex align-items-start">
-                        <div class="pic"><img src="{{ asset('website/assets/img/doctors/doctors-2.jpg')}}" class="img-fluid" alt=""></div>
-                        <div class="member-info">
-                            <h4>Sarah Jhonson</h4>
-                            <span>Anesthesiologist</span>
-                            <p>Aut maiores voluptates amet et quis praesentium qui senda para</p>
-                            <div class="social">
-                                <a href=""><i class="bi bi-twitter-x"></i></a>
-                                <a href=""><i class="bi bi-facebook"></i></a>
-                                <a href=""><i class="bi bi-instagram"></i></a>
-                                <a href=""> <i class="bi bi-linkedin"></i> </a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- End Team Member -->
-
-                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="team-member d-flex align-items-start">
-                        <div class="pic"><img src="{{ asset('website/assets/img/doctors/doctors-3.jpg')}}" class="img-fluid" alt=""></div>
-                        <div class="member-info">
-                            <h4>William Anderson</h4>
-                            <span>Cardiology</span>
-                            <p>Quisquam facilis cum velit laborum corrupti fuga rerum quia</p>
-                            <div class="social">
-                                <a href=""><i class="bi bi-twitter-x"></i></a>
-                                <a href=""><i class="bi bi-facebook"></i></a>
-                                <a href=""><i class="bi bi-instagram"></i></a>
-                                <a href=""> <i class="bi bi-linkedin"></i> </a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- End Team Member -->
-
-                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="team-member d-flex align-items-start">
-                        <div class="pic"><img src="{{ asset('website/assets/img/doctors/doctors-4.jpg')}}" class="img-fluid" alt=""></div>
-                        <div class="member-info">
-                            <h4>Amanda Jepson</h4>
-                            <span>Neurosurgeon</span>
-                            <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p>
-                            <div class="social">
-                                <a href=""><i class="bi bi-twitter-x"></i></a>
-                                <a href=""><i class="bi bi-facebook"></i></a>
-                                <a href=""><i class="bi bi-instagram"></i></a>
-                                <a href=""> <i class="bi bi-linkedin"></i> </a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- End Team Member -->
+                    </div><!-- End Team Member -->
+                @endforeach
 
             </div>
 
@@ -929,7 +908,9 @@
                         <i class="bi bi-geo-alt flex-shrink-0"></i>
                         <div>
                             <h3>Location</h3>
-                            <p>A108 Adam Street, New York, NY 535022</p>
+
+                            <p>Health & Hope Hospital <br/> 152/2/G Panthapath, Dhaka-1205</p>
+
                         </div>
                     </div><!-- End Info Item -->
 
@@ -996,12 +977,13 @@
     <div class="container footer-top">
         <div class="row gy-4">
             <div class="col-lg-4 col-md-6 footer-about">
-                <a href="index.html" class="logo d-flex align-items-center">
-                    <span class="sitename">Medilab</span>
+                <a href="#" class="logo d-flex align-items-center">
+                    <span class="sitename">HOPE</span>
                 </a>
                 <div class="footer-contact pt-3">
-                    <p>A108 Adam Street</p>
-                    <p>New York, NY 535022</p>
+                    <p>Health & Hope Hospital</p>
+                    <p>152/2/G Panthapath</p>
+                    <p> Dhaka-1205</p>
                     <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
                     <p><strong>Email:</strong> <span>info@example.com</span></p>
                 </div>
@@ -1027,33 +1009,31 @@
             <div class="col-lg-2 col-md-3 footer-links">
                 <h4>Our Services</h4>
                 <ul>
-                    <li><a href="#">Web Design</a></li>
-                    <li><a href="#">Web Development</a></li>
-                    <li><a href="#">Product Management</a></li>
-                    <li><a href="#">Marketing</a></li>
-                    <li><a href="#">Graphic Design</a></li>
+                    <li><a href="#">Cancer Treatment</a></li>
+                    <li><a href="#">Surgical Oncology</a></li>
+                    <li><a href="#">Radiation Therapy</a></li>
+                    <li><a href="#">Chemotherapy</a></li>
+                    <li><a href="#">Patient Support</a></li>
                 </ul>
             </div>
-
             <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Hic solutasetp</h4>
+                <h4>Our Services</h4>
                 <ul>
-                    <li><a href="#">Molestiae accusamus iure</a></li>
-                    <li><a href="#">Excepturi dignissimos</a></li>
-                    <li><a href="#">Suscipit distinctio</a></li>
-                    <li><a href="#">Dilecta</a></li>
-                    <li><a href="#">Sit quas consectetur</a></li>
+                    <li><a href="#">Cancer Treatment</a></li>
+                    <li><a href="#">Surgical Oncology</a></li>
+                    <li><a href="#">Radiation Therapy</a></li>
+                    <li><a href="#">Chemotherapy</a></li>
+                    <li><a href="#">Patient Support</a></li>
                 </ul>
             </div>
-
             <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Nobis illum</h4>
+                <h4>Our Services</h4>
                 <ul>
-                    <li><a href="#">Ipsam</a></li>
-                    <li><a href="#">Laudantium dolorum</a></li>
-                    <li><a href="#">Dinera</a></li>
-                    <li><a href="#">Trodelas</a></li>
-                    <li><a href="#">Flexo</a></li>
+                    <li><a href="#">Cancer Treatment</a></li>
+                    <li><a href="#">Surgical Oncology</a></li>
+                    <li><a href="#">Radiation Therapy</a></li>
+                    <li><a href="#">Chemotherapy</a></li>
+                    <li><a href="#">Patient Support</a></li>
                 </ul>
             </div>
 
@@ -1061,13 +1041,9 @@
     </div>
 
     <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">Medilab</strong> <span>All Rights Reserved</span></p>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">Hope</strong> <span>All Rights Reserved</span></p>
         <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you've purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a href=“https://themewagon.com>ThemeWagon
+            Designed & Developed by  <a href="https://shohozit.com" target="_blank">Shohozit</a>
         </div>
     </div>
 
