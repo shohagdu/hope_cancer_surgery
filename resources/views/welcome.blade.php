@@ -221,50 +221,119 @@
 
     </section><!-- /About Section -->
 
-    <!-- Stats Section -->
-    <section id="stats" class="stats section light-background">
+    <section id="doctors" class="doctors section light-background"">
+        <?php
+        $doctors = [
+            [
+                'title' => 'Dr. Md. Ashiqur Rahman',
+                'qualifications' => 'MBBS (CMC),FCPS(Surgery)  MS (Surgical Oncology), FACS (America)',
+                'special_training' => 'Tata Memorial Hospital, Mumbai, India & UKM Hospital, Malaysia',
+                'positions' => [
+                    'Associate Professor, Institute of Cancer Research & Hospital, Dhaka'
+                ]
+            ],
+            [
+                'title' => 'Dr. Mitun Kumar Mallick',
+                'qualifications' => 'MBBS, BCS(Health), MS (Surgical Oncology)',
+                'special_training' => 'Genito Unrinary Surgical Oncology Institute of Cancer Research & Hospital, Dhaka',
+                'positions' => [
+                    'Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka'
+                ]
+            ],
+            [
+                'title' => 'Dr. Muhammad Syeef Khalid',
+                'qualifications' => 'MBBS, MS (Surgical Oncology), MRCS (England)',
+                'special_training' => 'Endoscopy and Colonscopy Basic Laparospic Surgery',
+                'positions' => [
+                    'Ex-Registrar, Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka',
+                    'Life Member, Society of Endro-laparoscopic Surgeons of Bangladesh',
+                ]
+            ],
+        ];
 
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
-
+        ?>
+        <div class="container section-title" data-aos="fade-up">
+            <h2>Doctors</h2>
+            <p>Meet our team of highly qualified and experienced cancer surgeons dedicated to providing compassionate, advanced, and personalized care for every patient.</p>
+        </div><!-- End Section Title -->
+        <div class="container">
             <div class="row gy-4">
-
-                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                    <i class="fa-solid fa-user-doctor"></i>
-                    <div class="stats-item">
-                        <span data-purecounter-start="0" data-purecounter-end="85" data-purecounter-duration="1" class="purecounter"></span>
-                        <p>Doctors</p>
-                    </div>
-                </div><!-- End Stats Item -->
-
-                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                    <i class="fa-regular fa-hospital"></i>
-                    <div class="stats-item">
-                        <span data-purecounter-start="0" data-purecounter-end="18" data-purecounter-duration="1" class="purecounter"></span>
-                        <p>Departments</p>
-                    </div>
-                </div><!-- End Stats Item -->
-
-                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                    <i class="fas fa-flask"></i>
-                    <div class="stats-item">
-                        <span data-purecounter-start="0" data-purecounter-end="12" data-purecounter-duration="1" class="purecounter"></span>
-                        <p>Research Labs</p>
-                    </div>
-                </div><!-- End Stats Item -->
-
-                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                    <i class="fas fa-award"></i>
-                    <div class="stats-item">
-                        <span data-purecounter-start="0" data-purecounter-end="150" data-purecounter-duration="1" class="purecounter"></span>
-                        <p>Awards</p>
-                    </div>
-                </div><!-- End Stats Item -->
+                @foreach($doctors as $index => $doctor)
+                    <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
+                        <div class="team-member d-flex align-items-start">
+                            <div class="pic">
+                                <img src="{{ asset('website/assets/img/doctors/doctors-3.jpg') }}" class="img-fluid" alt="{{ $doctor['title'] }}">
+                            </div>
+                            <div class="member-info">
+                                <h4>{{ $doctor['title'] }}</h4>
+                                <span>{{ $doctor['qualifications'] }}</span>
+                                <p>Special Training: {{ $doctor['special_training'] }}</p>
+                                <ul>
+                                    @foreach($doctor['positions'] as $position)
+                                        <li>{{ $position }}</li>
+                                    @endforeach
+                                </ul>
+                                <div class="social">
+                                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                                    <a href="#"><i class="bi bi-facebook"></i></a>
+                                    <a href="#"><i class="bi bi-instagram"></i></a>
+                                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+                @endforeach
 
             </div>
 
         </div>
 
-    </section><!-- /Stats Section -->
+    </section><!-- /Doctors Section -->
+
+    <!-- Stats Section -->
+{{--    <section id="stats" class="stats section light-background">--}}
+
+{{--        <div class="container" data-aos="fade-up" data-aos-delay="100">--}}
+
+{{--            <div class="row gy-4">--}}
+
+{{--                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">--}}
+{{--                    <i class="fa-solid fa-user-doctor"></i>--}}
+{{--                    <div class="stats-item">--}}
+{{--                        <span data-purecounter-start="0" data-purecounter-end="85" data-purecounter-duration="1" class="purecounter"></span>--}}
+{{--                        <p>Doctors</p>--}}
+{{--                    </div>--}}
+{{--                </div><!-- End Stats Item -->--}}
+
+{{--                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">--}}
+{{--                    <i class="fa-regular fa-hospital"></i>--}}
+{{--                    <div class="stats-item">--}}
+{{--                        <span data-purecounter-start="0" data-purecounter-end="18" data-purecounter-duration="1" class="purecounter"></span>--}}
+{{--                        <p>Departments</p>--}}
+{{--                    </div>--}}
+{{--                </div><!-- End Stats Item -->--}}
+
+{{--                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">--}}
+{{--                    <i class="fas fa-flask"></i>--}}
+{{--                    <div class="stats-item">--}}
+{{--                        <span data-purecounter-start="0" data-purecounter-end="12" data-purecounter-duration="1" class="purecounter"></span>--}}
+{{--                        <p>Research Labs</p>--}}
+{{--                    </div>--}}
+{{--                </div><!-- End Stats Item -->--}}
+
+{{--                <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">--}}
+{{--                    <i class="fas fa-award"></i>--}}
+{{--                    <div class="stats-item">--}}
+{{--                        <span data-purecounter-start="0" data-purecounter-end="150" data-purecounter-duration="1" class="purecounter"></span>--}}
+{{--                        <p>Awards</p>--}}
+{{--                    </div>--}}
+{{--                </div><!-- End Stats Item -->--}}
+
+{{--            </div>--}}
+
+{{--        </div>--}}
+
+{{--    </section><!-- /Stats Section -->--}}
 
     <!-- Services Section -->
     <section id="services" class="services section">
@@ -331,7 +400,7 @@
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                         <div class="service-item  position-relative">
                             <div class="icon">
-                                <i class="fas fa-heartbeat"></i>
+                                <i class="fa-solid fa-user-doctor"></i>
                             </div>
                             <a href="#" class="stretched-link">
                                 <h3>{{ $row['title'] }}</h3>
@@ -347,7 +416,7 @@
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                         <div class="service-item  position-relative">
                             <div class="icon">
-                                <i class="fas fa-heartbeat"></i>
+                                <i class="fa-solid fa-user-doctor"></i>
                             </div>
                             <a href="#" class="stretched-link">
                                 <h3>{{ $row['title'] }}</h3>
@@ -410,176 +479,7 @@
         </div>
     </section><!-- /Appointment Section -->
 
-{{--    <!-- Departments Section -->--}}
-{{--    <section id="departments" class="departments section">--}}
 
-{{--        <!-- Section Title -->--}}
-{{--        <div class="container section-title" data-aos="fade-up">--}}
-{{--            <h2>Departments</h2>--}}
-{{--            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>--}}
-{{--        </div><!-- End Section Title -->--}}
-
-{{--        <div class="container" data-aos="fade-up" data-aos-delay="100">--}}
-
-{{--            <div class="row">--}}
-{{--                <div class="col-lg-3">--}}
-{{--                    <ul class="nav nav-tabs flex-column">--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a class="nav-link active show" data-bs-toggle="tab" href="#departments-tab-1">Cardiology</a>--}}
-{{--                        </li>--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-2">Neurology</a>--}}
-{{--                        </li>--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-3">Hepatology</a>--}}
-{{--                        </li>--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-4">Pediatrics</a>--}}
-{{--                        </li>--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-5">Eye Care</a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </div>--}}
-{{--                <div class="col-lg-9 mt-4 mt-lg-0">--}}
-{{--                    <div class="tab-content">--}}
-{{--                        <div class="tab-pane active show" id="departments-tab-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
-{{--                                    <h3>Cardiology</h3>--}}
-{{--                                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>--}}
-{{--                                    <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
-{{--                                    <img src="{{ asset('website/assets/img/departments-1.jpg')}}" alt="" class="img-fluid">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="tab-pane" id="departments-tab-2">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
-{{--                                    <h3>Et blanditiis nemo veritatis excepturi</h3>--}}
-{{--                                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>--}}
-{{--                                    <p>Ea ipsum voluptatem consequatur quis est. Illum error ullam omnis quia et reiciendis sunt sunt est. Non aliquid repellendus itaque accusamus eius et velit ipsa voluptates. Optio nesciunt eaque beatae accusamus lerode pakto madirna desera vafle de nideran pal</p>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
-{{--                                    <img src="{{ asset('website/assets/img/departments-2.jpg')}}" alt="" class="img-fluid">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="tab-pane" id="departments-tab-3">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
-{{--                                    <h3>Impedit facilis occaecati odio neque aperiam sit</h3>--}}
-{{--                                    <p class="fst-italic">Eos voluptatibus quo. Odio similique illum id quidem non enim fuga. Qui natus non sunt dicta dolor et. In asperiores velit quaerat perferendis aut</p>--}}
-{{--                                    <p>Iure officiis odit rerum. Harum sequi eum illum corrupti culpa veritatis quisquam. Neque necessitatibus illo rerum eum ut. Commodi ipsam minima molestiae sed laboriosam a iste odio. Earum odit nesciunt fugiat sit ullam. Soluta et harum voluptatem optio quae</p>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
-{{--                                    <img src="{{ asset('website/assets/img/departments-3.jpg')}}" alt="" class="img-fluid">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="tab-pane" id="departments-tab-4">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
-{{--                                    <h3>Fuga dolores inventore laboriosam ut est accusamus laboriosam dolore</h3>--}}
-{{--                                    <p class="fst-italic">Totam aperiam accusamus. Repellat consequuntur iure voluptas iure porro quis delectus</p>--}}
-{{--                                    <p>Eaque consequuntur consequuntur libero expedita in voluptas. Nostrum ipsam necessitatibus aliquam fugiat debitis quis velit. Eum ex maxime error in consequatur corporis atque. Eligendi asperiores sed qui veritatis aperiam quia a laborum inventore</p>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
-{{--                                    <img src="{{ asset('website/assets/img/departments-4.jpg')}}" alt="" class="img-fluid">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="tab-pane" id="departments-tab-5">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-lg-8 details order-2 order-lg-1">--}}
-{{--                                    <h3>Est eveniet ipsam sindera pad rone matrelat sando reda</h3>--}}
-{{--                                    <p class="fst-italic">Omnis blanditiis saepe eos autem qui sunt debitis porro quia.</p>--}}
-{{--                                    <p>Exercitationem nostrum omnis. Ut reiciendis repudiandae minus. Omnis recusandae ut non quam ut quod eius qui. Ipsum quia odit vero atque qui quibusdam amet. Occaecati sed est sint aut vitae molestiae voluptate vel</p>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-lg-4 text-center order-1 order-lg-2">--}}
-{{--                                    <img src="{{ asset('website/assets/img/departments-5.jpg')}}" alt="" class="img-fluid">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-
-{{--        </div>--}}
-
-{{--    </section><!-- /Departments Section -->--}}
-
-    <!-- Doctors Section -->
-    <section id="doctors" class="doctors section">
-        <?php
-            $doctors = [
-                [
-                    'title' => 'Dr. Md. Ashiqur Rahman',
-                    'qualifications' => 'MBBS (CMC),FCPS(Surgery)  MS (Surgical Oncology), FACS (America)',
-                    'special_training' => 'Tata Memorial Hospital, Mumbai, India & UKM Hospital, Malaysia',
-                    'positions' => [
-                        'Associate Professor, Institute of Cancer Research & Hospital, Dhaka'
-                    ]
-                ],
-                [
-                    'title' => 'Dr. Mitun Kumar Mallick',
-                    'qualifications' => 'MBBS, BCS(Health), MS (Surgical Oncology)',
-                    'special_training' => 'Genito Unrinary Surgical Oncology Institute of Cancer Research & Hospital, Dhaka',
-                    'positions' => [
-                        'Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka'
-                    ]
-                ],
-                [
-                    'title' => 'Dr. Muhammad Syeef Khalid',
-                    'qualifications' => 'MBBS, MS (Surgical Oncology), MRCS (England)',
-                    'special_training' => 'Endoscopy and Colonscopy Basic Laparospic Surgery',
-                    'positions' => [
-                        'Ex-Registrar, Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka',
-                        'Life Member, Society of Endro-laparoscopic Surgeons of Bangladesh',
-                    ]
-                ],
-            ];
-
-            ?>
-        <div class="container section-title" data-aos="fade-up">
-            <h2>Doctors</h2>
-            <p>Meet our team of highly qualified and experienced cancer surgeons dedicated to providing compassionate, advanced, and personalized care for every patient.</p>
-        </div><!-- End Section Title -->
-        <div class="container">
-            <div class="row gy-4">
-                @foreach($doctors as $index => $doctor)
-                    <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
-                        <div class="team-member d-flex align-items-start">
-                            <div class="pic">
-                                <img src="{{ asset('website/assets/img/doctors/doctors-3.jpg') }}" class="img-fluid" alt="{{ $doctor['title'] }}">
-                            </div>
-                            <div class="member-info">
-                                <h4>{{ $doctor['title'] }}</h4>
-                                <span>{{ $doctor['qualifications'] }}</span>
-                                <p>Special Training: {{ $doctor['special_training'] }}</p>
-                                <ul>
-                                    @foreach($doctor['positions'] as $position)
-                                        <li>{{ $position }}</li>
-                                    @endforeach
-                                </ul>
-                                <div class="social">
-                                    <a href="#"><i class="bi bi-twitter-x"></i></a>
-                                    <a href="#"><i class="bi bi-facebook"></i></a>
-                                    <a href="#"><i class="bi bi-instagram"></i></a>
-                                    <a href="#"><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-                @endforeach
-
-            </div>
-
-        </div>
-
-    </section><!-- /Doctors Section -->
 
     <!-- Faq Section -->
     <section id="faq" class="faq section light-background">
