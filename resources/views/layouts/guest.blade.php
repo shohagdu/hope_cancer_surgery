@@ -11,6 +11,11 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+{{--        <link rel="preload" as="style" href="https://hopecancersurgery.com/public/build/assets/app-DEoo0NxM.css" />--}}
+{{--        <link rel="modulepreload" href="https://hopecancersurgery.com/public/build/assets/app-T1DpEqax.js" />--}}
+{{--        <link rel="stylesheet" href="https://hopecancersurgery.com/public/build/assets/app-DEoo0NxM.css" data-navigate-track="reload" />--}}
+{{--        <script type="module" src="https://hopecancersurgery.com/public/build/assets/app-T1DpEqax.js" data-navigate-track="reload"></script>--}}
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
