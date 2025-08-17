@@ -8,6 +8,10 @@ use App\Livewire\PatientCreateForm;
 use App\Livewire\PatientEditForm;
 use App\Livewire\PatientView;
 use App\Livewire\Dashboard;
+use App\Livewire\WebpageContentManager;
+use App\Livewire\DoctorInformation;
+use App\Livewire\OrganizationSetup;
+use App\Livewire\OnlineAppointmentManager;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,3 +34,8 @@ Route::get('patient_infos', PatientInfo::class)->middleware('auth')->name('patie
 Route::get('/patient/create', PatientCreateForm::class)->middleware(['auth'])->name('patient.create');
 Route::get('/patient/view/{id}', PatientView::class)->middleware(['auth'])->name('patient.view');
 Route::get('/patient/edit/{id}', PatientEditForm::class)->middleware(['auth'])->name('patient.edit');
+Route::get('/contents', WebpageContentManager::class)->name('contents.index');
+Route::get('/doctors', DoctorInformation::class)->name('doctors.index');
+Route::get('/organization', OrganizationSetup::class)->name('organization.index');
+Route::get('/onlineAppointment', OnlineAppointmentManager::class)->name('onlineAppointment.index');
+

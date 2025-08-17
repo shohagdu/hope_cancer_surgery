@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('company_infos', function (Blueprint $table) {
+            $table->id();
+            $table->string('name'); // Company Name
+            $table->string('slug')->unique(); // Slug for URLs
+            $table->string('logo')->nullable(); // Logo file path
+            $table->string('address')->nullable();
+            $table->string('mobile', 20)->nullable();
+            $table->string('email')->nullable();
+            $table->string('fb')->nullable(); // Facebook URL
+            $table->string('twitter')->nullable(); // Twitter/X URL
+            $table->string('linkedin')->nullable(); // LinkedIn URL
+            $table->string('tiktok')->nullable(); // TikTok URL
+            $table->string('youtube')->nullable(); // YouTube URL
+            $table->integer('created_by')->nullable();
+            $table->string('created_ip',15)->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->string('updated_ip',15)->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('company_infos');
+    }
+};
