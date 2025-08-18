@@ -1,76 +1,145 @@
 <?php
+
 namespace App\Livewire;
 
-use Livewire\Component;
-use Livewire\WithFileUploads;
 use App\Models\Doctors;
+use Livewire\Component;
+use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class DoctorInformation extends Component
 {
-    use WithFileUploads;
+    use WithPagination, WithFileUploads;
 
-    public $doctor_id;
-    public $name, $picture, $qualifications, $special_training, $positions;
-    public $mobile, $email;
-    public $facebook, $twitter, $instagram, $linkedin, $tiktok, $youtube;
-    public $display_position = 0, $is_active = 1;
+    public $doctorId, $name, $email, $mobile, $positions, $qualifications, $special_training, $display_position, $is_active = 1;
+    public $picture, $newPicture;
+    public $showModal = false;
+    public $isEdit = false;
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'picture' => 'nullable|image|max:2048',
+        'email' => 'nullable|email',
+        'mobile' => 'required|string|max:20',
+        'positions' => 'nullable|string|max:255',
         'qualifications' => 'nullable|string|max:255',
         'special_training' => 'nullable|string|max:255',
-        'positions' => 'nullable|string|max:255',
-        'mobile' => 'nullable|string|max:30',
-        'email' => 'nullable|email|max:150',
-        'facebook' => 'nullable|url',
-        'twitter' => 'nullable|url',
-        'instagram' => 'nullable|url',
-        'linkedin' => 'nullable|url',
-        'tiktok' => 'nullable|url',
-        'youtube' => 'nullable|url',
-        'display_position' => 'integer|min:0',
+        'display_position' => 'nullable|integer',
         'is_active' => 'boolean',
     ];
 
-    public function save()
+    public function render()
+    {
+        $doctors = Doctors::latest()->paginate(10);
+        return view('livewire.doctor-information', compact('doctors'));
+    }
+
+    // ---------------- CREATE ----------------
+    public function openModal($id = null)
+    {
+        $this->resetValidation();
+        $this->resetForm();
+
+        if ($id) {
+            $doctor = Doctors::findOrFail($id);
+            $this->doctorId = $doctor->id;
+            $this->name = $doctor->name;
+            $this->email = $doctor->email;
+            $this->mobile = $doctor->mobile;
+            $this->positions = $doctor->positions;
+            $this->qualifications = $doctor->qualifications;
+            $this->special_training = $doctor->special_training;
+            $this->display_position = $doctor->display_position;
+            $this->is_active = $doctor->is_active;
+            $this->picture = $doctor->picture;
+            $this->isEdit = true;
+        }
+
+        $this->showModal = true;
+    }
+
+    // ---------------- STORE ----------------
+    public function store()
     {
         $this->validate();
 
-        $data = [
+        $data = $this->getDoctorData();
+
+        if ($this->newPicture) {
+            $data['picture'] = $this->newPicture->store('doctors', 'public');
+        }
+
+        Doctors::create($data);
+
+        $this->closeModal();
+        $this->dispatch('swal:success', title: 'Saved!', text: 'Doctor created successfully.');
+    }
+
+    // ---------------- UPDATE ----------------
+    public function update()
+    {
+        $this->validate();
+
+        $doctor = Doctors::findOrFail($this->doctorId);
+
+        $data = $this->getDoctorData();
+
+        if ($this->newPicture) {
+            $data['picture'] = $this->newPicture->store('doctors', 'public');
+        }
+
+        $doctor->update($data);
+
+        $this->closeModal();
+        $this->dispatch('swal:success', title: 'Updated!', text: 'Doctor updated successfully.');
+    }
+
+    // ---------------- DELETE ----------------
+    public function confirmDelete($id)
+    {
+        $this->dispatch('swal:confirm', title: 'Are you sure?', text: 'This doctor will be deleted!', id: $id);
+    }
+
+    public function delete($id)
+    {
+        $doctor = Doctors::findOrFail($id);
+        $doctor->delete(); // Soft delete if model uses SoftDeletes
+        $this->dispatch('swal:success', title: 'Deleted!', text: 'Doctor deleted successfully.');
+    }
+
+    // ---------------- Helpers ----------------
+    private function getDoctorData()
+    {
+        return [
             'name' => $this->name,
+            'email' => $this->email,
+            'mobile' => $this->mobile,
+            'positions' => $this->positions,
             'qualifications' => $this->qualifications,
             'special_training' => $this->special_training,
-            'positions' => $this->positions,
-            'mobile' => $this->mobile,
-            'email' => $this->email,
-            'facebook' => $this->facebook,
-            'twitter' => $this->twitter,
-            'instagram' => $this->instagram,
-            'linkedin' => $this->linkedin,
-            'tiktok' => $this->tiktok,
-            'youtube' => $this->youtube,
             'display_position' => $this->display_position,
             'is_active' => $this->is_active,
         ];
-
-        if ($this->picture) {
-            $data['picture'] = $this->picture->store('doctors', 'public');
-        }
-
-        if ($this->doctor_id) {
-            Doctors::findOrFail($this->doctor_id)->update($data);
-            $this->dispatch('swal:success', ['title' => 'Updated!', 'text' => 'Doctor updated successfully.']);
-        } else {
-            Doctors::create($data);
-            $this->dispatch('swal:success', ['title' => 'Created!', 'text' => 'Doctor created successfully.']);
-        }
-
-        $this->reset();
     }
 
-    public function render()
+    public function resetForm()
     {
-        return view('livewire.doctor-information');
+        $this->doctorId = null;
+        $this->name = '';
+        $this->email = '';
+        $this->mobile = '';
+        $this->positions = '';
+        $this->qualifications = '';
+        $this->special_training = '';
+        $this->display_position = '';
+        $this->is_active = 1;
+        $this->picture = null;
+        $this->newPicture = null;
+        $this->isEdit = false;
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetForm();
     }
 }

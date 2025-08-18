@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +10,12 @@ class Doctors extends Model
 
     protected $fillable = [
         'name',
+        'picture',
         'qualifications',
         'special_training',
         'positions',
+        'mobile',
+        'email',
         'facebook',
         'twitter',
         'instagram',
@@ -27,8 +29,5 @@ class Doctors extends Model
         'updated_by',
         'updated_ip',
     ];
-
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
 }
+

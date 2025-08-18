@@ -1,6 +1,17 @@
-<div class="p-6">
+<div class="max-w-7xl mx-auto p-4 bg-white shadow rounded">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <h1 class="text-xl font-bold">
+                Online Appointment Record
+            </h1>
+        </div>
+        <div class="text-right">
+            <button wire:click="toggleAdminView" class="px-4 py-2 bg-green-600 text-white rounded">Add New</button>
+        </div>
+    </div>
+    <hr class="my-3">
     <div class="flex justify-between mb-4">
-        <input type="text" wire:model.live.debounce.500ms="search" placeholder="Search by name or mobile" class="border rounded px-3 py-2 w-1/3">
+        <input type="text" wire:model.live.debounce.50ms="search" placeholder="Search by name or mobile" class="border rounded px-3 py-2 w-3/3">
         <select wire:model.live.debounce.500ms="perPage" class="border rounded p-2">
             <option value="5">5 per page</option>
             <option value="10">10 per page</option>
@@ -9,21 +20,21 @@
             <option value="100">100 per page</option>
             <option value="500">500 per page</option>
         </select>
-        <button wire:click="toggleAdminView" class="px-4 py-2 bg-green-600 text-white rounded">Add New</button>
+
     </div>
 
     <!-- Table -->
-    <table class="min-w-full bg-white border">
-        <thead>
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
         <tr class="bg-gray-100">
-            <th class="px-4 py-2 border">#</th>
-            <th class="px-4 py-2 border">Date & Time</th>
-            <th class="px-4 py-2 border">Doctor</th>
-            <th class="px-4 py-2 border">Patient Name</th>
-            <th class="px-4 py-2 border">Mobile</th>
-            <th class="px-4 py-2 border">Gender</th>
-            <th class="px-4 py-2 border">Type</th>
-            <th class="px-4 py-2 border">Actions</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
         </tr>
         </thead>
         <tbody>
