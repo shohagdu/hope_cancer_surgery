@@ -1,17 +1,29 @@
-<div class="p-6">
+<div class="max-w-7xl mx-auto p-4 bg-white shadow rounded">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+        <div>
+            <h1 class="text-xl font-bold">
+                Organization Information
+            </h1>
+        </div>
+        <div class="text-right">
+            @if($companies->count()<=0)
+                <button wire:click="openModal()" class="bg-blue-600 text-white px-4 py-2 rounded">Add Organization</button>
+            @endif
+        </div>
+    </div>
 
     <!-- Top controls -->
-    <div class="flex justify-between mb-4">
-        <div class="flex space-x-2">
-            <input type="text" wire:model.debounce.500ms="search" placeholder="Search..." class="border rounded p-2" />
-            <select wire:model="perPage" class="border rounded p-2">
-                <option value="5">5 per page</option>
-                <option value="10">10 per page</option>
-                <option value="20">20 per page</option>
-            </select>
-        </div>
-        <button wire:click="openModal()" class="bg-blue-600 text-white px-4 py-2 rounded">Add Company</button>
-    </div>
+{{--    <div class="flex justify-between mb-4">--}}
+{{--        <div class="flex space-x-2">--}}
+{{--            <input type="text" wire:model.debounce.500ms="search" placeholder="Search..." class="border rounded p-2" />--}}
+{{--            <select wire:model="perPage" class="border rounded p-2">--}}
+{{--                <option value="5">5 per page</option>--}}
+{{--                <option value="10">10 per page</option>--}}
+{{--                <option value="20">20 per page</option>--}}
+{{--            </select>--}}
+{{--        </div>--}}
+
+{{--    </div>--}}
 
     <!-- Table -->
     <div class="overflow-x-auto">

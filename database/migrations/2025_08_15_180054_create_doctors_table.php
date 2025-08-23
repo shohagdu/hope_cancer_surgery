@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('qualifications')->nullable();
             $table->string('special_training')->nullable();
             $table->string('positions')->nullable(); // Designation / Position
+            $table->text('doctor_profile')->nullable();
             $table->string('mobile',30)->nullable(); // Designation / Position
             $table->string('email',150)->nullable(); // Designation / Position
             $table->string('facebook')->nullable();
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->string('linkedin')->nullable();
             $table->string('tiktok')->nullable();
             $table->string('youtube')->nullable();
-            $table->integer('display_position')->default(0); // For sorting display order
+            $table->integer('display_position')->nullable()->default(0); // For sorting display order
             $table->tinyInteger('is_active')->default(1)->comment('1 = Active, 0 = Inactive');
             $table->integer('created_by')->nullable();
             $table->string('created_ip',15)->nullable();

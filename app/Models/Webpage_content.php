@@ -9,10 +9,10 @@ class Webpage_content extends Model
 {
     use HasFactory;
 
-    // Table name (optional if Laravel can guess it from the model name)
+    // Explicit table name (optional if Laravel can infer it)
     protected $table = 'webpage_contents';
 
-    // Allow mass assignment for these fields
+    // Mass assignable fields
     protected $fillable = [
         'type',
         'icon',
@@ -30,9 +30,30 @@ class Webpage_content extends Model
         'updated_ip',
     ];
 
-    // Cast fields to correct types
-//    protected $casts = [
-////        'is_active' => 'integer', // keep it as integer
-////        'is_highlight_item' => 'integer', // if also 0/1
-//    ];
+    // Fields hidden from JSON/array output
+    protected $hidden = [
+        'created_by',
+        'created_ip',
+        'updated_by',
+        'updated_ip',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
+     * Automatically append custom attributes
+     */
+    protected $appends = [
+        'file_url',
+    ];
+
+    /**
+     * Accessor for full file URL
+     */
+    public function getFileUrlAttribute()
+    {
+        return $this->file_path
+            ? asset('storage/' . $this->file_path)
+            : null;
+    }
 }

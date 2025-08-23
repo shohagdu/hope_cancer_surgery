@@ -11,7 +11,7 @@ class DoctorInformation extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $doctorId, $name, $email, $mobile, $positions, $qualifications, $special_training, $display_position, $is_active = 1;
+    public $doctorId, $name, $email, $mobile, $positions, $qualifications, $special_training,$doctor_profile, $display_position, $is_active = 1;
     public $picture, $newPicture;
     public $showModal = false;
     public $isEdit = false;
@@ -23,6 +23,7 @@ class DoctorInformation extends Component
         'positions' => 'nullable|string|max:255',
         'qualifications' => 'nullable|string|max:255',
         'special_training' => 'nullable|string|max:255',
+        'doctor_profile' => 'nullable|string',
         'display_position' => 'nullable|integer',
         'is_active' => 'boolean',
     ];
@@ -48,6 +49,7 @@ class DoctorInformation extends Component
             $this->positions = $doctor->positions;
             $this->qualifications = $doctor->qualifications;
             $this->special_training = $doctor->special_training;
+            $this->doctor_profile = $doctor->doctor_profile;
             $this->display_position = $doctor->display_position;
             $this->is_active = $doctor->is_active;
             $this->picture = $doctor->picture;
@@ -116,6 +118,7 @@ class DoctorInformation extends Component
             'positions' => $this->positions,
             'qualifications' => $this->qualifications,
             'special_training' => $this->special_training,
+            'doctor_profile' => $this->doctor_profile,
             'display_position' => $this->display_position,
             'is_active' => $this->is_active,
         ];
@@ -130,6 +133,7 @@ class DoctorInformation extends Component
         $this->positions = '';
         $this->qualifications = '';
         $this->special_training = '';
+        $this->doctor_profile = '';
         $this->display_position = '';
         $this->is_active = 1;
         $this->picture = null;

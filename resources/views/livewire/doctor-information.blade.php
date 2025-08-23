@@ -44,11 +44,8 @@
 
     {{-- Single modal, no duplicates, no inline style toggles --}}
     @if($showModal)
-        <div
-                class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50 overflow-auto"
-                wire:keydown.escape="$set('showModal', false)"
-        >
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl mx-4">
+        <div class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-5xl mx-4 overflow-y-auto max-h-[90vh]">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold">
                         {{ $isEdit ? 'Edit Doctor' : 'Add Doctor' }}
@@ -60,60 +57,61 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block">Name</label>
-                            <input type="text" wire:model="name" class="w-full border rounded px-2 py-1">
-                            @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input type="text" wire:model="name" placeholder="Enter Doctor Name" class="w-full border rounded px-2 py-1">
+                            @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @endif
                         </div>
                         <div>
                             <label class="block">Email</label>
-                            <input type="email" wire:model="email" class="w-full border rounded px-2 py-1">
-                            @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input type="email" wire:model="email" placeholder="Enter Doctor Email" class="w-full border rounded px-2 py-1">
+                            @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @endif
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
                             <label class="block">Mobile</label>
-                            <input type="text" wire:model="mobile" class="w-full border rounded px-2 py-1">
-                            @error('mobile') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input type="text" wire:model="mobile" placeholder="Enter Doctor Mobile" class="w-full border rounded px-2 py-1">
+                            @error('mobile') <span class="text-red-500 text-sm">{{ $message }}</span> @endif
                         </div>
                         <div>
-                            <label class="block">Position</label>
-                            <input type="text" wire:model="positions" class="w-full border rounded px-2 py-1">
+                            <label class="block">Picture</label>
+                            <input type="file" wire:model="newPicture" class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4  file:bg-gray-100 file:border-0 file:rounded-md file:text-gray-700 file:cursor-pointer hover:file:bg-gray-200 transition-colors">
+                            @error('newPicture') <span class="text-red-500 text-sm">{{ $message }}</span> @endif
+                            @if($picture)
+                                <img src="{{ Storage::url($picture) }}" class="h-16 mt-2 rounded">
+                            @endif
+                            @if($newPicture)
+                                <img src="{{ $newPicture->temporaryUrl() }}" class="h-16 mt-2 rounded">
+                            @endif
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <label class="block">Picture</label>
-                        <input type="file" wire:model="newPicture" class="w-full">
-                        @error('newPicture') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-
-                        {{-- Existing stored picture --}}
-                        @if($picture)
-                            <img src="{{ Storage::url($picture) }}" class="h-16 mt-2 rounded">
-                        @endif
-
-                        {{-- New temp preview --}}
-                        @if($newPicture)
-                            <img src="{{ $newPicture->temporaryUrl() }}" class="h-16 mt-2 rounded">
-                        @endif
+                        <label class="block">Designation/Position</label>
+                        <textarea wire:model="positions" placeholder="Enter Doctor Designation/Position"  class="w-full border rounded px-2 py-1"></textarea>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
                             <label class="block">Qualifications</label>
-                            <input type="text" wire:model="qualifications" class="w-full border rounded px-2 py-1">
+                            <textarea wire:model="qualifications" placeholder="Enter Qualifications" class="w-full border rounded px-2 py-1"></textarea>
                         </div>
                         <div>
                             <label class="block">Special Training</label>
-                            <input type="text" wire:model="special_training" class="w-full border rounded px-2 py-1">
+                            <textarea wire:model="special_training" placeholder="Enter Special Training" class="w-full border rounded px-2 py-1"></textarea>
                         </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="block">Doctor Profile</label>
+                        <textarea rows="6" wire:model="doctor_profile" placeholder="Enter Doctor Profile" class="w-full border rounded px-2 py-1"></textarea>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
                             <label class="block">Display Order</label>
-                            <input type="number" wire:model="display_position" class="w-full border rounded px-2 py-1">
-                            @error('display_position') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input type="number" wire:model="display_position"  placeholder="Enter Display Order" class="w-full border rounded px-2 py-1">
+                            @error('display_position') <span class="text-red-500 text-sm">{{ $message }}</span> @endif
                         </div>
                         <div>
                             <label class="block">Active?</label>
@@ -121,7 +119,7 @@
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
                             </select>
-                            @error('is_active') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('is_active') <span class="text-red-500 text-sm">{{ $message }}</span> @endif
                         </div>
                     </div>
 

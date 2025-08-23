@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Doctors extends Model
 {
@@ -14,6 +15,7 @@ class Doctors extends Model
         'qualifications',
         'special_training',
         'positions',
+        'doctor_profile',
         'mobile',
         'email',
         'facebook',
@@ -29,5 +31,14 @@ class Doctors extends Model
         'updated_by',
         'updated_ip',
     ];
+
+    public function getPictureUrlAttribute()
+    {
+        if (!empty($this->picture) && Storage::disk('public')->exists($this->picture)) {
+            return asset('storage/' . $this->picture);
+        }
+
+        return asset('assets/img/doctors/doctors-3.jpg'); // fallback
+    }
 }
 

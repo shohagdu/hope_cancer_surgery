@@ -3,14 +3,17 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Patient;
+use App\Models\Doctors;
+use App\Models\OnlineAppointment;
 use Illuminate\Support\Facades\DB;
 class Dashboard extends Component
 {
     public function render()
     {
-        $totalPatient   =   Patient::count();
-        $todayPatient = Patient::whereDate('created_at', today())->count();
-        return view('dashboard',['totalPatient'=>$totalPatient,'todayPatient'=>$todayPatient]);
+        $doctors                    =   Doctors::count();
+        $todayOnlineAppointment     =   OnlineAppointment::whereDate('date_time', today())->count();
+        $totalOnlineAppointment     =   OnlineAppointment::count();
+
+        return view('dashboard',['doctors'=>$doctors,'todayOnlineAppointment'=>$todayOnlineAppointment,'totalOnlineAppointment'=>$totalOnlineAppointment]);
     }
 }
