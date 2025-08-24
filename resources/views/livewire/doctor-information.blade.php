@@ -78,7 +78,7 @@
                             <input type="file" wire:model="newPicture" class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4  file:bg-gray-100 file:border-0 file:rounded-md file:text-gray-700 file:cursor-pointer hover:file:bg-gray-200 transition-colors">
                             @error('newPicture') <span class="text-red-500 text-sm">{{ $message }}</span> @endif
                             @if($picture)
-                                <img src="{{ Storage::url($picture) }}" class="h-16 mt-2 rounded">
+                                <img src="{{ asset('storage/'.$picture)  }}" class="h-16 mt-2 rounded">
                             @endif
                             @if($newPicture)
                                 <img src="{{ $newPicture->temporaryUrl() }}" class="h-16 mt-2 rounded">

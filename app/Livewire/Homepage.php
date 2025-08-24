@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Doctors;
 use App\Models\Webpage_content;
 use App\Models\OrganizationInfo;
+use App\Models\OnlineAppointment;
 
 class Homepage extends Component
 {
@@ -59,10 +60,47 @@ class Homepage extends Component
         )
             ->layout('layouts.web_app',
                 [
-                    'title' => 'Homepage :: ' . config('app.name'),
-                    'meta_description' => 'Homepage of ' . config('app.name'),
+                    'title' => 'Homepage :: Hope centre for cancer surgery and research ' . config('app.name'),
+                    'meta_description' => 'Homepage of Hope centre for cancer surgery and research ' . config('app.name'),
                     'organizationInfo' => $organizationInfo,
                 ]);
+    }
+
+    public $doctor;
+    public $date;
+    public $name;
+    public $phone;
+    public $gender;
+    public $message;
+    public $patient_type;
+
+    protected $rules = [
+        'doctor' => 'required|exists:doctors,id',
+        'date'   => 'required|date',
+        'name'   => 'required|string|max:255',
+        'phone'  => 'required|string|max:15',
+        'gender' => 'required|in:1,2,3',
+        'message'=> 'nullable|string|max:1000',
+    ];
+    public function submitDoctorAppointment(){
+        OnlineAppointment::create([
+            'doctor_id' => $this->doctor,
+            'date_time' => $this->date,
+            'patient_name' => $this->name,
+            'mobile' => $this->phone,
+            'gender' => $this->gender,
+            'patient_type' => $this->patient_type,
+            'message' => $this->message,
+        ]);
+
+       // $this->reset(['doctor','date','name','phone','gender','message']);
+
+        $this->dispatch('swal:success', [
+            'title' => 'Saved!',
+            'text'  => 'Your appointment request has been sent successfully. Thank you!',
+        ]);
+
+      //  session()->flash('success', 'Your appointment request has been sent successfully. Thank you!');
     }
 
 }

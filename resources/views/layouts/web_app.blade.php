@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="keywords" content="">
     <!-- Favicons -->
-    <link href="{{ asset('website/assets/img/favicon.png')  }}" rel="icon">
+    <link href="{{ asset('website/assets/img/favicon.ico')  }}" rel="icon">
     <link href="{{ asset('website/assets/img/apple-touch-icon.png')  }}" rel="apple-touch-icon">
 
     <!-- Fonts -->
@@ -25,6 +25,7 @@
 
     <!-- Main CSS File -->
     <link href="{{ asset('website/assets/css/main.css')  }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -36,8 +37,8 @@
     <div class="topbar d-flex align-items-center">
         <div class="container d-flex justify-content-center justify-content-md-between">
             <div class="contact-info d-flex align-items-center">
-                <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:info@hopecancersurgery.com">info@hopecancersurgery.com</a></i>
-                <i class="bi bi-phone d-flex align-items-center ms-4"><span>+880 155 6313 500</span></i>
+                <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:info@hopecancersurgery.com">{{ $organizationInfo->email??'' }}</a></i>
+                <i class="bi bi-phone d-flex align-items-center ms-4"><span>{{ $organizationInfo->mobile??'' }}</span></i>
             </div>
             <div class="social-links d-none d-md-flex align-items-center">
                 <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -50,7 +51,7 @@
     <div class="branding d-flex align-items-center">
 
         <div class="container position-relative d-flex align-items-center justify-content-between">
-            <a href="index.html" class="logo d-flex align-items-center me-auto">
+            <a href="{{ url('/') }}" class="logo d-flex align-items-center me-auto">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
                 <img src="{{ asset('website/assets/img/logo.png') }}" alt="">
                 {{--                <h1 class="sitename">Medilab</h1>--}}
@@ -82,10 +83,10 @@
                     <li class="dropdown"><a href="#"><span>Gallery</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             <li><a href="#gallery">Image</a></li>
-                            <li><a href="#">Viewo</a></li>
+{{--                            <li><a href="#gallery">Viewo</a></li>--}}
                         </ul>
                     </li>
-                    <li><a href="#contact">Article</a></li>
+{{--                    <li><a href="#contact">Article</a></li>--}}
                     <li><a href="#contact">Contact Us</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -107,14 +108,18 @@
         <div class="row gy-4">
             <div class="col-lg-4 col-md-6 footer-about">
                 <a href="#" class="logo d-flex align-items-center">
-                    <span class="sitename">HOPE</span>
+                    <span class="sitename">{{ $organizationInfo->slug??'' }}</span>
                 </a>
                 <div class="footer-contact pt-3">
-                    <p>Health & Hope Hospital</p>
-                    <p>152/2/G Panthapath</p>
-                    <p> Dhaka-1205</p>
-                    <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                    <p><strong>Email:</strong> <span>info@example.com</span></p>
+                    @if(!empty($organizationInfo->address))
+                        @foreach(explode("\n", $organizationInfo->address) as $address)
+                            @if(!empty(trim($address)))
+                                <p>{{ $address }}</p>
+                            @endif
+                        @endforeach
+                    @endif
+                    <p class="mt-3"><strong>Phone:</strong> <span>{{ $organizationInfo->mobile??'' }}</span></p>
+                    <p><strong>Email:</strong> <span>{{ $organizationInfo->email??'' }}</span></p>
                 </div>
                 <div class="social-links d-flex mt-4">
                     <a href=""><i class="bi bi-twitter-x"></i></a>
