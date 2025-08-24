@@ -130,7 +130,7 @@
                <div class="team-member d-flex align-items-start">
                   <div class="pic">
 {{--                     <img src="{{ asset('storage/assets/img/doctors/doctors-3.jpg') }}" class="img-fluid" alt="{{ $doctor['name'] }}">--}}
-                     <img src="{{ $doctor->picture_url }}" class="img-fluid" alt="{{ $doctor->name }}">
+                     <img src="{{  asset('storage/'.$doctor->picture) }}" class="img-fluid" alt="{{ $doctor->name }}">
 
                   </div>
                   <div class="member-info">
