@@ -130,7 +130,7 @@
                <div class="team-member d-flex align-items-start">
                   <div class="pic">
 {{--                     <img src="{{ asset('storage/assets/img/doctors/doctors-3.jpg') }}" class="img-fluid" alt="{{ $doctor['name'] }}">--}}
-                     <img src="{{  asset('storage/'.$doctor->picture) }}" class="img-fluid" alt="{{ $doctor->name }}">
+                     <img src="{{  asset('storage/app/public'.$doctor->picture) }}" class="img-fluid" alt="{{ $doctor->name }}">
 
                   </div>
                   <div class="member-info">
@@ -300,12 +300,6 @@
       <div class="container section-title" data-aos="fade-up">
          <h2>Appointment</h2>
          <p>Book an appointment with our expert cancer specialists for consultation, diagnosis, or treatment. We are committed to providing timely and compassionate care to every patient.</p>
-         @if (session()->has('success'))
-            <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
-               {{ session('success') }}
-            </div>
-         @endif
-
       </div><!-- End Section Title -->
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
