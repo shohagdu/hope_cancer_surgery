@@ -35,7 +35,7 @@ class Doctors extends Model
     public function getPictureUrlAttribute()
     {
         if (!empty($this->picture) && Storage::disk('public')->exists($this->picture)) {
-            return asset('storage/' . $this->picture);
+            return asset('storage/app/public/' . $this->picture);
         }
 
         return asset('assets/img/doctors/doctors-3.jpg'); // fallback

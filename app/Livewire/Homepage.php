@@ -14,6 +14,7 @@ class Homepage extends Component
         $doctors                    =   Doctors::where(['is_active'=> 1])
             ->orderBy('display_position', 'Asc')
             ->get();
+
         $whyChooseHighlightItem = Webpage_content::where(['type' => 1, 'is_active' => 1,'is_highlight_item'=> 1])
             ->orderBy('display_position', 'DESC')
             ->first();
