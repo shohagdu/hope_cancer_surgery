@@ -13,13 +13,13 @@ use App\Livewire\DoctorInformation;
 use App\Livewire\OrganizationSetup;
 use App\Livewire\OnlineAppointmentManager;
 use App\Livewire\Homepage;
+use App\Livewire\DoctorDetails;
 
 
 Route::get('/', Homepage::class)->name('home');
 
 Route::get('/home', function () {
     return view('welcome');
-   // return redirect()->route(Auth::check() ? 'dashboard' : 'login');
 });
 
 Route::middleware([
@@ -42,6 +42,8 @@ Route::get('/contents', WebpageContentManager::class)->name('contents.index');
 Route::get('/doctors', DoctorInformation::class)->name('doctors.index');
 Route::get('/organization', OrganizationSetup::class)->name('organization.index');
 Route::get('/onlineAppointment', OnlineAppointmentManager::class)->name('onlineAppointment.index');
+Route::get('/doctor/{id}/{slug}', DoctorDetails::class)->name('doctor.details');
+
 
 //
 

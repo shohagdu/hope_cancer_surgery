@@ -53,10 +53,7 @@
          <div class="row gy-4 gx-5">
 
             <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="200">
-{{--               <img src="{{ asset('website/assets/img/about.jpg')}}" class="img-fluid" alt="">--}}
                <img src="{{ asset('website/assets/img/all_doctors.jpeg')}}" class="img-fluid" alt="">
-
-{{--               <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>--}}
             </div>
 
             <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
@@ -89,36 +86,6 @@
    </section><!-- /About Section -->
 
    <section id="doctors" class="doctors section light-background"">
-   <?php
-//   $doctors = [
-//           [
-//                   'title' => 'Dr. Md. Ashiqur Rahman',
-//                   'qualifications' => 'MBBS (CMC),FCPS(Surgery)  MS (Surgical Oncology), FACS (America)',
-//                   'special_training' => 'Tata Memorial Hospital, Mumbai, India & UKM Hospital, Malaysia',
-//                   'positions' => [
-//                           'Associate Professor, Institute of Cancer Research & Hospital, Dhaka'
-//                   ]
-//           ],
-//           [
-//                   'title' => 'Dr. Mitun Kumar Mallick',
-//                   'qualifications' => 'MBBS, BCS(Health), MS (Surgical Oncology)',
-//                   'special_training' => 'Genito Unrinary Surgical Oncology Institute of Cancer Research & Hospital, Dhaka',
-//                   'positions' => [
-//                           'Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka'
-//                   ]
-//           ],
-//           [
-//                   'title' => 'Dr. Muhammad Syeef Khalid',
-//                   'qualifications' => 'MBBS, MS (Surgical Oncology), MRCS (England)',
-//                   'special_training' => 'Endoscopy and Colonscopy Basic Laparospic Surgery',
-//                   'positions' => [
-//                           'Ex-Registrar, Surgical Oncology, Institute of Cancer Research & Hospital, Dhaka',
-//                           'Life Member, Society of Endro-laparoscopic Surgeons of Bangladesh',
-//                   ]
-//           ],
-//   ];
-
-   ?>
    <div class="container section-title" data-aos="fade-up">
       <h2>Doctors</h2>
       <p>Meet our team of highly qualified and experienced cancer surgeons dedicated to providing compassionate, advanced, and personalized care for every patient.</p>
@@ -129,14 +96,19 @@
             <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
                <div class="team-member d-flex align-items-start">
                   <div class="pic">
-{{--                     <img src="{{ asset('storage/assets/img/doctors/doctors-3.jpg') }}" class="img-fluid" alt="{{ $doctor['name'] }}">--}}
-                     <img src="{{  asset('storage/app/public/'.$doctor->picture) }}" class="img-fluid" alt="{{ $doctor->name }}">
-
+                     @php
+                        $imagePath = $doctor->picture && file_exists(storage_path('app/public/'.$doctor->picture))
+                            ? asset('storage/'.$doctor->picture)
+                            : asset('website/assets/img/default-doctor.png');
+                     @endphp
+                     <img src="{{ $imagePath }}"
+                          alt="{{ $doctor->name }}"
+                          class="w-48 h-48 rounded-full object-cover shadow-md">
                   </div>
                   <div class="member-info">
                      <h4>{{ $doctor['name'] }}</h4>
-                     <div>{{ $doctor['qualifications'] }}</div>
-                     <p>Special Training: {{ $doctor['special_training'] }}</p>
+                     <div class="py-2">{{ $doctor['qualifications'] }}</div>
+                     <p> {{ $doctor['special_training'] }}</p>
 
                      @if(!empty($doctor['positions']))
                         <ul class="mt-2 ml-4 list-disc list-inside">
@@ -147,23 +119,32 @@
                            @endforeach
                         </ul>
                      @endif
+                     <div class="social">
+                        @isset($doctor->twitter)
+                           <a href="{{ $doctor->twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
+                        @endisset
+                        @isset($doctor->facebook)
+                           <a href="{{ $doctor->facebook  }}" target="_blank" ><i class="bi bi-facebook"></i></a>
+                        @endisset
+                        @isset($doctor->instagram)
+                           <a href="{{ $doctor->instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+                        @endisset
+                        @isset($doctor->linkedin)
+                           <a href="{{ $doctor->linkedin }}" target="_blank"><i class="bi bi-linkedin"></i></a>
+                        @endisset
+                     </div>
+                     <br/>
+                     <a href="{{ url('/doctor/'.$doctor->id.'/'.Str::slug($doctor->name)) }}" style="color: darkblue;">
+                        Read More...
+                     </a>
 
-{{--                     <div class="social">--}}
-{{--                        <a href="#"><i class="bi bi-twitter-x"></i></a>--}}
-{{--                        <a href="#"><i class="bi bi-facebook"></i></a>--}}
-{{--                        <a href="#"><i class="bi bi-instagram"></i></a>--}}
-{{--                        <a href="#"><i class="bi bi-linkedin"></i></a>--}}
-{{--                     </div>--}}
                   </div>
                </div>
-            </div><!-- End Team Member -->
+            </div>
          @endforeach
-
       </div>
-
    </div>
-
-   </section><!-- /Doctors Section -->
+   </section>
 
 
    <!-- Services Section -->

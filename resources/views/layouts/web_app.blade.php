@@ -37,14 +37,22 @@
     <div class="topbar d-flex align-items-center">
         <div class="container d-flex justify-content-center justify-content-md-between">
             <div class="contact-info d-flex align-items-center">
-                <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:info@hopecancersurgery.com">{{ $organizationInfo->email??'' }}</a></i>
+                <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:{{ $organizationInfo->email??'' }}">{{ $organizationInfo->email??'' }}</a></i>
                 <i class="bi bi-phone d-flex align-items-center ms-4"><span>{{ $organizationInfo->mobile??'' }}</span></i>
             </div>
             <div class="social-links d-none d-md-flex align-items-center">
-                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                @isset($organizationInfo->fb)
+                    <a href="{{ $organizationInfo->fb }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                @endisset
+                @isset($organizationInfo->twitter)
+                    <a href="{{ $organizationInfo->twitter }}" class="twitter"><i class="bi bi-twitter-x"></i></a>
+                @endisset
+                @isset($organizationInfo->tiktok)
+                    <a href="{{ $organizationInfo->tiktok }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                @endisset
+                @isset($organizationInfo->linkedin)
+                    <a href="{{ $organizationInfo->linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                @endisset
             </div>
         </div>
     </div><!-- End Top Bar -->
@@ -59,10 +67,10 @@
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="#hero" class="active">Home<br></a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#services">Treatment Area</a></li>
-                    <li><a href="#doctors">Doctors</a></li>
+                    <li><a href="{{ url('/') }}" class="active">Home<br></a></li>
+                    <li><a href="{{ url('/#about') }}">About Us</a></li>
+                    <li><a href="{{ url('/#services') }}">Treatment Area</a></li>
+                    <li><a href="{{ url('/#doctors') }}">Doctors</a></li>
                     {{--                    <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>--}}
                     {{--                        <ul>--}}
                     {{--                            <li><a href="#">Dropdown 1</a></li>--}}
@@ -82,16 +90,16 @@
                     {{--                    </li>--}}
                     <li class="dropdown"><a href="#"><span>Gallery</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="#gallery">Image</a></li>
+                            <li><a href="{{ url('/#gallery') }}">Image</a></li>
 {{--                            <li><a href="#gallery">Viewo</a></li>--}}
                         </ul>
                     </li>
 {{--                    <li><a href="#contact">Article</a></li>--}}
-                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="{{ url('/#contact') }}">Contact Us</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
-            <a class="cta-btn d-none d-sm-block" href="#appointment">Make an Appointment</a>
+            <a class="cta-btn d-none d-sm-block" href="{{ url('/#appointment') }}">Make an Appointment</a>
         </div>
     </div>
 </header>
@@ -122,10 +130,19 @@
                     <p><strong>Email:</strong> <span>{{ $organizationInfo->email??'' }}</span></p>
                 </div>
                 <div class="social-links d-flex mt-4">
-                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                    <a href=""><i class="bi bi-facebook"></i></a>
-                    <a href=""><i class="bi bi-instagram"></i></a>
-                    <a href=""><i class="bi bi-linkedin"></i></a>
+                    @isset($organizationInfo->fb)
+                        <a href="{{ $organizationInfo->fb }}" ><i class="bi bi-facebook"></i></a>
+                    @endisset
+                    @isset($organizationInfo->twitter)
+                        <a href="{{ $organizationInfo->twitter }}" ><i class="bi bi-twitter-x"></i></a>
+                    @endisset
+                    @isset($organizationInfo->tiktok)
+                        <a href="{{ $organizationInfo->tiktok }}" ><i class="bi bi-instagram"></i></a>
+                    @endisset
+                    @isset($organizationInfo->linkedin)
+                        <a href="{{ $organizationInfo->linkedin }}" ><i class="bi bi-linkedin"></i></a>
+                    @endisset
+
                 </div>
             </div>
 
