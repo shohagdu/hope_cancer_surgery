@@ -8,8 +8,8 @@
                 {{-- Doctor Image --}}
                 <div class="flex justify-center">
                     @php
-                        $imagePath = $doctor->picture && file_exists(storage_path('app/public/'.$doctor->picture))
-                            ? asset('storage/'.$doctor->picture)
+                        $imagePath = $doctor->picture && file_exists(('storage/app/public/'.$doctor->picture))
+                            ? asset('storage/app/public/'.$doctor->picture)
                             : asset('website/assets/img/default-doctor.png');
                     @endphp
                     <img src="{{ $imagePath }}"
