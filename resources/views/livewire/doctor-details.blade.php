@@ -8,8 +8,8 @@
                 {{-- Doctor Image --}}
                 <div class="flex justify-center">
                     @php
-                        $imagePath = $doctor->picture && file_exists(('storage/app/public/'.$doctor->picture))
-                            ? asset('storage/app/public/'.$doctor->picture)
+                        $imagePath = $doctor->picture && file_exists(storage_path('app/public/'.$doctor->picture))
+                            ? asset('storage/'.$doctor->picture)
                             : asset('website/assets/img/default-doctor.png');
                     @endphp
                     <img src="{{ $imagePath }}"
@@ -21,7 +21,7 @@
                 <div class="md:col-span-2">
                     <h2 class="text-2xl font-bold text-gray-800">{{ $doctor->name }}</h2>
                     <h5 class="text-lg text-gray-600">{{ $doctor->qualifications }}</h5>
-                    <p class="mt-2"><span class="font-semibold">Special Training:</span> {{ $doctor->special_training }}</p>
+                    <p class="mt-2"> {{ $doctor->special_training }}</p>
 
                     {{-- Positions --}}
                     @if(!empty($doctor->positions))

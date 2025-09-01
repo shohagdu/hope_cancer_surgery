@@ -4,14 +4,14 @@
       <img src="{{ asset('website/assets/img/hero-bg.jpg') }}" alt="" data-aos="fade-in">
       <div class="container position-relative">
          <div class="welcome position-relative" data-aos="fade-down" data-aos-delay="100">
-            <h2>WELCOME TO  </h2>
-            <p>{{ $organizationInfo->name??'HOPE' }}</p>
+             <h2 style="font-size: 30px;">WELCOME TO  </h2>
+            <p style="font-size: 35px;" class="mt-2">{{ $organizationInfo->name??'HOPE' }} ({{ $organizationInfo->slug??'HOPE' }})</p>
          </div><!-- End Welcome -->
 
          <div class="content row gy-4">
             <div class="col-lg-4 d-flex align-items-stretch">
                <div class="why-box" data-aos="zoom-out" data-aos-delay="200">
-                  <h3>{{ $whyChooseHighlightItem->title??'Why Choose' }} <br/> <span style="font-size:25px"> {{ $organizationInfo->name??'HOPE' }}?</span></h3>
+                  <h3>{{ $whyChooseHighlightItem->title??'Why Choose Us' }}</span></h3>
                   <p>
                      {{ $whyChooseHighlightItem->short_description??'' }}
                   </p>
@@ -657,7 +657,7 @@
                   <i class="bi bi-geo-alt flex-shrink-0"></i>
                   <div>
 
-                     <h3>Location</h3>
+                     <h3>Address</h3>
 
                      <p>Health & Hope Hospital <br/> 152/2/G Panthapath, Dhaka-1205</p>
 

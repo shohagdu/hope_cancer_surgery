@@ -37,8 +37,8 @@
     <div class="topbar d-flex align-items-center">
         <div class="container d-flex justify-content-center justify-content-md-between">
             <div class="contact-info d-flex align-items-center">
-                <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:{{ $organizationInfo->email??'' }}">{{ $organizationInfo->email??'' }}</a></i>
-                <i class="bi bi-phone d-flex align-items-center ms-4"><span>{{ $organizationInfo->mobile??'' }}</span></i>
+                <a href="mailto:{{ $organizationInfo->email??'' }}"> <i class="bi bi-envelope d-flex align-items-center"> &nbsp; {{ $organizationInfo->email??'' }}</i></a>
+                <a href="tel:{{ $organizationInfo->mobile??'' }}"> <i class="bi bi-phone d-flex align-items-center ms-4"><span>{{ $organizationInfo->mobile??'' }}</span></i></a>
             </div>
             <div class="social-links d-none d-md-flex align-items-center">
                 @isset($organizationInfo->fb)
@@ -115,8 +115,10 @@
     <div class="container footer-top">
         <div class="row gy-4">
             <div class="col-lg-4 col-md-6 footer-about">
-                <a href="#" class="logo d-flex align-items-center">
-                    <span class="sitename">{{ $organizationInfo->slug??'' }}</span>
+
+
+                <a href="{{ url('/') }}" class="logo d-flex align-items-center">
+                    <span class="sitename">{{ $organizationInfo->name??'' }}</span>
                 </a>
                 <div class="footer-contact pt-3">
                     @if(!empty($organizationInfo->address))
