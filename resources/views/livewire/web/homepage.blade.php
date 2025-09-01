@@ -96,14 +96,15 @@
             <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
                <div class="team-member d-flex align-items-start">
                   <div class="pic">
-                     @php
-                        $imagePath = $doctor->picture && file_exists(('storage/app/public/'.$doctor->picture))
-                            ? asset('storage/app/public/'.$doctor->picture)
-                            : asset('website/assets/img/default-doctor.png');
-                     @endphp
-                     <img src="{{ $imagePath }}"
-                          alt="{{ $doctor->name }}"
-                          class="w-48 h-48 rounded-full object-cover shadow-md">
+                      @php
+                          $imagePath = $doctor->picture && file_exists(storage_path('app/public/'.$doctor->picture))
+                              ? asset('storage/'.$doctor->picture)
+                              : asset('website/assets/img/default-doctor.png');
+                      @endphp
+                      <img src="{{ $imagePath }}"
+                           alt="{{ $doctor->name }}"
+                           class="w-48 h-48 rounded-full object-cover shadow-md">
+
                   </div>
                   <div class="member-info">
                      <h4>{{ $doctor['name'] }}</h4>
