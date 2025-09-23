@@ -166,4 +166,8 @@ class OnlineAppointmentManager extends Component
             $this->showAdminOnlineAppointment = false;
         }
     }
+    public function prescription($id)
+    {
+        return redirect()->route('prescription.new_patient', $id);
+    }
 }

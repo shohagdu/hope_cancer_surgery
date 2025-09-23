@@ -14,6 +14,7 @@ use App\Livewire\OrganizationSetup;
 use App\Livewire\OnlineAppointmentManager;
 use App\Livewire\Homepage;
 use App\Livewire\DoctorDetails;
+use App\Livewire\Prescription;
 
 
 Route::get('/', Homepage::class)->name('home');
@@ -43,6 +44,8 @@ Route::get('/doctors', DoctorInformation::class)->name('doctors.index');
 Route::get('/organization', OrganizationSetup::class)->name('organization.index');
 Route::get('/onlineAppointment', OnlineAppointmentManager::class)->name('onlineAppointment.index');
 Route::get('/doctor/{id}/{slug}', DoctorDetails::class)->name('doctor.details');
+
+Route::get('/prescription/new_patient/{id}', Prescription::class)->middleware(['auth'])->name('prescription.new_patient');
 
 
 //

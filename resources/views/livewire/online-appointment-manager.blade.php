@@ -48,7 +48,9 @@
                 <td class="px-4 py-2 capitalize">{{ $appointment->gender }}</td>
                 <td class="px-4 py-2">{{ $appointment->patient_type == 1 ? 'New' : 'Old' }}</td>
                 <td class="px-4 py-2 space-x-2">
+                    <button wire:click="prescription({{ $appointment->id }})" class="text-blue-600">Prescription</button>
                     <button wire:click="edit({{ $appointment->id }})" class="text-blue-600">Edit</button>
+
                     <button wire:click="delete({{ $appointment->id }})" class="text-red-600">Delete</button>
                 </td>
             </tr>
