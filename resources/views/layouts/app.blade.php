@@ -13,7 +13,6 @@
     <script src="https://cdn.tailwindcss.com/?plugins=forms"></script>
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -48,5 +47,7 @@
 
 
 @livewireScripts
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/livewire-sortable@1.0.0/dist/livewire-sortable.js"></script>
 </body>
 </html>
