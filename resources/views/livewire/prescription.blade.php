@@ -48,7 +48,7 @@
 
         </div>
         <div class="bg-red-100 p-1 rounded">
-            <div class="max-w-3xl mx-auto p-6 bg-white shadow rounded-lg">
+            <div class="max-w-3xl mx-auto p-2 bg-white shadow rounded-lg">
                 <div class="  flex items-center justify-between mb-6">
                     <span class="text-2xl font-bold">Rx</span>
                     <button wire:click="$set('showModal', true)"
