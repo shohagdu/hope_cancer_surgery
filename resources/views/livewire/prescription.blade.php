@@ -141,23 +141,27 @@
 {{--                                                   placeholder="Type medicine name..."--}}
 {{--                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">--}}
 
-                                            <input wire:model.live="searchTerm"
-                                                   type="text"
-                                                   placeholder="Type medicine name..."
-                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <div class="relative mb-1 mt-1">
+                                                <input
+                                                        wire:model.live="searchTerm"
+                                                        type="text"
+                                                        placeholder="Type medicine name..."
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-                                            @if(!empty($medicineSuggestions))
-                                                <div class="w-full">
-                                                    <ul class="absolute z-50 w-full bg-white border border-gray-200 rounded-md mt-1 max-h-48 overflow-y-auto shadow-md">
+                                                @if(!empty($medicineSuggestions))
+                                                    <ul class="absolute left-0 w-full z-50 bg-white border border-gray-200 rounded-md mt-1 max-h-60 overflow-y-auto shadow-md">
                                                         @foreach($medicineSuggestions as $med)
                                                             <li wire:click="selectMedicine({{ $med->id }})"
-                                                                class="px-3 py-2 cursor-pointer hover:bg-blue-100">
-                                                                {{ $med->name }}
+                                                                class="px-4 py-2 cursor-pointer hover:bg-blue-100">
+                                                                <span class="font-bold text-gray-800">{{ $med['name'] }}  ({{ $med['strength'] }})</span>
+                                                                <i> [{{ $med['generic'] }}]</i>
                                                             </li>
                                                         @endforeach
                                                     </ul>
-                                                </div>
-                                            @endif
+                                                @endif
+                                            </div>
+
+
                                         </div>
 
                                         <!-- Selected Medicines List -->

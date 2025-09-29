@@ -84,35 +84,35 @@ class PrescriptionList extends Component
             ],
         ];
 
-        $this->selectedMedicines = [
-            [
-                'id' => 1,
-                'name' => 'Sabitar',
-                'type' => 'Tab',
-                'strength' => '97 mg+103 mg',
-                'generic' => 'Sacubitril + Valsartan',
-                'instructions' => 'খাবারের পরে',
-                'duration' => ''
-            ],
-            [
-                'id' => 2,
-                'name' => 'Napa',
-                'type' => 'Supp',
-                'strength' => '500 mg',
-                'generic' => 'Paracetamol',
-                'instructions' => '১ + ১ + ১ + ০ \n১ কটি জর ১০১°F রা এর বেশি হলে, পায়ু পথে দিবেন',
-                'duration' => '৫ দিন'
-            ],
-            [
-                'id' => 3,
-                'name' => 'Napa Extend',
-                'type' => 'Tab',
-                'strength' => '',
-                'generic' => 'Paracetamol',
-                'instructions' => '১ + ১ + ১ + ০ \nভীর মাথা ব্যাথা হলে খাবেন',
-                'duration' => '৭ দিন'
-            ]
-        ];
+//        $this->selectedMedicines = [
+//            [
+//                'id' => 1,
+//                'name' => 'Sabitar',
+//                'type' => 'Tab',
+//                'strength' => '97 mg+103 mg',
+//                'generic' => 'Sacubitril + Valsartan',
+//                'instructions' => 'খাবারের পরে',
+//                'duration' => ''
+//            ],
+//            [
+//                'id' => 2,
+//                'name' => 'Napa',
+//                'type' => 'Supp',
+//                'strength' => '500 mg',
+//                'generic' => 'Paracetamol',
+//                'instructions' => '১ + ১ + ১ + ০ \n১ কটি জর ১০১°F রা এর বেশি হলে, পায়ু পথে দিবেন',
+//                'duration' => '৫ দিন'
+//            ],
+//            [
+//                'id' => 3,
+//                'name' => 'Napa Extend',
+//                'type' => 'Tab',
+//                'strength' => '',
+//                'generic' => 'Paracetamol',
+//                'instructions' => '১ + ১ + ১ + ০ \nভীর মাথা ব্যাথা হলে খাবেন',
+//                'duration' => '৭ দিন'
+//            ]
+//        ];
     }
 
     public function updatedSearchTerm()
@@ -120,7 +120,7 @@ class PrescriptionList extends Component
         $this->selectedMedicineId = null; // reset if user types again
         $this->medicineSuggestions = PrescriptionMedicineRecord::where('name', 'like', '%' . $this->searchTerm . '%')
             ->limit(10)
-            ->get(['id', 'name']);
+            ->get(['id', 'name','strength','generic']);
     }
 
     public function selectMedicine($id)
@@ -139,6 +139,8 @@ class PrescriptionList extends Component
                 'strength' => '',
             ]);
         }
+        $this->searchTerm = '';
+        $this->medicineSuggestions = [];
     }
     public function addPrescription()
     {
