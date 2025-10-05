@@ -28,6 +28,14 @@ return new class extends Migration
             $table->string('tiktok')->nullable();
             $table->string('youtube')->nullable();
             $table->integer('display_position')->nullable()->default(0); // For sorting display order
+
+            $table->json('print_settings')->nullable()->after('youtube');
+            $table->json('sidebar_titles')->nullable(); //{[“PatientComplaints”:”Patient Complaints”,”is_active”:”YES”],[“OnExamination”:”On Examination”,”is_active”:”YES”]}
+
+            $table->json('prescription_header_options')->nullable(); // {‘text’:’Yes’,’image’:’No’,’empty’:’No’}
+            $table->json('prescription_header_text')->nullable(); //{“Bangla”:{”Name”:”test”,”line1”:”test”,”line2”:”test”,”line3”:”test”,,”line4”:”test”},{”English”:{”Name”:”test”,”line1”:”test”,”line2”:”test”,”line3”:”test”,,”line4”:”test”}}
+            $table->string('prescription_header_image')->nullable(); // Store path or URL
+
             $table->tinyInteger('is_active')->default(1)->comment('1 = Active, 0 = Inactive');
             $table->integer('created_by')->nullable();
             $table->string('created_ip',15)->nullable();
