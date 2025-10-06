@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class OnlineAppointment extends Model
 {
     use HasFactory;
@@ -36,5 +37,9 @@ class OnlineAppointment extends Model
     public function doctor()
     {
         return $this->belongsTo(Doctors::class);
+    }
+    public function medicines()
+    {
+        return $this->belongsToMany(Patient_medicine::class, 'patient_medicine', 'patient_id');
     }
 }

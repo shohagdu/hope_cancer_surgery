@@ -2,9 +2,12 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use App\Models\PrescriptionMedicineRecord;
+use App\Models\OnlineAppointment;
+use App\Models\Patient_medicine;
 
 
 
@@ -45,44 +48,49 @@ class PrescriptionList extends Component
         ['name' => 'Acical-M', 'type' => 'Tablet', 'strength' => ''],
         ['name' => 'Absol', 'type' => 'Syrup', 'strength' => '2 mg/5 ml'],
     ];
-    public function mount()
+    public function mount($id=NULL)
     {
-        $this->prescriptionsMedicine = [
-            [
-                "id" => 1,
-                "name" => "Cefotil",
-                "strength" => "500 mg",
-                "generic" => "Cefuroxime Axetil",
-                "dose" => "১ + ০ + ১",
-                "instruction" => "খাবারের পরে",
-                "duration" => "৭ দিন",
-            ],
-            [
-                "id" => 2,
-                "name" => "Docopa",
-                "strength" => "200 mg",
-                "generic" => "Doxophylline",
-                "dose" => "০ + ০ + ১",
-                "instruction" => "খাবারের পরে",
-                "duration" => "১ মাস",
-            ],[
-                "id" => 3,
-                "name" => "Napa One",
-                "strength" => "200 mg",
-                "generic" => "Doxophylline",
-                "dose" => "০ + ০ + ১",
-                "instruction" => "খাবারের পরে",
-                "duration" => "১ মাস",
-            ],[
-                "id" =>4,
-                "name" => "Miyolux",
-                "strength" => "200 mg",
-                "generic" => "Doxophylline",
-                "dose" => "০ + ০ + ১",
-                "instruction" => "খাবারের পরে",
-                "duration" => "১ মাস",
-            ],
-        ];
+        if(!empty($id)){
+            $this->id = $id;
+        }else{
+            $this->id= '';
+        }
+//        $this->prescriptionsMedicine = [
+//            [
+//                "id" => 1,
+//                "name" => "Cefotil",
+//                "strength" => "500 mg",
+//                "generic" => "Cefuroxime Axetil",
+//                "dose" => "১ + ০ + ১",
+//                "instruction" => "খাবারের পরে",
+//                "duration" => "৭ দিন",
+//            ],
+//            [
+//                "id" => 2,
+//                "name" => "Docopa",
+//                "strength" => "200 mg",
+//                "generic" => "Doxophylline",
+//                "dose" => "০ + ০ + ১",
+//                "instruction" => "খাবারের পরে",
+//                "duration" => "১ মাস",
+//            ],[
+//                "id" => 3,
+//                "name" => "Napa One",
+//                "strength" => "200 mg",
+//                "generic" => "Doxophylline",
+//                "dose" => "০ + ০ + ১",
+//                "instruction" => "খাবারের পরে",
+//                "duration" => "১ মাস",
+//            ],[
+//                "id" =>4,
+//                "name" => "Miyolux",
+//                "strength" => "200 mg",
+//                "generic" => "Doxophylline",
+//                "dose" => "০ + ০ + ১",
+//                "instruction" => "খাবারের পরে",
+//                "duration" => "১ মাস",
+//            ],
+//        ];
 
 //        $this->selectedMedicines = [
 //            [
@@ -222,6 +230,8 @@ class PrescriptionList extends Component
 
     public function render()
     {
+        $patient            = !empty($this->id)? OnlineAppointment::with('medicines')-> find($this->id) :'';
+        dd($patient);
         return view('livewire.prescription');
     }
 }

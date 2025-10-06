@@ -11,11 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('patient_info', function (Blueprint $table) {
+        Schema::table('online_appointments', function (Blueprint $table) {
+            $table->string('age', 50);
+            $table->integer('district_id')->nullable();
             $table->integer('upazila_id')->nullable();
             $table->integer('union_id')->nullable();
             $table->string('referer_doctor')->nullable();
             $table->string('remarks')->nullable();
+        });
+
+        Schema::table('patient_info', function (Blueprint $table) {
+            $table->bigInteger('doctor_id')->unsigned()->nullable();
+        });
+        Schema::table('patient_medicine', function (Blueprint $table) {
+            $table->bigInteger('patient_id')->unsigned()->nullable();
         });
     }
 
@@ -24,7 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('patient_info', function (Blueprint $table) {
+        Schema::table('online_appointments', function (Blueprint $table) {
             //
         });
     }

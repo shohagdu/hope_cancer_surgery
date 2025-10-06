@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('patient_info', function (Blueprint $table) {
             $table->bigIncrements('id'); // BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
+            $table->bigInteger('doctor_id')->unsigned()->nullable();
             $table->bigInteger('patient_id')->unsigned()->unique(); // Unique, non-auto-incrementing
             $table->string('name', 300)->nullable();
             $table->string('age',100)->nullable();

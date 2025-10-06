@@ -19,6 +19,14 @@ return new class extends Migration
             $table->string('mobile', 20);
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->tinyInteger('patient_type')->comment('1 = New, 2 = Old');
+
+            $table->string('age', 50);
+            $table->integer('district_id')->nullable();
+            $table->integer('upazila_id')->nullable();
+            $table->integer('union_id')->nullable();
+            $table->string('referer_doctor')->nullable();
+            $table->string('remarks')->nullable();
+
             $table->integer('created_by')->nullable();
             $table->string('created_ip',15)->nullable();
             $table->integer('updated_by')->nullable();
