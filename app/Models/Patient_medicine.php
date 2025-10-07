@@ -11,4 +11,13 @@ class Patient_medicine extends Model
     protected $table = "patient_medicine";
 //    protected $fillable = ['patient_id', 'medicine_id', 'dose', 'instruction'];
 
+    public function medicine()
+    {
+        return $this->belongsTo(PrescriptionMedicineRecord::class, 'medicine_id');
+    }
+    public function dosages()
+    {
+        return $this->hasMany(PatientMedicineDosage::class, 'patient_medicine_id');
+    }
+
 }

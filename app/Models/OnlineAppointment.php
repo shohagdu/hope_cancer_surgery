@@ -38,8 +38,12 @@ class OnlineAppointment extends Model
     {
         return $this->belongsTo(Doctors::class);
     }
-    public function medicines()
+    public function patient()
     {
-        return $this->belongsToMany(Patient_medicine::class, 'patient_medicine', 'patient_id');
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
+    public function patientPrescriptionRecords()
+    {
+        return $this->hasMany(PatientPrescriptionRecord::class, 'patient_id', 'patient_id');
     }
 }

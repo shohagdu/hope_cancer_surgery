@@ -318,7 +318,7 @@
                                         <!-- Modal Footer -->
                                         <div class="border-t p-4 bg-gray-50">
                                             <div class="flex justify-end space-x-3">
-                                                <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <button wire:click="saveMedicine()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                                     Save Medicines
                                                 </button>
                                                 <button @click="open = false" class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">Close</button>

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->bigInteger('doctor_id')->unsigned()->nullable();
         });
         Schema::table('patient_medicine', function (Blueprint $table) {
-            $table->bigInteger('patient_id')->unsigned()->nullable();
+            $table->bigInteger('patient_prescription_id')->unsigned()->nullable();
         });
     }
 

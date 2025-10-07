@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('patient_medicine', function (Blueprint $table) {
             $table->id(); // Primary key, auto-increment
-            $table->bigInteger('patient_id')->unsigned()->nullable();
+            $table->bigInteger('patient_prescription_id')->unsigned()->nullable();
             $table->string('medicine_id');
             $table->text('custom_time_instruction')->nullable();
             $table->string('medicine_serial')->nullable();

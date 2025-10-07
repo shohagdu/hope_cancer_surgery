@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\PrescriptionMedicineRecord;
 use App\Models\OnlineAppointment;
 use App\Models\Patient_medicine;
+use App\Models\PatientPrescriptionRecord;
 
 
 
@@ -228,10 +229,20 @@ class PrescriptionList extends Component
         dd($this->searchTerm);
     }
 
+    public function saveMedicine()
+    {
+        dd($this->selectedMedicines);
+    }
     public function render()
     {
-        $patient            = !empty($this->id)? OnlineAppointment::with('medicines')-> find($this->id) :'';
-        dd($patient);
-        return view('livewire.prescription');
+        $patient_id =  isset($this->id)? $this->id:NULL;
+        $patient    =   OnlineAppointment::find($patient_id);
+        $prescription = PatientPrescriptionRecord::where('patient_id',$patient_id)->orderBy('id','DESC')->first();
+        $prescripiton_infos = !empty($prescription->id)
+            ? PatientPrescriptionRecord::with('patient_medicine_record.medicine', 'patient_medicine_record.dosages')
+                ->find($prescription->id)
+            : null;
+
+        return view('livewire.prescription',compact('prescripiton_infos','patient'));
     }
 }
