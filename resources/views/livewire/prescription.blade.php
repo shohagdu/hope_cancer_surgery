@@ -69,11 +69,18 @@
                                         <span class="font-bold text-gray-800">{{ $med['medicine']['name'] }}  {{ $med['medicine']['strength'] }}</span>
                                         <i> [{{ $med['medicine']['generic'] }}]</i>
                                     </span>
-                                    <div class="grid grid-cols-[30%_50%_17%] gap-4 mt-1">
-                                        <div >{{ $med['dosages']['dose']??NULL }}</div>
-                                        <div >{{ $med['instruction']??NULL }}</div>
-                                        <div > {{ $med['duration']??NULL }}</div>
-                                    </div>
+                                    @if(!empty($med['dosages']))
+                                        @foreach($med['dosages'] as  $dosage)
+                                            <div class="grid grid-cols-[30%_50%_17%] gap-4 mt-1">
+                                                <div >{{ $dosage['dosage_morning']??'0' }} + {{ $dosage['dosage_noon']??'0' }} + {{ $dosage['dosage_afternoon']??'0' }}+ {{ $dosage['dosage_night']??'0' }} --- {{ $dosage['meal_time_selected']??'' }} </div>
+                                                <div >{{ $dosage['instruction']??NULL }}</div>
+                                                <div > {{ $dosage['duration']??NULL }}</div>
+                                            </div>
+                                        @endforeach
+                                    @endif
+
+
+
 
                                 </div>
                                 <div class="flex gap-2">

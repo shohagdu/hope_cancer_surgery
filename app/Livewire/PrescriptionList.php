@@ -86,7 +86,6 @@ class PrescriptionList extends Component
     public function selectMedicine($id)
     {
         $medicine = PrescriptionMedicineRecord::find($id);
-
         if ($medicine) {
             $this->selectedMedicineId = $medicine->id;
             $this->searchTerm = $medicine->name; // show name in input
@@ -94,9 +93,11 @@ class PrescriptionList extends Component
 
             // Optional: auto-add to selectedMedicines
             $this->addMedicine([
+                'id' => $medicine->id,
                 'name' => $medicine->name,
-                'type' => '', // You can load type if stored
-                'strength' => '',
+                'type' => $medicine->dosage_id, // You can load type if stored
+                'strength' => $medicine->strength,
+                'generic' => $medicine->generic,
             ]);
         }
         $this->searchTerm = '';
@@ -154,9 +155,10 @@ class PrescriptionList extends Component
     {
         $newId = count($this->selectedMedicines) + 1;
         $this->selectedMedicines[] = [
+            'serial_number' => $newId,
             'id' => $newId,
             "medicine" => [
-                "id" => 1,
+                "id" => $drug['id'],
                 "name" => $drug['name'],
                 "generic" => $drug['generic']??null,
                 "strength" => $drug['strength']??null,
@@ -191,8 +193,8 @@ class PrescriptionList extends Component
 
     public function saveMedicine()
     {
-       // dd($this->selectedMedicines);
         $prescription= $this->selectedMedicines;
+        //dd($prescription);
         $prescriptionInfo=[
             'patient_id' => $this->id,
             'visit_date' => $prescription['visit_date']??date("Y-m-d"),
@@ -219,20 +221,68 @@ class PrescriptionList extends Component
             $prescriptionInfo
         );
 
+      //  dd($prescription);
         // Upsert medicines and their dosages
         foreach ($prescription ?? [] as $medicine) {
-            $medicineID = rand(1,100);
-           $medicineRecord= [
+            $medicineID = $medicine['medicine']['id'] ?? null;
+
+            // Base record data for both create and update
+            $medicineRecord = [
                 'patient_prescription_id' => $this->prescription_id,
                 'medicine_id' => $medicineID,
-                'custom_time_instruction' => $medicine['custom_time_instruction']??null,
-                'medicine_serial' => rand(1,100),
-                'created_by' => auth()->id(),
-                'updated_by' => auth()->id(),
-                'created_ip' => request()->ip(),
-                'updated_ip' => request()->ip(),
+                'custom_time_instruction' => $medicine['custom_time_instruction'] ?? null,
+                'medicine_serial' => $medicine['serial_number'] ?? null,
+                'created_by' => auth()->id(), // Set on creation
+                'created_ip' => request()->ip(), // Set on creation
+                // updated_by and updated_ip will be set based on the operation
             ];
-            Patient_medicine::updateOrCreate(['medicine_id' => $medicineID ?? null,'patient_prescription_id'=>$this->prescription_id],$medicineRecord);
+
+            // Attributes to uniquely identify the record
+            $keyAttributes = [
+                'medicine_id' => $medicineID,
+                'patient_prescription_id' => $this->prescription_id
+            ];
+
+            // Attempt to update or create
+            $patientMedicine = Patient_medicine::updateOrCreate($keyAttributes, $medicineRecord);
+
+            if (!$patientMedicine->wasRecentlyCreated) {
+                // Record was UPDATED
+                $patientMedicine->updated_by = auth()->id();
+                $patientMedicine->updated_ip = request()->ip();
+                $patientMedicine->save(); // Save the changes
+            } else {
+                $patientMedicine->updated_by = null;
+                $patientMedicine->updated_ip = null;
+                $patientMedicine->save();
+            }
+
+
+            $patientMedicineId = $patientMedicine->id;
+
+        // Assuming $medicine contains the 'dosages' array from your input
+            $dosages = $medicine['dosages'] ?? [];
+
+            foreach ($dosages as $dosage) {
+                // Prepare the data array for insertion
+                $dosageRecord = [
+                    'patient_medicine_id' => $patientMedicineId,
+                    'dosage_morning' => $dosage['dosage_morning'] ?? null,
+                    'dosage_noon' => $dosage['dosage_noon'] ?? null,
+                    'dosage_afternoon' => $dosage['dosage_afternoon'] ?? null,
+                    'dosage_night' => $dosage['dosage_night'] ?? null,
+
+                    'created_by' => auth()->id(), // Set on creation
+                    'created_ip' => request()->ip(), // Set on creation
+                    'created_at' => now(), // Manually set timestamps if not using Eloquent Model
+                    'updated_at' => now(), // Manually set timestamps if not using Eloquent Model
+                    // updated_by and updated_ip are NULL on creation as per standard practice
+                ];
+
+                PatientMedicineDosage::create($dosageRecord);
+            }
+
+
         }
     }
     public function render()
