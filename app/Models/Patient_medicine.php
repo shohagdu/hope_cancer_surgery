@@ -9,7 +9,17 @@ class Patient_medicine extends Model
 {
     use HasFactory;
     protected $table = "patient_medicine";
-//    protected $fillable = ['patient_id', 'medicine_id', 'dose', 'instruction'];
+    protected $fillable = [
+        'patient_prescription_id',
+        'medicine_id',
+        'custom_time_instruction',
+        'medicine_serial',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'created_ip',
+        'updated_ip',
+    ];
 
     public function medicine()
     {

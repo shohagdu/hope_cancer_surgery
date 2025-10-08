@@ -66,13 +66,13 @@
                                 <div>
                                     <span class="">
                                         {{ $index + 1 }}. Tab.
-                                        <span class="font-bold text-gray-800">{{ $med['name'] }}  {{ $med['strength'] }}</span>
-                                        <i> [{{ $med['generic'] }}]</i>
+                                        <span class="font-bold text-gray-800">{{ $med['medicine']['name'] }}  {{ $med['medicine']['strength'] }}</span>
+                                        <i> [{{ $med['medicine']['generic'] }}]</i>
                                     </span>
                                     <div class="grid grid-cols-[30%_50%_17%] gap-4 mt-1">
-                                        <div >{{ $med['dose'] }}</div>
-                                        <div >{{ $med['instruction'] }}</div>
-                                        <div > {{ $med['duration'] }}</div>
+                                        <div >{{ $med['dosages']['dose']??NULL }}</div>
+                                        <div >{{ $med['instruction']??NULL }}</div>
+                                        <div > {{ $med['duration']??NULL }}</div>
                                     </div>
 
                                 </div>
@@ -166,6 +166,7 @@
 
                                         <!-- Selected Medicines List -->
                                         <div class="flex-1 overflow-y-auto p-4">
+
                                             @foreach($selectedMedicines as $index => $medicine)
                                                 <div class="mb-2 p-2 border border-gray-200 rounded-lg bg-white shadow-sm">
                                                     <div class="flex items-start justify-between">
@@ -174,12 +175,12 @@
                                                             <div class="grid grid-cols-[95%,5%] gap-1 ">
                                                                 <div class="flex items-center mb-3">
                                                                     <span class="text-gray-600 mr-2">{{ $loop->iteration }}.</span>
-                                                                    <span class="font-medium">{{ $medicine['type'] }}. {{ $medicine['name'] }}</span>
-                                                                    @if($medicine['strength'])
-                                                                        <span class="text-gray-600 ml-2">{{ $medicine['strength'] }}</span>
+                                                                    <span class="font-medium">{{ $medicine['medicine']['dosage_id'] }}. {{ $medicine['medicine']['name'] }}</span>
+                                                                    @if($medicine['medicine']['strength'])
+                                                                        <span class="text-gray-600 ml-2">{{ $medicine['medicine']['strength'] }}</span>
                                                                     @endif
-                                                                    @if($medicine['generic'])
-                                                                        <div class="text-gray-600 ml-2">[{{ $medicine['generic'] }}]</div>
+                                                                    @if($medicine['medicine']['generic'])
+                                                                        <div class="text-gray-600 ml-2">[{{ $medicine['medicine']['generic'] }}]</div>
                                                                     @endif
                                                                 </div>
                                                                 <div>

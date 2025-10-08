@@ -9,6 +9,7 @@ use App\Models\PrescriptionMedicineRecord;
 use App\Models\OnlineAppointment;
 use App\Models\Patient_medicine;
 use App\Models\PatientPrescriptionRecord;
+use App\Models\PatientMedicineDosage;
 
 
 
@@ -21,6 +22,8 @@ class PrescriptionList extends Component
     public $searchTerm = '';
     public $medicineSuggestions = [];
     public $selectedMedicineId = null;
+    public $id,$prescription_id;
+    public $patient = [];
 
     // Form inputs
     public $name, $strength, $generic, $dose, $instruction, $duration;
@@ -53,75 +56,23 @@ class PrescriptionList extends Component
     {
         if(!empty($id)){
             $this->id = $id;
+
+            $patient_id =  isset($this->id)? $this->id:NULL;
+            $this->patient          =   OnlineAppointment::find($patient_id);
+            $prescription           = PatientPrescriptionRecord::where('patient_id',$patient_id)->orderBy('id','DESC')->first();
+            $this->prescription_id  =  $prescription->id;
+            $prescripiton_infos = !empty($this->prescription_id)
+                ? PatientPrescriptionRecord::with('patient_medicine_record.medicine', 'patient_medicine_record.dosages')
+                    ->find($this->prescription_id)
+                : null;
+
+            $prescriptionsMedicine= !empty($prescripiton_infos->patient_medicine_record)?$prescripiton_infos->patient_medicine_record:null;
+            $this->prescriptionsMedicine    = $prescriptionsMedicine->toArray();
+            $this->selectedMedicines        = $prescriptionsMedicine->toArray();
+
         }else{
             $this->id= '';
         }
-//        $this->prescriptionsMedicine = [
-//            [
-//                "id" => 1,
-//                "name" => "Cefotil",
-//                "strength" => "500 mg",
-//                "generic" => "Cefuroxime Axetil",
-//                "dose" => "১ + ০ + ১",
-//                "instruction" => "খাবারের পরে",
-//                "duration" => "৭ দিন",
-//            ],
-//            [
-//                "id" => 2,
-//                "name" => "Docopa",
-//                "strength" => "200 mg",
-//                "generic" => "Doxophylline",
-//                "dose" => "০ + ০ + ১",
-//                "instruction" => "খাবারের পরে",
-//                "duration" => "১ মাস",
-//            ],[
-//                "id" => 3,
-//                "name" => "Napa One",
-//                "strength" => "200 mg",
-//                "generic" => "Doxophylline",
-//                "dose" => "০ + ০ + ১",
-//                "instruction" => "খাবারের পরে",
-//                "duration" => "১ মাস",
-//            ],[
-//                "id" =>4,
-//                "name" => "Miyolux",
-//                "strength" => "200 mg",
-//                "generic" => "Doxophylline",
-//                "dose" => "০ + ০ + ১",
-//                "instruction" => "খাবারের পরে",
-//                "duration" => "১ মাস",
-//            ],
-//        ];
-
-//        $this->selectedMedicines = [
-//            [
-//                'id' => 1,
-//                'name' => 'Sabitar',
-//                'type' => 'Tab',
-//                'strength' => '97 mg+103 mg',
-//                'generic' => 'Sacubitril + Valsartan',
-//                'instructions' => 'খাবারের পরে',
-//                'duration' => ''
-//            ],
-//            [
-//                'id' => 2,
-//                'name' => 'Napa',
-//                'type' => 'Supp',
-//                'strength' => '500 mg',
-//                'generic' => 'Paracetamol',
-//                'instructions' => '১ + ১ + ১ + ০ \n১ কটি জর ১০১°F রা এর বেশি হলে, পায়ু পথে দিবেন',
-//                'duration' => '৫ দিন'
-//            ],
-//            [
-//                'id' => 3,
-//                'name' => 'Napa Extend',
-//                'type' => 'Tab',
-//                'strength' => '',
-//                'generic' => 'Paracetamol',
-//                'instructions' => '১ + ১ + ১ + ০ \nভীর মাথা ব্যাথা হলে খাবেন',
-//                'duration' => '৭ দিন'
-//            ]
-//        ];
     }
 
     public function updatedSearchTerm()
@@ -204,12 +155,21 @@ class PrescriptionList extends Component
         $newId = count($this->selectedMedicines) + 1;
         $this->selectedMedicines[] = [
             'id' => $newId,
-            'name' => $drug['name'],
-            'type' => $drug['type'],
-            'strength' => $drug['strength'],
-            'generic' => '',
-            'instructions' => '',
-            'duration' => ''
+            "medicine" => [
+                "id" => 1,
+                "name" => $drug['name'],
+                "generic" => $drug['generic']??null,
+                "strength" => $drug['strength']??null,
+                "dosage_id" => $drug['dosage_id']??null,
+            ],
+            "dosages" => [
+                [
+                    "dosage_morning" => "1",
+                    "dosage_noon" => "0",
+                    "dosage_afternoon" => "1",
+                    "dosage_night" => "0",
+                ]
+            ]
         ];
     }
 
@@ -231,18 +191,52 @@ class PrescriptionList extends Component
 
     public function saveMedicine()
     {
-        dd($this->selectedMedicines);
+       // dd($this->selectedMedicines);
+        $prescription= $this->selectedMedicines;
+        $prescriptionInfo=[
+            'patient_id' => $this->id,
+            'visit_date' => $prescription['visit_date']??date("Y-m-d"),
+            'complaints' => $prescription['complaints']??null,
+            'on_examination' => $prescription['on_examination']??null,
+            'pastHistory' => $prescription['pastHistory']??null,
+            'drugHistory' => $prescription['drugHistory']??null,
+            'investigation' => $prescription['investigation']??null,
+            'diagnosis' => $prescription['diagnosis']??null,
+            'treatmentPlan' => $prescription['treatmentPlan']??null,
+            'operationNote' => $prescription['operationNote']??null,
+            'advice' => $prescription['advice']??null,
+            'nextPlan' => $prescription['nextPlan']??null,
+            'hospitalizations' => $prescription['hospitalizations']??null,
+            'next_visit_date' => $prescription['next_visit_date']??null,
+            'created_by' => auth()->id(),
+            'updated_by' => auth()->id(),
+            'created_ip' => request()->ip(),
+            'updated_ip' => request()->ip(),
+        ];
+
+        $prescription_record = PatientPrescriptionRecord::updateOrCreate(
+            ['id' => $this->prescription_id ?? null],
+            $prescriptionInfo
+        );
+
+        // Upsert medicines and their dosages
+        foreach ($prescription ?? [] as $medicine) {
+            $medicineID = rand(1,100);
+           $medicineRecord= [
+                'patient_prescription_id' => $this->prescription_id,
+                'medicine_id' => $medicineID,
+                'custom_time_instruction' => $medicine['custom_time_instruction']??null,
+                'medicine_serial' => rand(1,100),
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+                'created_ip' => request()->ip(),
+                'updated_ip' => request()->ip(),
+            ];
+            Patient_medicine::updateOrCreate(['medicine_id' => $medicineID ?? null,'patient_prescription_id'=>$this->prescription_id],$medicineRecord);
+        }
     }
     public function render()
     {
-        $patient_id =  isset($this->id)? $this->id:NULL;
-        $patient    =   OnlineAppointment::find($patient_id);
-        $prescription = PatientPrescriptionRecord::where('patient_id',$patient_id)->orderBy('id','DESC')->first();
-        $prescripiton_infos = !empty($prescription->id)
-            ? PatientPrescriptionRecord::with('patient_medicine_record.medicine', 'patient_medicine_record.dosages')
-                ->find($prescription->id)
-            : null;
-
-        return view('livewire.prescription',compact('prescripiton_infos','patient'));
+        return view('livewire.prescription');
     }
 }
