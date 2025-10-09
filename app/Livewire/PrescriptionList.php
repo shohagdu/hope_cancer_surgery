@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Support\Str;
@@ -25,6 +27,9 @@ class PrescriptionList extends Component
     public $id,$prescription_id;
     public $patient = [];
 
+
+    public $currentMedicineIndex = null;
+
     // Form inputs
     public $name, $strength, $generic, $dose, $instruction, $duration;
     public array $complaints = [
@@ -37,20 +42,6 @@ class PrescriptionList extends Component
     public $commonDrugs = [
         ['name' => 'Azithin', 'type' => 'Tablet', 'strength' => '500 mg'],
         ['name' => 'Napa One', 'type' => 'Tablet', 'strength' => '1000 mg'],
-        ['name' => 'Algicon', 'type' => 'Oral Suspension', 'strength' => '(500 mg+100 mg)/5 ml'],
-        ['name' => 'Zinc', 'type' => 'Syrup', 'strength' => '4.05 mg/5 ml'],
-        ['name' => 'Naafboost', 'type' => 'Syrup', 'strength' => ''],
-        ['name' => 'Napa', 'type' => 'Suppository', 'strength' => '500 mg'],
-        ['name' => 'Napa Extend', 'type' => 'Tablet (Extended Release)', 'strength' => '665 mg'],
-        ['name' => 'Nebilol', 'type' => 'Tablet', 'strength' => '5 mg'],
-        ['name' => 'Tabis', 'type' => 'Tablet', 'strength' => '2.5 mg'],
-        ['name' => 'Sabitar', 'type' => 'Tablet', 'strength' => '97 mg+103 mg'],
-        ['name' => 'Met', 'type' => 'Tablet', 'strength' => '500 mg'],
-        ['name' => 'Bexімco', 'type' => 'Tab', 'strength' => '250'],
-        ['name' => 'Labecard', 'type' => 'IV Injection or Infusion', 'strength' => '5 mg/ml'],
-        ['name' => 'Napa', 'type' => 'Tablet', 'strength' => '500 mg'],
-        ['name' => 'Acical-M', 'type' => 'Tablet', 'strength' => ''],
-        ['name' => 'Absol', 'type' => 'Syrup', 'strength' => '2 mg/5 ml'],
     ];
     public function mount($id=NULL)
     {
@@ -103,29 +94,7 @@ class PrescriptionList extends Component
         $this->searchTerm = '';
         $this->medicineSuggestions = [];
     }
-    public function addPrescription()
-    {
-        $this->validate([
-            'name' => 'required|string',
-            'strength' => 'nullable|string',
-            'generic' => 'nullable|string',
-            'dose' => 'required|string',
-            'instruction' => 'required|string',
-            'duration' => 'required|string',
-        ]);
 
-        $this->prescriptionsMedicine[] = [
-            "id" => Str::uuid()->toString(),
-            "name" => $this->name,
-            "strength" => $this->strength,
-            "generic" => $this->generic,
-            "dose" => $this->dose,
-            "instruction" => $this->instruction,
-            "duration" => $this->duration,
-        ];
-
-        $this->reset(['name', 'strength', 'generic', 'dose', 'instruction', 'duration', 'showModal']);
-    }
 
     public function remove($id)
     {
@@ -137,9 +106,10 @@ class PrescriptionList extends Component
 
     public function updateOrder($orderedItems)
     {
+
         $this->prescriptionsMedicine = collect($orderedItems)
             ->map(fn ($item, $index) => array_merge(
-                collect($this->prescriptionsMedicine)->firstWhere('id', $item['value']),
+                collect($this->prescriptionsMedicine)->firstWhere('id', $item['value']) ?? [],
                 ['order' => $index + 1] // Automatically update order number
             ))
             ->filter()
@@ -194,97 +164,139 @@ class PrescriptionList extends Component
     public function saveMedicine()
     {
         $prescription= $this->selectedMedicines;
-        //dd($prescription);
-        $prescriptionInfo=[
-            'patient_id' => $this->id,
-            'visit_date' => $prescription['visit_date']??date("Y-m-d"),
-            'complaints' => $prescription['complaints']??null,
-            'on_examination' => $prescription['on_examination']??null,
-            'pastHistory' => $prescription['pastHistory']??null,
-            'drugHistory' => $prescription['drugHistory']??null,
-            'investigation' => $prescription['investigation']??null,
-            'diagnosis' => $prescription['diagnosis']??null,
-            'treatmentPlan' => $prescription['treatmentPlan']??null,
-            'operationNote' => $prescription['operationNote']??null,
-            'advice' => $prescription['advice']??null,
-            'nextPlan' => $prescription['nextPlan']??null,
-            'hospitalizations' => $prescription['hospitalizations']??null,
-            'next_visit_date' => $prescription['next_visit_date']??null,
-            'created_by' => auth()->id(),
-            'updated_by' => auth()->id(),
-            'created_ip' => request()->ip(),
-            'updated_ip' => request()->ip(),
-        ];
-
-        $prescription_record = PatientPrescriptionRecord::updateOrCreate(
-            ['id' => $this->prescription_id ?? null],
-            $prescriptionInfo
-        );
-
-      //  dd($prescription);
-        // Upsert medicines and their dosages
-        foreach ($prescription ?? [] as $medicine) {
-            $medicineID = $medicine['medicine']['id'] ?? null;
-
-            // Base record data for both create and update
-            $medicineRecord = [
-                'patient_prescription_id' => $this->prescription_id,
-                'medicine_id' => $medicineID,
-                'custom_time_instruction' => $medicine['custom_time_instruction'] ?? null,
-                'medicine_serial' => $medicine['serial_number'] ?? null,
-                'created_by' => auth()->id(), // Set on creation
-                'created_ip' => request()->ip(), // Set on creation
-                // updated_by and updated_ip will be set based on the operation
+        try {
+            $prescriptionInfo=[
+                'patient_id' => $this->id,
+                'visit_date' => $prescription['visit_date']??date("Y-m-d"),
+                'complaints' => $prescription['complaints']??null,
+                'on_examination' => $prescription['on_examination']??null,
+                'pastHistory' => $prescription['pastHistory']??null,
+                'drugHistory' => $prescription['drugHistory']??null,
+                'investigation' => $prescription['investigation']??null,
+                'diagnosis' => $prescription['diagnosis']??null,
+                'treatmentPlan' => $prescription['treatmentPlan']??null,
+                'operationNote' => $prescription['operationNote']??null,
+                'advice' => $prescription['advice']??null,
+                'nextPlan' => $prescription['nextPlan']??null,
+                'hospitalizations' => $prescription['hospitalizations']??null,
+                'next_visit_date' => $prescription['next_visit_date']??null,
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+                'created_ip' => request()->ip(),
+                'updated_ip' => request()->ip(),
             ];
 
-            // Attributes to uniquely identify the record
-            $keyAttributes = [
-                'medicine_id' => $medicineID,
-                'patient_prescription_id' => $this->prescription_id
-            ];
+            $prescription_record = PatientPrescriptionRecord::updateOrCreate(
+                ['id' => $this->prescription_id ?? null],
+                $prescriptionInfo
+            );
 
-            // Attempt to update or create
-            $patientMedicine = Patient_medicine::updateOrCreate($keyAttributes, $medicineRecord);
+            //  dd($prescription);
+            // Upsert medicines and their dosages
+            foreach ($prescription ?? [] as $medicine) {
+                $medicineID = $medicine['medicine']['id'] ?? null;
 
-            if (!$patientMedicine->wasRecentlyCreated) {
-                // Record was UPDATED
-                $patientMedicine->updated_by = auth()->id();
-                $patientMedicine->updated_ip = request()->ip();
-                $patientMedicine->save(); // Save the changes
-            } else {
-                $patientMedicine->updated_by = null;
-                $patientMedicine->updated_ip = null;
-                $patientMedicine->save();
-            }
-
-
-            $patientMedicineId = $patientMedicine->id;
-
-        // Assuming $medicine contains the 'dosages' array from your input
-            $dosages = $medicine['dosages'] ?? [];
-
-            foreach ($dosages as $dosage) {
-                // Prepare the data array for insertion
-                $dosageRecord = [
-                    'patient_medicine_id' => $patientMedicineId,
-                    'dosage_morning' => $dosage['dosage_morning'] ?? null,
-                    'dosage_noon' => $dosage['dosage_noon'] ?? null,
-                    'dosage_afternoon' => $dosage['dosage_afternoon'] ?? null,
-                    'dosage_night' => $dosage['dosage_night'] ?? null,
-
+                // Base record data for both create and update
+                $medicineRecord = [
+                    'patient_prescription_id' => $this->prescription_id,
+                    'medicine_id' => $medicineID,
+                    'custom_time_instruction' => $medicine['custom_time_instruction'] ?? null,
+                    'medicine_serial' => $medicine['serial_number'] ?? null,
                     'created_by' => auth()->id(), // Set on creation
                     'created_ip' => request()->ip(), // Set on creation
-                    'created_at' => now(), // Manually set timestamps if not using Eloquent Model
-                    'updated_at' => now(), // Manually set timestamps if not using Eloquent Model
-                    // updated_by and updated_ip are NULL on creation as per standard practice
+                    // updated_by and updated_ip will be set based on the operation
                 ];
 
-                PatientMedicineDosage::create($dosageRecord);
+                // Attributes to uniquely identify the record
+                $keyAttributes = [
+                    'medicine_id' => $medicineID,
+                    'patient_prescription_id' => $this->prescription_id
+                ];
+
+                // Attempt to update or create
+                $patientMedicine = Patient_medicine::updateOrCreate($keyAttributes, $medicineRecord);
+
+                if (!$patientMedicine->wasRecentlyCreated) {
+                    // Record was UPDATED
+                    $patientMedicine->updated_by = auth()->id();
+                    $patientMedicine->updated_ip = request()->ip();
+                    $patientMedicine->save(); // Save the changes
+                } else {
+                    $patientMedicine->updated_by = null;
+                    $patientMedicine->updated_ip = null;
+                    $patientMedicine->save();
+                }
+
+
+                $patientMedicineId = $patientMedicine->id;
+
+                $dosages = $medicine['dosages'] ?? [];
+
+                foreach ($dosages as $dosage) {
+                    $existing = PatientMedicineDosage::where('patient_medicine_id', $patientMedicineId)
+//                    ->where('dosage_time', $dosage['dosage_time'] ?? null)
+                        ->first();
+
+                    if ($existing) {
+                        // Update existing record
+                        $existing->update([
+                            'dosage_morning' => $dosage['dosage_morning'] ?? null,
+                            'dosage_noon' => $dosage['dosage_noon'] ?? null,
+                            'dosage_afternoon' => $dosage['dosage_afternoon'] ?? null,
+                            'dosage_night' => $dosage['dosage_night'] ?? null,
+
+                            'drug_taking_quantity_unit' => $dosage['drug_taking_quantity_unit'] ?? null,
+                            'meal_time_select' => $dosage['meal_time_select'] ?? null,
+                            'duration' => $dosage['duration'] ?? null,
+                            'duration_unit_check' => $dosage['duration_unit_check'] ?? null,
+
+                            'updated_by' => auth()->id(),
+                            'updated_ip' => request()->ip(),
+                            'updated_at' => now(),
+                        ]);
+                    } else {
+                        // Create new record
+                        PatientMedicineDosage::create([
+                            'patient_medicine_id' => $patientMedicineId,
+//                        'dosage_time' => $dosage['dosage_time'] ?? null,
+                            'dosage_morning' => $dosage['dosage_morning'] ?? null,
+                            'dosage_noon' => $dosage['dosage_noon'] ?? null,
+                            'dosage_afternoon' => $dosage['dosage_afternoon'] ?? null,
+                            'dosage_night' => $dosage['dosage_night'] ?? null,
+
+                            'drug_taking_quantity_unit' => $dosage['drug_taking_quantity_unit'] ?? null,
+                            'meal_time_select' => $dosage['meal_time_select'] ?? null,
+                            'duration' => $dosage['duration'] ?? null,
+                            'duration_unit_check' => $dosage['duration_unit_check'] ?? null,
+
+                            'created_by' => auth()->id(),
+                            'created_ip' => request()->ip(),
+                            'created_at' => now(),
+                        ]);
+                    }
+                }
             }
 
-
+            $this->dispatch('swal:success', [
+                'title' => 'Updated!',
+                'text' => 'Appointment updated successfully.',
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('swal:error', [
+                'title' => 'Error!',
+                'text' => $e->getMessage(),
+            ]);
         }
+
     }
+
+    public function openEditModal($index)
+    {
+        $this->currentMedicineIndex = $index;
+        //$medicine = $this->prescriptionsMedicine[$index] ?? null;
+        $this->showEditModal = true;
+    }
+
     public function render()
     {
         return view('livewire.prescription');

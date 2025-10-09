@@ -57,11 +57,16 @@
                     </button>
                 </div>
 
+
                 <!-- Drag & Drop List -->
-                <ul wire:sortable="updateOrder" class="space-y-2">
+{{--                <ul wire:sortable="updateOrder" class="space-y-2">--}}
+{{--                wire:sortable.item="{{ $med['medicine_serial']?? $med['id'] }}" wire:key="prescription-{{ $med['id'] }}"--}}
+
+                <ul  class="space-y-2">
                     @foreach ($prescriptionsMedicine as $index => $med)
-                        <li wire:sortable.item="{{ $med['id'] }}" wire:key="prescription-{{ $med['id'] }}"
+                        <li
                             class="border-b pb-21 cursor-move bg-gray-50 p-2 rounded">
+
                             <div class="flex justify-between items-start">
                                 <div>
                                     <span class="">
@@ -72,19 +77,24 @@
                                     @if(!empty($med['dosages']))
                                         @foreach($med['dosages'] as  $dosage)
                                             <div class="grid grid-cols-[30%_50%_17%] gap-4 mt-1">
-                                                <div >{{ $dosage['dosage_morning']??'0' }} + {{ $dosage['dosage_noon']??'0' }} + {{ $dosage['dosage_afternoon']??'0' }}+ {{ $dosage['dosage_night']??'0' }} --- {{ $dosage['meal_time_selected']??'' }} </div>
-                                                <div >{{ $dosage['instruction']??NULL }}</div>
+                                                <div>
+                                                    @if($dosage['dosage_afternoon']>0)
+                                                        {{ $dosage['dosage_morning']??'0' }} + {{ $dosage['dosage_noon']??'0' }} + {{ $dosage['dosage_afternoon']??'0' }}+ {{ $dosage['dosage_night']??'0' }}
+                                                    @else
+                                                        {{ $dosage['dosage_morning']??'0' }} + {{ $dosage['dosage_noon']??'0' }} + {{ $dosage['dosage_night']??'0' }}
+                                                    @endif
+                                                </div>
+                                                <div>
+                                                    --- {{ $dosage['meal_time_selected']??'' }}
+                                                </div>
                                                 <div > {{ $dosage['duration']??NULL }}</div>
                                             </div>
+                                            <div >{{ $dosage['instruction']??NULL }}</div>
                                         @endforeach
                                     @endif
-
-
-
-
                                 </div>
                                 <div class="flex gap-2">
-                                    <button wire:click="$set('showEditModal', true)" class="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 hover:text-blue-800  rounded">
+                                    <button wire:click="openEditModal({{ $index }})" class="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 hover:text-blue-800">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                         </svg>
@@ -143,11 +153,6 @@
                                                     <button class="text-blue-600 hover:underline ml-1">Add</button>
                                                 </div>
                                             </div>
-{{--                                            <input wire:model.live="searchTerm"--}}
-{{--                                                   type="text"--}}
-{{--                                                   placeholder="Type medicine name..."--}}
-{{--                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">--}}
-
                                             <div class="relative mb-1 mt-1">
                                                 <input
                                                         wire:model.live="searchTerm"
@@ -338,7 +343,7 @@
                         </div>
                     </div>
                 </div>
-                 <div x-data="{ open: @entangle('showEditModal') }">
+                <div x-data="{ open: @entangle('showEditModal') }">
                      <div x-show="open"
                           class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"
                           x-cloak>
@@ -347,108 +352,137 @@
                              <!-- Header -->
                              <div class="flex justify-between items-center border-b pb-3">
                                  <h3 class="text-lg font-semibold">
-                                     Tab. {{ $name }} {{ $strength }}
+                                     Tab. {{ $prescriptionsMedicine[$currentMedicineIndex]['medicine']['name']??null }}
                                  </h3>
                                  <button @click="open = false" class="text-gray-400 hover:text-gray-600">✖</button>
                              </div>
-                            <div class="mt-4" title="Name: {{ $name }}  {{ $strength }}">
+
+                             @if($currentMedicineIndex !== null)
+                                 @php
+                                     $medicine = $prescriptionsMedicine[$currentMedicineIndex];
+                                     $dosage = $medicine['dosages'][0] ?? [];
+//                                     [id] => 1
+//                                    [patient_medicine_id] => 1
+//                                    [dosage_morning] => 1
+//                                    [dosage_noon] => 0
+//                                    [dosage_afternoon] => 1
+//                                    [dosage_night] => 0
+//                                    [drug_taking_quantity_unit] =>
+//                                    [meal_time_select] =>
+//                                    [duration] =>
+//                                    [duration_unit_check] =>
+                                 @endphp
+
+                                 <div class="mt-4" >
                              <!-- Body -->
-                                 <div class="grid grid-cols-[35%,20%,43%] gap-2">
-                                     <!-- Dosage Checkboxes -->
-                                     <div >
-                                         <div class="flex items-center space-x-2 mb-1">
-                                             @foreach(['morning' => 'সকাল', 'noon' => 'দুপুর', 'night' => 'রাত', 'before_sleep' => 'বিকাল'] as $key => $label)
-                                                 <div class="flex items-center space-x-2">
-                                                     <input type="checkbox" id="{{ $key }}_{{ $index }}"
-                                                            {{ isset($medicine['dosage'][$key]) && $medicine['dosage'][$key] > 0 ? 'checked' : '' }}
-                                                            class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                                                     <label for="{{ $key }}_{{ $index }}" class="text-sm">{{ $label }}</label>
-                                                 </div>
-                                             @endforeach
-                                         </div>
-                                         <div class="flex items-center space-x-2">
-                                             <div class="flex">
-                                                 @foreach(['morning', 'noon', 'night', 'before_sleep'] as $key)
-                                                     <input wire:model.live="selectedMedicines.{{ $index }}.dosage.{{ $key }}"
-                                                            wire:change="updateInstructions({{ $index }})"
-                                                            type="text" min="0" max="10"
-                                                            class="w-12 px-2 py-1 text-center border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                                                                                                  {{ $loop->first ? 'rounded-l-md' : '' }}
-                                                                                                  {{ $loop->last ? 'rounded-r-md' : 'border-r-0' }}">
+                                     <div class="grid grid-cols-[35%,20%,43%] gap-2">
+                                         <!-- Dosage Checkboxes -->
+                                         <div >
+                                             <div class="flex items-center space-x-2 mb-1">
+                                                 @foreach(['morning' => 'সকাল', 'noon' => 'দুপুর', 'night' => 'রাত', 'before_sleep' => 'বিকাল'] as $key => $label)
+                                                     <div class="flex items-center space-x-2">
+                                                         <input type="checkbox" id="{{ $key }}_{{ $index }}"
+                                                                @if($key=='morning' && $dosage['dosage_morning']>0)
+                                                                    {{ 'checked' }}
+                                                                @elseif($key=='noon' && $dosage['dosage_noon']>0)
+                                                                    {{ 'checked' }}
+                                                                @elseif($key=='before_sleep' && $dosage['dosage_afternoon']>0)
+                                                                    {{ 'checked' }}
+                                                                @elseif($key=='night' && $dosage['dosage_night']>0)
+                                                                    {{ 'checked' }}
+                                                                @else
+
+                                                                @endif
+
+                                                                class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                                         <label for="{{ $key }}_{{ $index }}" class="text-sm">{{ $label }}</label>
+                                                     </div>
                                                  @endforeach
                                              </div>
+                                             <div class="flex items-center space-x-2">
+                                                 <div class="flex">
+                                                     @foreach(['morning', 'noon', 'night', 'before_sleep'] as $key)
+                                                         <input wire:model.live="selectedMedicines.{{ $index }}.dosage.{{ $key }}"
+                                                                wire:change="updateInstructions({{ $index }})"
+                                                                type="text" min="0" max="10"
+                                                                class="w-12 px-2 py-1 text-center border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                                                                                                      {{ $loop->first ? 'rounded-l-md' : '' }}
+                                                                                                      {{ $loop->last ? 'rounded-r-md' : 'border-r-0' }}">
+                                                     @endforeach
+                                                 </div>
 
-                                             <select class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                 <option value="" selected>N/A</option>
-                                                 @foreach(['চামচ', 'ফোঁটা', 'মিলি', 'পাফস', 'ইউনিট'] as $option)
-                                                     <option value="{{ $option }}">{{ $option }}</option>
+                                                 <select class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                     <option value="" selected>N/A</option>
+                                                     @foreach(['চামচ', 'ফোঁটা', 'মিলি', 'পাফস', 'ইউনিট'] as $option)
+                                                         <option value="{{ $option }}">{{ $option }}</option>
+                                                     @endforeach
+                                                 </select>
+                                             </div>
+                                             <div>
+                                                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add more</button>
+                                             </div>
+
+                                         </div>
+
+                                         <!-- Timing Dropdown -->
+                                         <div>
+                                             <select wire:model.live="selectedMedicines.{{ $index }}.timing"
+                                                     class="w-full py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                 @foreach(['খাবারের পরে', 'খাবারের আগে', 'খাবারের সাথে'] as $timing)
+                                                     <option value="{{ $timing }}">{{ $timing }}</option>
                                                  @endforeach
                                              </select>
+                                             <label class="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap mt-1">
+                                                 <input type="checkbox"
+
+                                                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                                 Custom Instruction
+                                             </label>
                                          </div>
-                                         <div>
-                                             <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add more</button>
-                                         </div>
 
-                                     </div>
+                                         <!-- Take For and Duration -->
+                                         <div class=" p-2 border border-gray-200 ">
+                                             <!-- Take For Section -->
+                                             <div class="flex items-center justify-between mb-2">
 
-                                     <!-- Timing Dropdown -->
-                                     <div>
-                                         <select wire:model.live="selectedMedicines.{{ $index }}.timing"
-                                                 class="w-full py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                             @foreach(['খাবারের পরে', 'খাবারের আগে', 'খাবারের সাথে'] as $timing)
-                                                 <option value="{{ $timing }}">{{ $timing }}</option>
-                                             @endforeach
-                                         </select>
-                                         <label class="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap mt-1">
-                                             <input type="checkbox"
-
-                                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                             Custom Instruction
-                                         </label>
-                                     </div>
-
-                                     <!-- Take For and Duration -->
-                                     <div class=" p-2 border border-gray-200 ">
-                                         <!-- Take For Section -->
-                                         <div class="flex items-center justify-between mb-2">
-
-                                             <div class="flex items-center gap-2">
-                                                 <span class="text-sm font-semibold text-gray-700">Take For:</span>
-                                                 @foreach([1, 5, 7, 14, 30] as $days)
-                                                     <label for="take_for_{{ $days }}_{{ $index }}" class="flex items-center gap-1 text-xs font-medium text-gray-600">
-                                                         <input wire:model.live="selectedMedicines.{{ $index }}.take_for.{{ $days }}"
-                                                                wire:change="updateTakeFor({{ $index }}, {{ $days }}, $event.target.checked)"
-                                                                type="checkbox"
-                                                                id="take_for_{{ $days }}_{{ $index }}"
-                                                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                                         {{ $days }}
-                                                     </label>
-                                                 @endforeach
+                                                 <div class="flex items-center gap-2">
+                                                     <span class="text-sm font-semibold text-gray-700">Take For:</span>
+                                                     @foreach([1, 5, 7, 14, 30] as $days)
+                                                         <label for="take_for_{{ $days }}_{{ $index }}" class="flex items-center gap-1 text-xs font-medium text-gray-600">
+                                                             <input wire:model.live="selectedMedicines.{{ $index }}.take_for.{{ $days }}"
+                                                                    wire:change="updateTakeFor({{ $index }}, {{ $days }}, $event.target.checked)"
+                                                                    type="checkbox"
+                                                                    id="take_for_{{ $days }}_{{ $index }}"
+                                                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                                             {{ $days }}
+                                                         </label>
+                                                     @endforeach
+                                                 </div>
                                              </div>
-                                         </div>
 
-                                         <!-- Duration Section -->
-                                         <div class="grid grid-cols-[22%,78%] gap-2 items-center">
-                                             <input type="text"
-                                                    wire:model.live="selectedMedicines.{{ $index }}.duration"
-                                                    placeholder="Duration"
-                                                    class="w-full px-2 py-1 text-center border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                             <!-- Duration Section -->
+                                             <div class="grid grid-cols-[22%,78%] gap-2 items-center">
+                                                 <input type="text"
+                                                        wire:model.live="selectedMedicines.{{ $index }}.duration"
+                                                        placeholder="Duration"
+                                                        class="w-full px-2 py-1 text-center border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-                                             <div class="flex items-center gap-2">
-                                                 @foreach(['দিন', 'মাস', 'চলবে', 'N/A'] as $type)
-                                                     <label class="flex items-center gap-1 text-sm text-gray-700">
-                                                         <input wire:model.live="selectedMedicines.{{ $index }}.duration_type"
-                                                                type="radio"
-                                                                value="{{ $type }}"
-                                                                class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                         {{ $type }}
-                                                     </label>
-                                                 @endforeach
+                                                 <div class="flex items-center gap-2">
+                                                     @foreach(['দিন', 'মাস', 'চলবে', 'N/A'] as $type)
+                                                         <label class="flex items-center gap-1 text-sm text-gray-700">
+                                                             <input wire:model.live="selectedMedicines.{{ $index }}.duration_type"
+                                                                    type="radio"
+                                                                    value="{{ $type }}"
+                                                                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                             {{ $type }}
+                                                         </label>
+                                                     @endforeach
+                                                 </div>
                                              </div>
                                          </div>
                                      </div>
-                                 </div>
-                            </div>
+                                </div>
+                             @endif
 
                              <!-- Footer -->
                              <div class="flex justify-end gap-2 mt-6">
@@ -469,356 +503,40 @@
 {{--            </div>--}}
         </div>
 </div>
-<!--
-<div>
-    <div id="drug-container">
-        <span class='h1'>Rx</span>
-        <span class="text-success newDrugBtn" title="add medicine" onclick="openDrugModal()">
-        <i class="fa fa-plus-circle"></i>
-    </span>
-        <ol id='drug-list' class="mt-4">
-            <li class="drug-list-item border-bottom" data-id="12060" data-pdid="294870" data-serial="1" title="Move up-down to change serial">
-                <div>
-                    <div class="d-flex justify-content-between align-items-end">
-                        <div class="full_drug">
-                            <span>Supp.</span>
-                            <span class="drug_brand"><strong> Napa</strong></span>
-                            <span>500 mg</span>
-                        </div>
-                        <div>
-                            <span class="text-primary editDrugBtn" title="edit medicine"><i class="fa fa-edit"></i></span>
-                            <span class="text-danger deleteDrugBtn" title="delete medicine" data-id="294870"><i class="fa fa-minus-circle"></i></span>
-                        </div>
-                    </div>
-                    <span>Paracetamol</span><br>
+<script>
+    window.addEventListener('swal:success', event => {
+        Swal.fire({
+            icon: 'success',
+            title: event.detail[0].title,
+            text: event.detail[0].text,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            console.log(result);
+            if (result.isConfirmed) {
+                // Close modal (assuming Bootstrap 5 modal)
+                const modalEl = document.getElementById('prescriptionModal');
+                if (modalEl) {
+                    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                    modal.hide();
+                }
 
-                    <table class="w-100">
-                        <tr class="w-100">
-                            <td style="width: 40%;">
-                                ১ + ০ + ১
-                            </td>
-                            <td style="width: 40%; text-align:center;">
+                // Option 1: Reload page
+                location.reload();
 
-                            </td>
-                            <td style="width: 20%; text-align:center;">
-                                ৫ দিন
-                            </td>
-                        </tr>
+                // Option 2: Refresh Livewire component dynamically
+                // Livewire.emit('refreshPrescriptions');
+            }
+        });
+    });
 
-                        <div id="additionalAttributesHtml294870" class="d-none">
-                            <script>
-                                document.querySelectorAll('input[type="checkbox"].checked').forEach(function(checkbox) {
-                                    checkbox.checked = true;
-                                });
-                            </script>            </div>
-                    </table>
-                </div>
-
-                <div class="d-none" id="drugAttrs294870">
-                    <p class="taking_time">1 + 0 + 1</p>
-                    <p class="taking_time_custom"></p>
-                    <p class="duration">5</p>
-                    <p class="duration_unit">দিন</p>
-                    <p class="quantity">1</p>
-                    <p class="quantity_unit">টা</p>
-                    <p class="meal_time"></p>
-                    <p class="instruction">১ কাটি জ্বর ১০২°F বা এর বেশি হলে, পায়ু পথে দিবেন</p>
-                    <p class="is_default">0</p>
-                </div>
-
-                <p class="instruction text-dark mb-0">১ কাটি জ্বর ১০২°F বা এর বেশি হলে, পায়ু পথে দিবেন</p>
-            </li>                <li class="drug-list-item border-bottom" data-id="620" data-pdid="294866" data-serial="2" title="Move up-down to change serial">
-                <div>
-                    <div class="d-flex justify-content-between align-items-end">
-                        <div class="full_drug">
-                            <span>Tab.</span>
-                            <span class="drug_brand"><strong> Alice</strong></span>
-                            <span>6 mg</span>
-                        </div>
-                        <div>
-                            <span class="text-primary editDrugBtn" title="edit medicine"><i class="fa fa-edit"></i></span>
-                            <span class="text-danger deleteDrugBtn" title="delete medicine" data-id="294866"><i class="fa fa-minus-circle"></i></span>
-                        </div>
-                    </div>
-                    <span>Ivermectin</span><br>
-
-                    <table class="w-100">
-                        <tr class="w-100">
-                            <td style="width: 40%;">
-                                ০ + ০ + ১
-                            </td>
-                            <td style="width: 40%; text-align:center;">
-                                খাবারের পরে
-                            </td>
-                            <td style="width: 20%; text-align:center;">
-
-                            </td>
-                        </tr>
-
-                        <div id="additionalAttributesHtml294866" class="d-none">
-                            <script>
-                                document.querySelectorAll('input[type="checkbox"].checked').forEach(function(checkbox) {
-                                    checkbox.checked = true;
-                                });
-                            </script>            </div>
-                    </table>
-                </div>
-
-                <div class="d-none" id="drugAttrs294866">
-                    <p class="taking_time">0 + 0 + 1</p>
-                    <p class="taking_time_custom"></p>
-                    <p class="duration"></p>
-                    <p class="duration_unit"></p>
-                    <p class="quantity">1</p>
-                    <p class="quantity_unit">টা</p>
-                    <p class="meal_time">খাবারের পরে</p>
-                    <p class="instruction"></p>
-                    <p class="is_default">0</p>
-                </div>
-
-                <p class="instruction text-dark mb-0"></p>
-            </li>                <li class="drug-list-item border-bottom" data-id="5893" data-pdid="294868" data-serial="3" title="Move up-down to change serial">
-                <div>
-                    <div class="d-flex justify-content-between align-items-end">
-                        <div class="full_drug">
-                            <span>Tab.</span>
-                            <span class="drug_brand"><strong> Ebasten</strong></span>
-                        </div>
-                        <div>
-                            <span class="text-primary editDrugBtn" title="edit medicine"><i class="fa fa-edit"></i></span>
-                            <span class="text-danger deleteDrugBtn" title="delete medicine" data-id="294868"><i class="fa fa-minus-circle"></i></span>
-                        </div>
-                    </div>
-                    <span>Ebastine</span><br>
-
-                    <table class="w-100">
-                        <tr class="w-100">
-                            <td style="width: 40%;">
-                                ০ + ০ + ১
-                            </td>
-                            <td style="width: 40%; text-align:center;">
-                                খাবারের পরে
-                            </td>
-                            <td style="width: 20%; text-align:center;">
-                                ১ মাস
-                            </td>
-                        </tr>
-
-                        <div id="additionalAttributesHtml294868" class="d-none">
-                            <script>
-                                document.querySelectorAll('input[type="checkbox"].checked').forEach(function(checkbox) {
-                                    checkbox.checked = true;
-                                });
-                            </script>            </div>
-                    </table>
-                </div>
-
-                <div class="d-none" id="drugAttrs294868">
-                    <p class="taking_time">0 + 0 + 1</p>
-                    <p class="taking_time_custom"></p>
-                    <p class="duration">30</p>
-                    <p class="duration_unit">দিন</p>
-                    <p class="quantity">1</p>
-                    <p class="quantity_unit">টা</p>
-                    <p class="meal_time">খাবারের পরে</p>
-                    <p class="instruction"></p>
-                    <p class="is_default">0</p>
-                </div>
-
-                <p class="instruction text-dark mb-0"></p>
-            </li>                    </ol>
-    </div>
-    <div class="modal fade" id="drugModal" data-bs-keyboard="false" data-bs-backdrop="static">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title mb-0">Add Medicine</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div id="commonDrugsArea">
-                            <p class="text-muted mb-0">Commonly used drugs</p>
-                            <div class="d-flex flex-wrap justify-content-start mt-1" style="max-height: 90%; overflow-y:scroll; scrollbar-width: thin;">
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='1934' data-brand='Azithin' data-drugtype='Tablet' data-drugweight='500 mg' data-generic='Azithromycin Dihydrate' data-defaultmealtime='1' data-unit="1">
-                                    &#x2022; Azithin
-                                    <small>(Tablet, 500 mg)</small>
-                                </a>
-                                <div id="prescribed_drug_1934" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">টা</span><br />
-                                    <span class="instruction"></span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='1' data-brand='Zinc' data-drugtype='Syrup' data-drugweight='4.05 mg/5 ml' data-generic='Zinc Sulfate Monohydrate' data-defaultmealtime='1' data-unit="2">
-                                    &#x2022; Zinc
-                                    <small>(Syrup, 4.05 mg/5 ml)</small>
-                                </a>
-                                <div id="prescribed_drug_1" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">চামচ</span><br />
-                                    <span class="instruction">2 চামুচ করে ৩ বার</span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='12070' data-brand='Napa One' data-drugtype='Tablet' data-drugweight='1000 mg' data-generic='Paracetamol' data-defaultmealtime='1' data-unit="1">
-                                    &#x2022; Napa One
-                                    <small>(Tablet, 1000 mg)</small>
-                                </a>
-                                <div id="prescribed_drug_12070" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">টা</span><br />
-                                    <span class="instruction">জ্বর থাকলে</span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='605' data-brand='Algicon' data-drugtype='Oral Suspension' data-drugweight='(500 mg+100 mg)/5 ml' data-generic='Sodium Alginate + Potassium Bicarbonate' data-defaultmealtime='1' data-unit="2">
-                                    &#x2022; Algicon
-                                    <small>(Oral Suspension, (500 mg+100 mg)/5 ml)</small>
-                                </a>
-                                <div id="prescribed_drug_605" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">চামচ</span><br />
-                                    <span class="instruction"></span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='12012' data-brand='Naafboost' data-drugtype='Syrup' data-drugweight='' data-generic='Multivitamin &amp; Cod Liver Oil' data-defaultmealtime='1' data-unit="2">
-                                    &#x2022; Naafboost
-                                    <small>(Syrup, )</small>
-                                </a>
-                                <div id="prescribed_drug_12012" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">চামচ</span><br />
-                                    <span class="instruction"></span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='12060' data-brand='Napa' data-drugtype='Suppository' data-drugweight='500 mg' data-generic='Paracetamol' data-defaultmealtime='1' data-unit="1">
-                                    &#x2022; Napa
-                                    <small>(Suppository, 500 mg)</small>
-                                </a>
-                                <div id="prescribed_drug_12060" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">টা</span><br />
-                                    <span class="instruction">১ কাটি জ্বর ১০২°F বা এর বেশি হলে, পায়ু পথে দিবেন</span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='25520' data-brand='Beximco' data-drugtype='Tab' data-drugweight='250' data-generic='Beximco' data-defaultmealtime='0' data-unit="">
-                                    &#x2022; Beximco
-                                    <small>(Tab, 250)</small>
-                                </a>
-                                <div id="prescribed_drug_25520" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">0</span><br />
-                                    <span class="quantity"></span><br />
-                                    <span class="quantity_unit"></span><br />
-                                    <span class="instruction"></span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='12062' data-brand='Napa' data-drugtype='Tablet' data-drugweight='500 mg' data-generic='Paracetamol' data-defaultmealtime='1' data-unit="1">
-                                    &#x2022; Napa
-                                    <small>(Tablet, 500 mg)</small>
-                                </a>
-                                <div id="prescribed_drug_12062" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">টা</span><br />
-                                    <span class="instruction">জ্বর থাকলে</span><br />
-                                </div>
-                                <a class="me-1 commonDrugBtn" href="javascript:void(0)" data-id='12226' data-brand='Nebilol' data-drugtype='Tablet' data-drugweight='5 mg' data-generic='Nebivolol Hydrochloride' data-defaultmealtime='1' data-unit="1">
-                                    &#x2022; Nebilol
-                                    <small>(Tablet, 5 mg)</small>
-                                </a>
-                                <div id="prescribed_drug_12226" class="d-none">
-                                    <span class="taking_time"></span><br />
-                                    <span class="taking_time_custom"></span><br />
-                                    <span class="take_for_qty"></span><br />
-                                    <span class="take_for_unit_id"></span><br />
-                                    <span class="meal_time">1</span><br />
-                                    <span class="quantity">1</span><br />
-                                    <span class="quantity_unit">1</span><br />
-                                    <span class="instruction"></span><br />
-                                </div>
-                            </div>
-                        </div>
-                        <div id="drugEditArea">
-                            <div id="drugInputArea">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <label class="font-weight-bold">Medicine</label>
-                                    <div>
-                                        <span class="text-muted">Medicine Missing?</span><a href="javascript:void(0)" class="text-primary" onclick="$('#newMedicineFormArea').toggle();"> Add</a>
-                                    </div>
-                                </div>
-
-                                <div id="newMedicineFormArea" style="display: none;">
-                                    <form id="newMedicineForm">
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <label class="mb-0">Company</label>
-                                                <input type="text" name="company" class="form-control" id="newMedCompany" placeholder="ex: Company / Unknown">
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <label class="mb-0">Brand</label>
-                                                <input type="text" name="brand" class="form-control" id="newMedBrand">
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <label class="mb-0">Generic</label>
-                                                <input type="text" name="generic" class="form-control" id="newMedGeneric">
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <label class="mb-0">Type</label>
-                                                <input type="text" name="type" class="form-control" id="newMedType" placeholder="ex: Tablet / Syrup">
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <label class="mb-0">Weight</label>
-                                                <input type="text" name="weight" class="form-control" id="newMedWeight" placeholder="ex: 250 mg">
-                                            </div>
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <button type="button" class="btn btn-info btn-sm mt-3 text-white" id="saveNewDrugBtn">Save Medicine</button>
-                                            </div>
-                                        </div>
-                                        <p class="text-danger mb-1 d-none" id="newMedicineError"></p>
-                                    </form>
-                                    <hr>
-                                </div>
-                                <input type="text" id="drugInput" class="form-control drugInput mb-3" placeholder="Type medicine name..." autocomplete="off">
-                            </div>
-                            <div class="pe-3" style="max-height: 650px; overflow-y:scroll; scrollbar-width: thin;">
-                                <ol id="msd" class="my-3"></ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
--->
+    window.addEventListener('swal:error', event => {
+        Swal.fire({
+            icon: 'error',
+            title: event.detail[0].title,
+            text: event.detail[0].text,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    });
+</script>
