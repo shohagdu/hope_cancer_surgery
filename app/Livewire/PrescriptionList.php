@@ -98,10 +98,20 @@ class PrescriptionList extends Component
 
     public function remove($id)
     {
+        Patient_medicine::where('id', $id)->delete();
+        PatientMedicineDosage::where('patient_medicine_id', $id)->delete();
+
         $this->prescriptionsMedicine = collect($this->prescriptionsMedicine)
             ->reject(fn ($med) => $med['id'] == $id)
             ->values()
             ->toArray();
+        $this->prescriptionsMedicine = collect($this->selectedMedicines)
+            ->reject(fn ($med) => $med['id'] == $id)
+            ->values()
+            ->toArray();
+
+
+
     }
 
     public function updateOrder($orderedItems)
@@ -151,10 +161,10 @@ class PrescriptionList extends Component
         $this->selectedMedicines = array_values($this->selectedMedicines);
     }
 
-    public function updateMedicine($index, $field, $value)
-    {
-        $this->selectedMedicines[$index][$field] = $value;
-    }
+//    public function updateMedicine($index, $field, $value)
+//    {
+//        $this->selectedMedicines[$index][$field] = $value;
+//    }
 
     public function searchTerm()
     {
@@ -290,11 +300,98 @@ class PrescriptionList extends Component
 
     }
 
+    public $dosage_morning = false;
+    public $dosage_noon = false;
+    public $dosage_before_sleep = false;
+    public $dosage_night = false;
+    public $medicineDosage_morning = '',$medicineDosage_noon,$medicineDosage_night,$medicineDosage_before_sleep;
+
     public function openEditModal($index)
     {
         $this->currentMedicineIndex = $index;
-        //$medicine = $this->prescriptionsMedicine[$index] ?? null;
+        $medicine = $this->prescriptionsMedicine[$index] ?? null;
+        $dosage = $medicine['dosages'][0] ?? [];
+        /*
+        array:17 [▼ // app/Livewire/PrescriptionList.php:303
+          "id" => 1
+          "patient_medicine_id" => 1
+          "dosage_morning" => "1"
+          "dosage_noon" => "0"
+          "dosage_afternoon" => "1"
+          "dosage_night" => "0"
+          "drug_taking_quantity_unit" => null
+          "meal_time_select" => null
+          "duration" => null
+          "duration_unit_check" => null
+          "is_active" => 1
+          "created_by" => null
+          "created_ip" => null
+          "updated_by" => null
+          "updated_ip" => null
+          "created_at" => "2025-10-09T08:15:53.000000Z"
+          "updated_at" => "2025-10-09T08:15:53.000000Z"
+        ]
+        */
+        $dosageKeys = [
+            'morning' => 'dosage_morning',
+            'noon' => 'dosage_noon',
+            'afternoon' => 'dosage_afternoon',
+            'night' => 'dosage_night',
+        ];
+
+        foreach ($dosageKeys as $propSuffix => $arrayKey) {
+            $property = "medicineDosage_".$propSuffix;
+            $this->$property = $dosage[$arrayKey] ?? null;
+            $this->$arrayKey = $dosage[$arrayKey]>0?true:null;
+        }
         $this->showEditModal = true;
+    }
+
+
+    public function prescriptionMedicineSave()
+    {
+        if ($this->currentMedicineIndex === null) {
+            return;
+        }
+
+        // Get the current medicine data
+        $medicine = $this->prescriptionsMedicine[$this->currentMedicineIndex];
+
+
+        // Prepare dosage data
+        $dosageData = [
+            'dosage_morning'    =>  $this->medicineDosage_morning ?? 0,
+            'dosage_noon'       =>$this->medicineDosage_noon ?? 0 ,
+            'dosage_afternoon'  => $this->medicineDosage_before_sleep ?? 0,
+            'dosage_night'      => $this->medicineDosage_night ?? 0,
+        ];
+
+
+        // Prepare the full medicine data
+        if (isset($medicine['dosages'][0])) {
+            // Update existing dosage
+            $medicine['dosages'][0] = array_merge($medicine['dosages'][0], $dosageData);
+        } else {
+            // Create new dosage entry if it doesn't exist
+            $medicine['dosages'][0] = $dosageData;
+        }
+
+       // dd($medicine);
+        // Update the prescriptionsMedicine array
+       // $this->prescriptionsMedicine[$this->currentMedicineIndex] = $medicine;
+
+
+        PatientMedicineDosage::updateOrCreate(
+            [
+                'id' => $medicine['dosages'][0]->id ?? null,
+            ],$medicine['dosages'][0]);
+
+        // Close modal and reset
+        $this->showEditModal = false;
+        $this->currentMedicineIndex = null;
+
+        // Success message
+        session()->flash('message', 'Medicine updated successfully!');
     }
 
     public function render()

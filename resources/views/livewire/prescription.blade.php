@@ -201,7 +201,7 @@
 {{--                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>--}}
 {{--                                                                        </svg>--}}
 {{--                                                                    </button>--}}
-                                                                    <button wire:click="removeMedicine({{ $index }})"
+                                                                    <button wire:click="remove('{{ $medicine['id'] }}')"
                                                                             class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded">
                                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -228,7 +228,7 @@
                                                                         <div class="flex">
                                                                             @foreach(['morning', 'noon', 'night', 'before_sleep'] as $key)
                                                                                 <input wire:model.live="selectedMedicines.{{ $index }}.dosage.{{ $key }}"
-                                                                                       wire:change="updateInstructions({{ $index }})"
+
                                                                                        type="text" min="0" max="10"
                                                                                        class="w-12 px-2 py-1 text-center border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
                                                                                               {{ $loop->first ? 'rounded-l-md' : '' }}
@@ -361,16 +361,6 @@
                                  @php
                                      $medicine = $prescriptionsMedicine[$currentMedicineIndex];
                                      $dosage = $medicine['dosages'][0] ?? [];
-//                                     [id] => 1
-//                                    [patient_medicine_id] => 1
-//                                    [dosage_morning] => 1
-//                                    [dosage_noon] => 0
-//                                    [dosage_afternoon] => 1
-//                                    [dosage_night] => 0
-//                                    [drug_taking_quantity_unit] =>
-//                                    [meal_time_select] =>
-//                                    [duration] =>
-//                                    [duration_unit_check] =>
                                  @endphp
 
                                  <div class="mt-4" >
@@ -381,19 +371,7 @@
                                              <div class="flex items-center space-x-2 mb-1">
                                                  @foreach(['morning' => 'সকাল', 'noon' => 'দুপুর', 'night' => 'রাত', 'before_sleep' => 'বিকাল'] as $key => $label)
                                                      <div class="flex items-center space-x-2">
-                                                         <input type="checkbox" id="{{ $key }}_{{ $index }}"
-                                                                @if($key=='morning' && $dosage['dosage_morning']>0)
-                                                                    {{ 'checked' }}
-                                                                @elseif($key=='noon' && $dosage['dosage_noon']>0)
-                                                                    {{ 'checked' }}
-                                                                @elseif($key=='before_sleep' && $dosage['dosage_afternoon']>0)
-                                                                    {{ 'checked' }}
-                                                                @elseif($key=='night' && $dosage['dosage_night']>0)
-                                                                    {{ 'checked' }}
-                                                                @else
-
-                                                                @endif
-
+                                                         <input type="checkbox"  wire:model="dosage_{{ $key }}"
                                                                 class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
                                                          <label for="{{ $key }}_{{ $index }}" class="text-sm">{{ $label }}</label>
                                                      </div>
@@ -402,8 +380,8 @@
                                              <div class="flex items-center space-x-2">
                                                  <div class="flex">
                                                      @foreach(['morning', 'noon', 'night', 'before_sleep'] as $key)
-                                                         <input wire:model.live="selectedMedicines.{{ $index }}.dosage.{{ $key }}"
-                                                                wire:change="updateInstructions({{ $index }})"
+                                                         <input wire:model.live="medicineDosage_{{ $key }}"
+
                                                                 type="text" min="0" max="10"
                                                                 class="w-12 px-2 py-1 text-center border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
                                                                                                       {{ $loop->first ? 'rounded-l-md' : '' }}
@@ -487,7 +465,7 @@
                              <!-- Footer -->
                              <div class="flex justify-end gap-2 mt-6">
                                  <button @click="open = false" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Close</button>
-                                 <button wire:click="save" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                 <button wire:click="prescriptionMedicineSave()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                                      {{ isset($editId) ? 'Update' : 'Add' }}
                                  </button>
                              </div>
