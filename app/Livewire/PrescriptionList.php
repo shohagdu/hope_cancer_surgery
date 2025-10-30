@@ -357,11 +357,10 @@ class PrescriptionList extends Component
         // Get the current medicine data
         $medicine = $this->prescriptionsMedicine[$this->currentMedicineIndex];
 
-
         // Prepare dosage data
         $dosageData = [
             'dosage_morning'    =>  $this->medicineDosage_morning ?? 0,
-            'dosage_noon'       =>$this->medicineDosage_noon ?? 0 ,
+            'dosage_noon'       => $this->medicineDosage_noon ?? 0 ,
             'dosage_afternoon'  => $this->medicineDosage_before_sleep ?? 0,
             'dosage_night'      => $this->medicineDosage_night ?? 0,
         ];
@@ -371,27 +370,18 @@ class PrescriptionList extends Component
         if (isset($medicine['dosages'][0])) {
             // Update existing dosage
             $medicine['dosages'][0] = array_merge($medicine['dosages'][0], $dosageData);
-        } else {
-            // Create new dosage entry if it doesn't exist
-            $medicine['dosages'][0] = $dosageData;
         }
 
-       // dd($medicine);
-        // Update the prescriptionsMedicine array
-       // $this->prescriptionsMedicine[$this->currentMedicineIndex] = $medicine;
-
-
-        PatientMedicineDosage::updateOrCreate(
-            [
-                'id' => $medicine['dosages'][0]->id ?? null,
-            ],$medicine['dosages'][0]);
+        $dosage = PatientMedicineDosage::find($medicine['dosages'][0]['id']);
+        $dosage->update($dosageData);
 
         // Close modal and reset
         $this->showEditModal = false;
         $this->currentMedicineIndex = null;
 
-        // Success message
         session()->flash('message', 'Medicine updated successfully!');
+        return redirect(request()->header('Referer'));
+
     }
 
     public function render()
