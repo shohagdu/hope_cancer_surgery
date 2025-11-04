@@ -1,18 +1,34 @@
 <div class="max-w-7xl mx-auto p-4 bg-white shadow rounded">
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">Patient Prescription</h2>
-        <button wire:click="openModal" class="bg-blue-600 text-white px-4 py-2 rounded">+ Add New</button>
+        <h2 class="text-xl font-bold text-gray-800">Patient Prescription</h2>
+
+        <div class="flex space-x-2">
+{{--            <button--}}
+{{--                    type="button"--}}
+{{--                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm transition duration-200"--}}
+{{--            >--}}
+{{--                + Add New--}}
+{{--            </button>--}}
+            <a
+                    href="#"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition duration-200"
+
+            >
+                🖨️ Print
+            </a>
+        </div>
     </div>
-    <div class="grid grid-cols-2 gap-4 mt-3 bg-gray-100 p-2 rounded">
+
+    <div class="grid grid-cols-2 gap-4 mt-3 bg-gray-100 p-2 rounded font-semibold">
         <span>Name: harun</span>
-        <span> 17 Years | Male | Date: 23-09-2025</span>
+        <span> 17 Years | Male | Date: {{ date('d-m-Y') }}</span>
     </div>
     <div class="grid grid-cols-[30%_69%] gap-2 mt-2">
         <div class="bg-gray-100 p-2 rounded">
             <div>
                 <div class="grid grid-cols-1">
                     <div >
-                       <span class="font-semibold"> Patient Complaints</span>
+                       <span class="font-semibold"> Patient Complaints:</span>
                         <button wire:click="$set('showModal', true)"
                                 class="px-3  ">
                             ➕
@@ -30,7 +46,7 @@
             <div class="mt-4" >
                 <div class="grid grid-cols-1">
                     <div >
-                       <span class="font-semibold"> Patient Complaints</span>
+                       <span class="font-semibold"> On Examination: </span>
                         <button wire:click="$set('showModal', true)"
                                 class="px-3  ">
                             ➕
@@ -38,13 +54,224 @@
                     </div>
                 </div>
                 <ul >
-                    @foreach ($complaints as $index => $item)
-                        <li  >
-                             <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                        </li>
-                    @endforeach
+                    @if(!empty($onExamination))
+                        @foreach ($onExamination as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
                 </ul>
             </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Past History:  </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($pastHistory))
+                        @foreach ($pastHistory as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Drug History:  </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($drugHistory))
+                        @foreach ($drugHistory as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Investigations : </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($investigations))
+                        @foreach ($investigations as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Diagnosis : </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($diagnosis))
+                        @foreach ($diagnosis as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Operation Notes: </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($operationNotes))
+                        @foreach ($operationNotes as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Next Plans : </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($nextPlan))
+                        @foreach ($nextPlan as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Hospitalizations : </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($hospitalizations))
+                        @foreach ($hospitalizations as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Advices : </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($advices))
+                        @foreach ($advices as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Next Plans  : </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($nextPlans ))
+                        @foreach ($nextPlans as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="mt-4" >
+                <div class="grid grid-cols-1">
+                    <div >
+                       <span class="font-semibold"> Hospitalizations  : </span>
+                        <button wire:click="$set('showModal', true)"
+                                class="px-3  ">
+                            ➕
+                        </button>
+                    </div>
+                </div>
+                <ul >
+                    @if(!empty($hospitalizations ))
+                        @foreach ($hospitalizations as $index => $item)
+                            <li  >
+                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+
+
+
+
+
+
+
+
+
 
         </div>
         <div class="bg-red-100 p-1 rounded">
@@ -53,7 +280,7 @@
                     <span class="text-2xl font-bold">Rx</span>
                     <button wire:click="$set('showModal', true)"
                             class="px-3 py-1 rounded bg-green-500 text-white hover:bg-green-600">
-                        ➕ Add
+                        ➕ Add Medicine
                     </button>
                 </div>
 
@@ -111,6 +338,18 @@
                         </li>
                     @endforeach
                 </ul>
+                <div class="flex  mt-10">
+                    <div>
+                        <label class="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap m-1 font-semibold">
+                            Next Follow Date
+                        </label>
+                        <input type="text" wire:model="nextFollowDate"
+                                class="w-full py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value="{{ date('d-m-Y') }}">
+
+                    </div>
+                </div>
+
+
 
                 <!-- Modal -->
                 <div x-data="{ open: @entangle('showModal') }">
