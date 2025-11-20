@@ -20,6 +20,7 @@ class PrescriptionList extends Component
 {
     public $prescriptionsMedicine = [];
     public $showModal = false;
+    public $showLeftBarModal = false;
     public $showEditModal = false;
     public $searchTerm = '';
     public $medicineSuggestions = [];

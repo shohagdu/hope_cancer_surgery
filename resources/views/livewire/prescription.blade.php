@@ -29,7 +29,7 @@
                 <div class="grid grid-cols-1">
                     <div >
                        <span class="font-semibold"> Patient Complaints:</span>
-                        <button wire:click="$set('showModal', true)"
+                        <button wire:click="$set('showLeftBarModal', true)"
                                 class="px-3  ">
                             ➕
                         </button>
@@ -47,7 +47,7 @@
                 <div class="grid grid-cols-1">
                     <div >
                        <span class="font-semibold"> On Examination: </span>
-                        <button wire:click="$set('showModal', true)"
+                        <button wire:click="$set('showLeftBarModal', true)"
                                 class="px-3  ">
                             ➕
                         </button>
@@ -711,6 +711,102 @@
                          </div>
                      </div>
                 </div>
+
+
+            <div x-data="{ open: @entangle('showLeftBarModal') }">
+                <div
+                        x-show="open"
+                        class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+                >
+                    <div class="bg-white rounded-2xl w-full max-w-7xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+
+                        <!-- Header -->
+                        <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+                            <h2 class="text-xl font-semibold text-gray-800">Patient Complaints</h2>
+                            <button
+                                    @click="open = false"
+                                    class="text-gray-400 hover:text-gray-700 text-2xl leading-none"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="flex flex-1 overflow-hidden">
+
+                            <div class="flex-1 flex flex-col">
+
+                                <!-- Search -->
+                                <div class="px-6 py-4 border-b bg-white">
+                                    <input
+                                            wire:model.live="searchLefbarTerm"
+                                            type="text"
+                                            placeholder="Search..."
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                </div>
+
+                                <!-- Quick Complaint Buttons -->
+                                <div class="px-6 py-4 bg-white border-b overflow-y-auto max-h-48 rounded-lg">
+                                    <div class="flex flex-wrap gap-2">
+
+                                        <button
+                                                class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')"
+                                                data-id="111"
+                                        >Headache</button>
+
+                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="58"
+                                        >Fever</button>
+
+                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="116"
+                                        >Cough</button>
+
+                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="152"
+                                        >Swelling of joints</button>
+
+                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="1703"
+                                        >Worst Headache</button>
+
+                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="166"
+                                        >Ear pain</button>
+
+                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="150"
+                                        >Back pain</button>
+
+                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
+                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="112"
+                                        >Fatigue</button>
+
+                                    </div>
+                                </div>
+
+                                <!-- Selected Complaint Details -->
+                                <div class="px-6 py-4 bg-white overflow-y-auto">
+                                    <div class="grid grid-cols-[24%,1fr] items-center gap-3 p-4 border rounded-lg shadow-sm bg-gray-50">
+                                        <div class="font-medium text-gray-700">Headache</div>
+                                        <input
+                                                type="text"
+                                                wire:model.live="selectedMedicines.{{ $index }}.duration"
+                                                placeholder="Duration"
+                                                class="w-full px-3 py-2 border text-center border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                        >
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
 
             </div>
 
