@@ -32,7 +32,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Content Type</label>
-                            <select wire:model="type" wire:change="changeContentType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <select wire:model.live="type" wire:change="changeContentType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="">-- Select Type --</option>
                                 @foreach($contentTypes as $key => $label)
                                     <option value="{{ $key }}">{{ $label }}</option>
@@ -68,32 +68,73 @@
                         <textarea wire:model="description" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Enter Description"></textarea>
                     </div>
 
-                    <!-- Storage Type & File Path -->
+                    <!-- Storage Type & File Path (only for Picture / Video) -->
+                    @if(in_array($type, [7, 8]))
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Storage Type</label>
-                            <select wire:model="storage_type" wire:change="helloChange" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <select wire:model.live="storage_type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="1">Local Storage</option>
                                 <option value="2">Remote Server</option>
                             </select>
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                {{ $storage_type == 1 ? 'Upload File' : 'Remote URL' }}
+                            </label>
 
-                            <label class="block text-sm font-medium text-gray-700">File Path</label>
-
-                            @if($storage_type==1)
+                            @if($storage_type == 1)
                                 <input
-                                        type="file"
-                                        wire:model="file_path_local"
-                                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer
-               bg-gray-50 p-2 mt-1  focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    type="file"
+                                    wire:model="file_path_local"
+                                    accept="{{ $type == 8 ? 'video/*' : 'image/*' }}"
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 p-2 mt-1 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                 >
-
-                            @elseif($storage_type==2)
-                                <input type="text" wire:model="file_path" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="e.g. uploads/images/...">
+                                <div wire:loading wire:target="file_path_local" class="text-sm text-blue-500 mt-1">Uploading...</div>
+                            @elseif($storage_type == 2)
+                                <input type="text" wire:model.live="file_path" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="https://example.com/image.jpg">
                             @endif
                         </div>
                     </div>
+
+                    <!-- Media Preview -->
+                    @php
+                        $previewSrc = null;
+                        if ($storage_type == 1 && $file_path_local) {
+                            $previewSrc = $file_path_local->temporaryUrl();
+                        } elseif ($storage_type == 1 && $file_path && !$file_path_local) {
+                            $previewSrc = asset('storage/' . $file_path);
+                        } elseif ($storage_type == 2 && $file_path) {
+                            $previewSrc = $file_path;
+                        }
+                    @endphp
+                    @if($previewSrc)
+                        <div class="mt-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Preview</label>
+                            @if($storage_type == 2)
+                                <iframe
+                                    src="{{ $previewSrc }}"
+                                    class="w-full rounded border border-gray-300 bg-black"
+                                    style="height: 220px;"
+                                    allowfullscreen
+                                    frameborder="0"
+                                ></iframe>
+                            @elseif($type == 8)
+                                <video
+                                    src="{{ $previewSrc }}"
+                                    controls
+                                    class="max-h-48 rounded border border-gray-300 bg-black"
+                                ></video>
+                            @else
+                                <img
+                                    src="{{ $previewSrc }}"
+                                    alt="Preview"
+                                    class="max-h-48 rounded border border-gray-300 object-contain"
+                                >
+                            @endif
+                        </div>
+                    @endif
+                    @endif
                     <div class="grid grid-cols-3 gap-4">
                         <!-- Display Position -->
                         <div>
@@ -172,7 +213,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Media</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -185,6 +226,23 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $contentTypes[$content->type] ?? '' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $content->title }}</td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if(in_array($content->type, [7, 8]) && $content->file_path)
+                                @php
+                                    $src = $content->storage_type == 1
+                                        ? asset('storage/' . $content->file_path)
+                                        : $content->file_path;
+                                @endphp
+                                @if($content->type == 8)
+                                    <video src="{{ $src }}" class="h-12 w-20 object-cover rounded bg-black" muted></video>
+                                @else
+                                    <img src="{{ $src }}" alt="media" class="h-12 w-20 object-cover rounded">
+                                @endif
+                            @else
+                                <span class="text-gray-400 text-xs">—</span>
+                            @endif
+                        </td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($content->is_active==1)

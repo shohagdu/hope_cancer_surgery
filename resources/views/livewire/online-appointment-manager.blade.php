@@ -10,17 +10,21 @@
         </div>
     </div>
     <hr class="my-3">
-    <div class="flex justify-between mb-4">
-        <input type="text" wire:model.live.debounce.50ms="search" placeholder="Search by name or mobile" class="border rounded px-3 py-2 w-3/3">
+    <div class="flex flex-wrap gap-2 mb-4">
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name or mobile" class="border rounded px-3 py-2 flex-1 min-w-48">
+        <select wire:model.live="filterStatus" class="border rounded px-3 py-2">
+            <option value="">All Status</option>
+            <option value="1">Pending</option>
+            <option value="2">Confirmed</option>
+            <option value="3">Cancelled</option>
+        </select>
         <select wire:model.live.debounce.500ms="perPage" class="border rounded p-2">
             <option value="5">5 per page</option>
             <option value="10">10 per page</option>
             <option value="20">20 per page</option>
             <option value="50">50 per page</option>
             <option value="100">100 per page</option>
-            <option value="500">500 per page</option>
         </select>
-
     </div>
 
     <!-- Table -->
@@ -34,6 +38,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
         </tr>
         </thead>
@@ -47,6 +52,16 @@
                 <td class="px-4 py-2">{{ $appointment->mobile }}</td>
                 <td class="px-4 py-2 capitalize">{{ $appointment->gender }}</td>
                 <td class="px-4 py-2">{{ $appointment->patient_type == 1 ? 'New' : 'Old' }}</td>
+                <td class="px-4 py-2">
+                    @php $s = $appointment->status ?? 1; @endphp
+                    @if($s == 1)
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                    @elseif($s == 2)
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                    @else
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>
+                    @endif
+                </td>
                 <td class="px-4 py-2 space-x-2">
                     <button wire:click="prescription({{ $appointment->id }})" class="text-blue-600">Prescription</button>
                     <button wire:click="edit({{ $appointment->id }})" class="text-blue-600">Edit</button>
@@ -120,6 +135,32 @@
                         </select>
                         @error('patient_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Age</label>
+                        <input type="text" wire:model="age" placeholder="e.g. 45" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Status</label>
+                        <select wire:model="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <option value="1">Pending</option>
+                            <option value="2">Confirmed</option>
+                            <option value="3">Cancelled</option>
+                        </select>
+                        @error('status') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Patient Message</label>
+                    <textarea wire:model="message" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Message from patient"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Admin Remarks</label>
+                    <textarea wire:model="remarks" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Internal remarks"></textarea>
                 </div>
 
                 <div class="flex space-x-2 mt-4">

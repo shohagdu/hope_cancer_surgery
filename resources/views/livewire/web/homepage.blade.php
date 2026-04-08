@@ -16,7 +16,7 @@
                      {{ $whyChooseHighlightItem->short_description??'' }}
                   </p>
                   <div class="text-center">
-                     <a href="#about" class="more-btn"><span>Learn More</span> <i class="bi bi-chevron-right"></i></a>
+                     <a href="{{ route('why-choose-us') }}" class="more-btn"><span>Learn More</span> <i class="bi bi-chevron-right"></i></a>
                   </div>
                </div>
             </div><!-- End Why Box -->
@@ -85,66 +85,97 @@
 
    </section><!-- /About Section -->
 
-   <section id="doctors" class="doctors section light-background"">
-   <div class="container section-title" data-aos="fade-up">
-      <h2>Doctors</h2>
-      <p>Meet our team of highly qualified and experienced cancer surgeons dedicated to providing compassionate, advanced, and personalized care for every patient.</p>
-   </div><!-- End Section Title -->
-   <div class="container">
-      <div class="row gy-4">
-         @foreach($doctors as $index => $doctor)
-            <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
-               <div class="team-member d-flex align-items-start">
-                  <div class="pic">
-                     @php
-                        $imagePath = $doctor->picture && file_exists(('storage/app/public/'.$doctor->picture))
-                            ? asset('storage/app/public/'.$doctor->picture)
-                            : asset('website/assets/img/default-doctor.png');
-                     @endphp
-                      <img src="{{ $imagePath }}"
-                           alt="{{ $doctor->name }}"
-                           class="w-48 h-48 rounded-full object-cover shadow-md">
+   <section id="doctors" class="doctors section light-background">
+      <div class="container section-title" data-aos="fade-up">
+         <h2>Our Doctors</h2>
+         <p>Meet our team of highly qualified and experienced cancer surgeons dedicated to providing compassionate, advanced, and personalised care for every patient.</p>
+      </div>
 
-                  </div>
-                  <div class="member-info">
-                     <h4>{{ $doctor['name'] }}</h4>
-                     <div class="py-2">{{ $doctor['qualifications'] }}</div>
-                     <p> {{ $doctor['special_training'] }}</p>
-
-                     @if(!empty($doctor['positions']))
-                        <ul class="mt-2 ml-4 list-disc list-inside">
-                           @foreach(explode("\n", $doctor['positions']) as $position)
-                              @if(!empty(trim($position)))
-                                 <li>{{ $position }}</li>
-                              @endif
-                           @endforeach
-                        </ul>
-                     @endif
-                     <div class="social">
-                        @isset($doctor->twitter)
-                           <a href="{{ $doctor->twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
-                        @endisset
-                        @isset($doctor->facebook)
-                           <a href="{{ $doctor->facebook  }}" target="_blank" ><i class="bi bi-facebook"></i></a>
-                        @endisset
-                        @isset($doctor->instagram)
-                           <a href="{{ $doctor->instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
-                        @endisset
-                        @isset($doctor->linkedin)
-                           <a href="{{ $doctor->linkedin }}" target="_blank"><i class="bi bi-linkedin"></i></a>
-                        @endisset
+      <div class="container">
+         <div class="row gy-4 justify-content-center">
+            @foreach($doctors as $index => $doctor)
+            @php
+               $imgPath = $doctor->picture && file_exists(storage_path('app/public/'.$doctor->picture))
+                  ? asset('storage/'.$doctor->picture)
+                  : asset('website/assets/img/doctors/doctors-1.jpg');
+               $positions = array_filter(array_map('trim', explode("\n", $doctor->positions ?? '')));
+               $detailUrl = url('/doctor/'.$doctor->id.'/'.Str::slug($doctor->name));
+            @endphp
+            <div class="col-xl-4 col-lg-5 col-md-8" data-aos="fade-up" data-aos-delay="{{ $loop->index * 120 }}">
+               <div class="hp-doctor-card">
+                  {{-- Photo strip --}}
+                  <div class="hp-doctor-photo-wrap">
+                     <img src="{{ $imgPath }}" alt="{{ $doctor->name }}">
+                     <div class="hp-doctor-overlay">
+                        <a href="{{ $detailUrl }}" class="hp-doctor-view-btn">View Full Profile</a>
                      </div>
-                     <br/>
-                     <a href="{{ url('/doctor/'.$doctor->id.'/'.Str::slug($doctor->name)) }}" style="color: darkblue;">
-                        Read More...
-                     </a>
-
+                  </div>
+                  {{-- Info --}}
+                  <div class="hp-doctor-body">
+                     <h4 class="hp-doctor-name">{{ $doctor->name }}</h4>
+                     <p class="hp-doctor-qual">{{ $doctor->qualifications }}</p>
+                     @if(!empty($positions))
+                        <div class="hp-doctor-pos">
+                           @foreach(array_slice($positions, 0, 2) as $pos)
+                              <span><i class="bi bi-dot"></i>{{ $pos }}</span>
+                           @endforeach
+                        </div>
+                     @endif
+                     @if(!empty($doctor->special_training))
+                        <p class="hp-doctor-training">
+                           <i class="bi bi-mortarboard-fill me-1"></i>{{ Str::limit($doctor->special_training, 80) }}
+                        </p>
+                     @endif
+                     {{-- Socials --}}
+                     <div class="hp-doctor-socials">
+                        @foreach(['facebook'=>'bi-facebook','youtube'=>'bi-youtube','linkedin'=>'bi-linkedin','instagram'=>'bi-instagram','tiktok'=>'bi-tiktok'] as $field => $icon)
+                           @if(!empty($doctor->$field))
+                              <a href="{{ $doctor->$field }}" target="_blank" rel="noopener"><i class="bi {{ $icon }}"></i></a>
+                           @endif
+                        @endforeach
+                     </div>
+                  </div>
+                  {{-- Footer --}}
+                  <div class="hp-doctor-footer">
+                     @if(!empty($doctor->mobile))
+                        <span><i class="bi bi-telephone-fill me-1"></i>{{ $doctor->mobile }}</span>
+                     @endif
+                     <a href="{{ $detailUrl }}" class="hp-doctor-readmore">Read More <i class="bi bi-arrow-right-short"></i></a>
                   </div>
                </div>
             </div>
-         @endforeach
+            @endforeach
+         </div>
       </div>
-   </div>
+
+      <style>
+         .hp-doctor-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,.09);transition:transform .35s,box-shadow .35s;display:flex;flex-direction:column;height:100%}
+         .hp-doctor-card:hover{transform:translateY(-8px);box-shadow:0 18px 48px rgba(0,0,0,.14)}
+         .hp-doctor-photo-wrap{position:relative;overflow:hidden;height:340px;background:#f0f4f8}
+         .hp-doctor-photo-wrap img{width:100%;height:100%;object-fit:cover;object-position:center 10%;transition:transform .5s}
+         .hp-doctor-card:hover .hp-doctor-photo-wrap img{transform:scale(1.06)}
+         .hp-doctor-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:1.2rem;opacity:0;transition:opacity .35s}
+         .hp-doctor-card:hover .hp-doctor-overlay{opacity:1}
+         .hp-doctor-view-btn{background:var(--accent-color);color:#fff;border-radius:50px;padding:.4rem 1.3rem;font-size:.82rem;font-weight:600;text-decoration:none;transition:.25s}
+         .hp-doctor-view-btn:hover{background:#fff;color:var(--accent-color)}
+         .hp-doctor-body{padding:1.3rem 1.4rem .8rem;flex:1}
+         .hp-doctor-name{font-family:var(--heading-font);font-size:1.15rem;font-weight:700;color:var(--heading-color);margin-bottom:.25rem}
+         .hp-doctor-qual{font-size:.82rem;color:var(--accent-color);font-weight:600;margin-bottom:.5rem}
+         .hp-doctor-pos{display:flex;flex-direction:column;gap:.1rem;margin-bottom:.55rem}
+         .hp-doctor-pos span{font-size:.82rem;color:var(--default-color);display:flex;align-items:flex-start}
+         .hp-doctor-pos .bi-dot{font-size:1.1rem;color:var(--accent-color);flex-shrink:0;margin-top:-.05rem}
+         .hp-doctor-training{font-size:.78rem;color:color-mix(in srgb,var(--default-color),transparent 20%);margin-bottom:.6rem;line-height:1.5}
+         .hp-doctor-training .bi{color:var(--accent-color)}
+         .hp-doctor-socials{display:flex;gap:.5rem;margin-top:.5rem}
+         .hp-doctor-socials a{width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,var(--accent-color),transparent 88%);display:flex;align-items:center;justify-content:center;color:var(--accent-color);font-size:.85rem;transition:.25s;text-decoration:none}
+         .hp-doctor-socials a:hover{background:var(--accent-color);color:#fff}
+         .hp-doctor-footer{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.4rem;border-top:1px solid #f0f0f0;background:#fafafa}
+         .hp-doctor-footer span{font-size:.78rem;color:var(--default-color)}
+         .hp-doctor-footer .bi-telephone-fill{color:var(--accent-color)}
+         .hp-doctor-readmore{font-size:.85rem;font-weight:700;color:var(--accent-color);text-decoration:none;display:flex;align-items:center;gap:.1rem;transition:.2s}
+         .hp-doctor-readmore:hover{color:var(--heading-color)}
+         .hp-doctor-readmore .bi{font-size:1.1rem}
+      </style>
    </section>
 
 
@@ -202,152 +233,340 @@
               ]
       ];
       ?>
-              <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-         <h2>Our Treatment Area</h2>
+      {{-- ── Section Header ──────────────────────────────────────────── --}}
+      <div class="container ta-header text-center" data-aos="fade-up">
+         <span class="ta-label">Specialised Care</span>
+         <h2 class="ta-title">Our Treatment Area</h2>
+         <p class="ta-sub">Advanced oncology care delivered with compassion — from diagnosis through surgery and beyond.</p>
       </div>
-      <div class="container">
-         <h4 class="pb-2">Cancer Treatment & Consultation Services Provided For:</h4>
-         <div class="row gy-4">
+
+      {{-- ── Cancer Treatment ─────────────────────────────────────────── --}}
+      <div class="container" data-aos="fade-up" data-aos-delay="50">
+         <div class="ta-category-header">
+            <div class="ta-cat-icon"><i class="fa-solid fa-ribbon"></i></div>
+            <div>
+               <h4 class="ta-cat-title">Cancer Treatment &amp; Consultation</h4>
+               <p class="ta-cat-sub">Comprehensive surgical and medical oncology services for all major cancer types</p>
+            </div>
+         </div>
+         <div class="row gy-3">
             @if($service_treatment)
-               @foreach($service_treatment as $key=> $row)
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                         <div class="service-item  position-relative">
-                            <div class="icon">
-                             <i class="{{ !empty($row->icon)?$row->icon:'fa-solid fa-user-doctor' }}"></i>
-                            </div>
-                            <a href="#" class="stretched-link">
-                             <h3>{{ $row['title'] }}</h3>
-                            </a>
-                            <p>{{ $row['description'] }}</p>
-                         </div>
-                    </div>
+               @foreach($service_treatment as $key => $row)
+               <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 4) * 80 }}">
+                  <a href="{{ route('service.details', ['id'=>$row->id,'slug'=>\Illuminate\Support\Str::slug($row->title)]) }}" class="ta-card ta-card--cancer">
+                     <div class="ta-card-icon">
+                        <i class="{{ !empty($row->icon) ? $row->icon : 'fa-solid fa-microscope' }}"></i>
+                     </div>
+                     <div class="ta-card-body">
+                        <h5 class="ta-card-title">{{ $row['title'] }}</h5>
+                        <p class="ta-card-desc">{{ Str::limit($row['short_description'] ?? '', 70) }}</p>
+                     </div>
+                     <div class="ta-card-arrow"><i class="bi bi-arrow-right-short"></i></div>
+                  </a>
+               </div>
                @endforeach
             @else
-               @foreach($ctg as $key=> $row)
-                  <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                     <div class="service-item  position-relative">
-                        <div class="icon">
-                           <i class="fa-solid fa-user-doctor"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                           <h3>{{ $row['title'] }}</h3>
-                        </a>
-                        <p>{{ $row['description'] }}</p>
+               @foreach($ctg as $key => $row)
+               <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 4) * 80 }}">
+                  <a href="#" class="ta-card ta-card--cancer">
+                     <div class="ta-card-icon"><i class="fa-solid fa-microscope"></i></div>
+                     <div class="ta-card-body">
+                        <h5 class="ta-card-title">{{ $row['title'] }}</h5>
+                        <p class="ta-card-desc">{{ Str::limit($row['description'], 70) }}</p>
                      </div>
-                  </div>
-               @endforeach
-            @endif
-         </div>
-         <h4 class="pt-4 pb-2">Emergency Services Provided:</h4>
-         <div class="row gy-4">
-            @if($service_emergency)
-               @foreach($service_emergency as $key=> $row)
-                  <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                     <div class="service-item  position-relative">
-                        <div class="icon">
-                           <i class="{{ !empty($row->icon)?$row->icon:'fa-solid fa-user-doctor' }}"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                           <h3>{{ $row['title'] }}</h3>
-                        </a>
-                        <p>{{ $row['description'] }}</p>
-                     </div>
-                  </div>
-               @endforeach
-            @else
-               @foreach($emergencyServices as $key=> $row)
-                  <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                     <div class="service-item  position-relative">
-                        <div class="icon">
-                           <i class="fa-solid fa-user-doctor"></i>
-                        </div>
-                        <a href="#" class="stretched-link">
-                           <h3>{{ $row['title'] }}</h3>
-                        </a>
-                        <p>{{ $row['description'] }}</p>
-                     </div>
-                  </div>
+                     <div class="ta-card-arrow"><i class="bi bi-arrow-right-short"></i></div>
+                  </a>
+               </div>
                @endforeach
             @endif
          </div>
       </div>
+
+      {{-- ── Emergency Services ───────────────────────────────────────── --}}
+      <div class="container mt-5" data-aos="fade-up" data-aos-delay="50">
+         <div class="ta-category-header ta-category-header--emergency">
+            <div class="ta-cat-icon ta-cat-icon--emergency"><i class="fa-solid fa-kit-medical"></i></div>
+            <div>
+               <h4 class="ta-cat-title">Emergency &amp; Diagnostic Services</h4>
+               <p class="ta-cat-sub">Urgent procedures and minimally invasive diagnostics available when you need them most</p>
+            </div>
+         </div>
+         <div class="row gy-3">
+            @if($service_emergency)
+               @foreach($service_emergency as $key => $row)
+               <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 4) * 80 }}">
+                  <a href="{{ route('service.details', ['id'=>$row->id,'slug'=>\Illuminate\Support\Str::slug($row->title)]) }}" class="ta-card ta-card--emergency">
+                     <div class="ta-card-icon ta-card-icon--emergency">
+                        <i class="{{ !empty($row->icon) ? $row->icon : 'fa-solid fa-stethoscope' }}"></i>
+                     </div>
+                     <div class="ta-card-body">
+                        <h5 class="ta-card-title">{{ $row['title'] }}</h5>
+                        <p class="ta-card-desc">{{ Str::limit($row['short_description'] ?? '', 70) }}</p>
+                     </div>
+                     <div class="ta-card-arrow ta-card-arrow--emergency"><i class="bi bi-arrow-right-short"></i></div>
+                  </a>
+               </div>
+               @endforeach
+            @else
+               @foreach($emergencyServices as $key => $row)
+               <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 4) * 80 }}">
+                  <a href="#" class="ta-card ta-card--emergency">
+                     <div class="ta-card-icon ta-card-icon--emergency"><i class="fa-solid fa-stethoscope"></i></div>
+                     <div class="ta-card-body">
+                        <h5 class="ta-card-title">{{ $row['title'] }}</h5>
+                        <p class="ta-card-desc">{{ Str::limit($row['description'], 70) }}</p>
+                     </div>
+                     <div class="ta-card-arrow ta-card-arrow--emergency"><i class="bi bi-arrow-right-short"></i></div>
+                  </a>
+               </div>
+               @endforeach
+            @endif
+         </div>
+      </div>
+
+      {{-- ── Styles ───────────────────────────────────────────────────── --}}
+      <style>
+         /* Header */
+         .ta-label{display:inline-block;background:color-mix(in srgb,var(--accent-color),transparent 85%);color:var(--accent-color);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.22rem .9rem;border-radius:50px;margin-bottom:.6rem}
+         .ta-title{font-family:var(--heading-font);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:var(--heading-color);margin-bottom:.5rem}
+         .ta-sub{color:color-mix(in srgb,var(--default-color),transparent 25%);max-width:580px;margin:0 auto 2.5rem;font-size:.97rem}
+         .ta-header{margin-bottom:1rem}
+
+         /* Category header */
+         .ta-category-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.4rem;padding:1rem 1.4rem;background:#fff;border-radius:16px;box-shadow:0 3px 16px rgba(0,0,0,.07);border-left:5px solid var(--accent-color)}
+         .ta-category-header--emergency{border-left-color:#e05c2a}
+         .ta-cat-icon{width:52px;height:52px;flex-shrink:0;border-radius:14px;background:color-mix(in srgb,var(--accent-color),transparent 88%);display:flex;align-items:center;justify-content:center}
+         .ta-cat-icon i{font-size:1.4rem;color:var(--accent-color)}
+         .ta-cat-icon--emergency{background:color-mix(in srgb,#e05c2a,transparent 88%)}
+         .ta-cat-icon--emergency i{color:#e05c2a}
+         .ta-cat-title{font-family:var(--heading-font);font-size:1.1rem;font-weight:700;color:var(--heading-color);margin:0 0 .2rem}
+         .ta-cat-sub{font-size:.82rem;color:color-mix(in srgb,var(--default-color),transparent 25%);margin:0}
+
+         /* Cards */
+         .ta-card{display:flex;align-items:center;gap:.9rem;background:#fff;border-radius:14px;padding:.95rem 1rem;box-shadow:0 3px 14px rgba(0,0,0,.07);text-decoration:none;transition:transform .3s,box-shadow .3s,border-color .3s;border:1.5px solid transparent;position:relative;overflow:hidden}
+         .ta-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,color-mix(in srgb,var(--accent-color),transparent 95%) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+         .ta-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.13);border-color:color-mix(in srgb,var(--accent-color),transparent 60%)}
+         .ta-card:hover::before{opacity:1}
+         .ta-card--emergency::before{background:linear-gradient(135deg,color-mix(in srgb,#e05c2a,transparent 92%) 0%,transparent 60%)}
+         .ta-card--emergency:hover{border-color:color-mix(in srgb,#e05c2a,transparent 55%)}
+
+         /* Card icon */
+         .ta-card-icon{width:44px;height:44px;flex-shrink:0;border-radius:12px;background:color-mix(in srgb,var(--accent-color),transparent 88%);display:flex;align-items:center;justify-content:center;transition:.3s}
+         .ta-card-icon i{font-size:1.15rem;color:var(--accent-color)}
+         .ta-card:hover .ta-card-icon{background:var(--accent-color)}
+         .ta-card:hover .ta-card-icon i{color:#fff}
+         .ta-card-icon--emergency{background:color-mix(in srgb,#e05c2a,transparent 88%)}
+         .ta-card-icon--emergency i{color:#e05c2a}
+         .ta-card--emergency:hover .ta-card-icon{background:#e05c2a}
+         .ta-card--emergency:hover .ta-card-icon i{color:#fff}
+
+         /* Card body */
+         .ta-card-body{flex:1;min-width:0}
+         .ta-card-title{font-size:.88rem;font-weight:700;color:var(--heading-color);margin:0 0 .18rem;line-height:1.3;transition:color .3s}
+         .ta-card:hover .ta-card-title{color:var(--accent-color)}
+         .ta-card--emergency:hover .ta-card-title{color:#e05c2a}
+         .ta-card-desc{font-size:.75rem;color:color-mix(in srgb,var(--default-color),transparent 30%);margin:0;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+         /* Arrow */
+         .ta-card-arrow{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--accent-color),transparent 90%);display:flex;align-items:center;justify-content:center;transition:.3s}
+         .ta-card-arrow i{font-size:1.1rem;color:var(--accent-color);transition:.3s}
+         .ta-card:hover .ta-card-arrow{background:var(--accent-color)}
+         .ta-card:hover .ta-card-arrow i{color:#fff;transform:translateX(2px)}
+         .ta-card-arrow--emergency{background:color-mix(in srgb,#e05c2a,transparent 90%)}
+         .ta-card-arrow--emergency i{color:#e05c2a}
+         .ta-card--emergency:hover .ta-card-arrow{background:#e05c2a}
+         .ta-card--emergency:hover .ta-card-arrow i{color:#fff}
+      </style>
 
    </section>
 
    <!-- Appointment Section -->
-   <section id="appointment" class="appointment section">
+   <section id="appointment" class="appt-section">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-         <h2>Appointment</h2>
-         <p>Book an appointment with our expert cancer specialists for consultation, diagnosis, or treatment. We are committed to providing timely and compassionate care to every patient.</p>
-      </div><!-- End Section Title -->
+      <div class="container">
+         <div class="row g-0 appt-wrapper" data-aos="fade-up">
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-            <form wire:submit.prevent="submitDoctorAppointment" class="space-y-4">
-               {{-- Doctor --}}
-               <div class="mt-3">
-                  <select wire:model="doctor" class="w-full border rounded px-3 py-2" required>
-                     <option value="">Select Doctor</option>
-                     @foreach($doctors as $d)
-                        <option value="{{ $d->id }}">{{ $d->name }}</option>
-                     @endforeach
-                  </select>
-                  @error('doctor') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            {{-- Left info panel --}}
+            <div class="col-lg-5 appt-info-panel d-flex flex-column justify-content-between">
+               <div>
+                  <div class="appt-info-badge"><i class="bi bi-calendar2-heart-fill me-2"></i>Book an Appointment</div>
+                  <h2 class="appt-info-title">Get Expert Cancer Care <span>Today</span></h2>
+                  <p class="appt-info-desc">Our team of specialist surgeons is dedicated to providing timely, compassionate, and advanced care. Fill in the form and we will confirm your slot.</p>
                </div>
 
-               {{-- Date --}}
-               <div class="mt-3">
-                  <input type="datetime-local" wire:model="date" class="w-full border rounded px-3 py-2" placeholder="Appointment Date" required>
-                  @error('date') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-               </div>
+               <ul class="appt-info-list">
+                  <li>
+                     <span class="appt-info-icon"><i class="bi bi-clock-fill"></i></span>
+                     <div>
+                        <strong>Consultation Hours</strong>
+                        <span>Sat – Thu &nbsp;|&nbsp; 9:00 AM – 6:00 PM</span>
+                     </div>
+                  </li>
+                  <li>
+                     <span class="appt-info-icon"><i class="bi bi-telephone-fill"></i></span>
+                     <div>
+                        <strong>Call for Emergency</strong>
+                        <span>{{ $organizationInfo->phone ?? '+880 xxxxxxxx' }}</span>
+                     </div>
+                  </li>
+                  <li>
+                     <span class="appt-info-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                     <div>
+                        <strong>Location</strong>
+                        <span>{{ $organizationInfo->address ?? '152/2/G Panthapath, Dhaka-1205' }}</span>
+                     </div>
+                  </li>
+               </ul>
 
-               {{-- Name --}}
-               <div class="mt-3">
-                  <input type="text" wire:model="name" class="w-full border rounded px-3 py-2" placeholder="Patient Name" required>
-                  @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+               <div class="appt-info-note">
+                  <i class="bi bi-shield-check me-2"></i>Your information is safe and never shared.
                </div>
+            </div>
 
-               {{-- Phone --}}
-               <div class="mt-3">
-                  <input type="tel" wire:model="phone" class="w-full border rounded px-3 py-2" placeholder="Mobile" required>
-                  @error('phone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-               </div>
+            {{-- Right form panel --}}
+            <div class="col-lg-7 appt-form-panel">
+               <form wire:submit.prevent="submitDoctorAppointment">
 
-               {{-- Gender --}}
-               <div class="mt-3">
-                  <select wire:model="gender" class="w-full border rounded px-3 py-2" required>
-                     <option value="">Select Gender</option>
-                     <option value="1">Male</option>
-                     <option value="2">Female</option>
-                     <option value="3">Others</option>
-                  </select>
-                  @error('gender') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-               </div>
-               <div class="mt-3">
-                  <select wire:model="patient_type" class="w-full border rounded px-3 py-2" required>
-                     <option value="">Select One</option>
-                     <option value="1">New</option>
-                     <option value="2">Old</option>
-                  </select>
-                  @error('patient_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-               </div>
+                  <div class="row g-3">
 
+                     {{-- Doctor --}}
+                     <div class="col-12">
+                        <label class="appt-label"><i class="bi bi-person-badge me-1"></i>Select Doctor <span class="text-danger">*</span></label>
+                        <select wire:model="appt_doctor" class="appt-input">
+                           <option value="">-- Choose a Doctor --</option>
+                           @foreach($doctors as $d)
+                              <option value="{{ $d->id }}">{{ $d->name }}{{ $d->qualifications ? ' — '.$d->qualifications : '' }}</option>
+                           @endforeach
+                        </select>
+                        @error('appt_doctor') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
 
-               {{-- Message --}}
-               <div class="mt-3">
-                  <textarea wire:model="message" class="w-full border rounded px-3 py-2" rows="4" placeholder="Message (Optional)"></textarea>
-                  @error('message') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-               </div>
+                     {{-- Appointment Date --}}
+                     <div class="col-md-6">
+                        <label class="appt-label"><i class="bi bi-calendar-event me-1"></i>Preferred Date & Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" wire:model="appt_date" class="appt-input" min="{{ now()->addHours(1)->format('Y-m-d\TH:i') }}">
+                        @error('appt_date') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
 
-               {{-- Submit --}}
-               <div class="mt-3">
-                  <div ><button type="submit" class="bg-green-600 text-white px-4 py-2 rounded shadow">Submit</button></div>
-               </div>
-            </form>
+                     {{-- Patient Type --}}
+                     <div class="col-md-6">
+                        <label class="appt-label"><i class="bi bi-person-lines-fill me-1"></i>Patient Type <span class="text-danger">*</span></label>
+                        <select wire:model="appt_patient_type" class="appt-input">
+                           <option value="1">New Patient</option>
+                           <option value="2">Existing Patient</option>
+                        </select>
+                        @error('appt_patient_type') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
 
+                     {{-- Name --}}
+                     <div class="col-md-6">
+                        <label class="appt-label"><i class="bi bi-person me-1"></i>Patient Name <span class="text-danger">*</span></label>
+                        <input type="text" wire:model="appt_name" class="appt-input" placeholder="Full name">
+                        @error('appt_name') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
+
+                     {{-- Age --}}
+                     <div class="col-md-6">
+                        <label class="appt-label"><i class="bi bi-123 me-1"></i>Age</label>
+                        <input type="text" wire:model="appt_age" class="appt-input" placeholder="e.g. 45">
+                        @error('appt_age') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
+
+                     {{-- Phone --}}
+                     <div class="col-md-6">
+                        <label class="appt-label"><i class="bi bi-telephone me-1"></i>Mobile Number <span class="text-danger">*</span></label>
+                        <input type="tel" wire:model="appt_phone" class="appt-input" placeholder="+880 01xxxxxxxxx">
+                        @error('appt_phone') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
+
+                     {{-- Gender --}}
+                     <div class="col-md-6">
+                        <label class="appt-label"><i class="bi bi-gender-ambiguous me-1"></i>Gender <span class="text-danger">*</span></label>
+                        <select wire:model="appt_gender" class="appt-input">
+                           <option value="">-- Select --</option>
+                           <option value="male">Male</option>
+                           <option value="female">Female</option>
+                           <option value="other">Other</option>
+                        </select>
+                        @error('appt_gender') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
+
+                     {{-- Message --}}
+                     <div class="col-12">
+                        <label class="appt-label"><i class="bi bi-chat-left-text me-1"></i>Additional Notes</label>
+                        <textarea wire:model="appt_message" class="appt-input" rows="3" placeholder="Describe your condition or any special requests (optional)"></textarea>
+                        @error('appt_message') <span class="appt-error">{{ $message }}</span> @enderror
+                     </div>
+
+                     {{-- Math Captcha --}}
+                     <div class="col-12">
+                        <div class="appt-captcha">
+                           <i class="bi bi-shield-lock-fill appt-captcha-icon"></i>
+                           <label class="appt-label mb-0">Security check: What is <strong>{{ $captchaNum1 }}</strong> + <strong>{{ $captchaNum2 }}</strong> ?</label>
+                           <input type="number" wire:model="captchaInput" class="appt-input appt-captcha-input" placeholder="Your answer">
+                           @error('captchaInput') <span class="appt-error">{{ $message }}</span> @enderror
+                        </div>
+                     </div>
+
+                     {{-- Submit --}}
+                     <div class="col-12">
+                        <button type="submit" class="appt-submit-btn" wire:loading.attr="disabled">
+                           <span wire:loading.remove><i class="bi bi-send-fill me-2"></i>Book Appointment</span>
+                           <span wire:loading><i class="bi bi-hourglass-split me-2"></i>Submitting…</span>
+                        </button>
+                     </div>
+
+                  </div>
+               </form>
+            </div>
+
+         </div>
       </div>
+
+      <style>
+         .appt-section{padding:80px 0;background:linear-gradient(135deg,#f0f6ff 0%,#faf0ff 100%)}
+         .appt-wrapper{border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.10)}
+
+         /* Left panel */
+         .appt-info-panel{background:linear-gradient(160deg,var(--heading-color) 0%,color-mix(in srgb,var(--accent-color),var(--heading-color) 40%) 100%);padding:48px 40px;color:#fff}
+         .appt-info-badge{display:inline-flex;align-items:center;background:rgba(255,255,255,.15);border-radius:50px;padding:.35rem 1rem;font-size:.82rem;font-weight:600;letter-spacing:.5px;margin-bottom:1.2rem;color:#fff}
+         .appt-info-title{font-size:1.9rem;font-weight:800;line-height:1.25;color:#fff;margin-bottom:1rem}
+         .appt-info-title span{color:color-mix(in srgb,var(--accent-color),#fff 40%)}
+         .appt-info-desc{font-size:.92rem;opacity:.88;line-height:1.7;margin-bottom:2rem;color:#fff}
+         .appt-info-list{list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:1.1rem}
+         .appt-info-list li{display:flex;align-items:flex-start;gap:.9rem}
+         .appt-info-icon{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff;margin-top:.1rem}
+         .appt-info-list strong{display:block;font-size:.88rem;font-weight:700;color:#fff;margin-bottom:.1rem}
+         .appt-info-list span{font-size:.82rem;opacity:.82;color:#fff}
+         .appt-info-note{font-size:.78rem;opacity:.75;color:#fff;border-top:1px solid rgba(255,255,255,.2);padding-top:1rem}
+
+         /* Right panel */
+         .appt-form-panel{background:#fff;padding:48px 44px}
+         .appt-label{display:block;font-size:.82rem;font-weight:600;color:var(--heading-color);margin-bottom:.35rem}
+         .appt-input{display:block;width:100%;padding:.6rem .9rem;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.9rem;color:var(--default-color);background:#fafbff;transition:border-color .2s,box-shadow .2s;outline:none}
+         .appt-input:focus{border-color:var(--accent-color);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-color),transparent 82%);background:#fff}
+         .appt-error{display:block;font-size:.78rem;color:#e53e3e;margin-top:.25rem}
+
+         /* Captcha */
+         .appt-captcha{background:#f8f4ff;border:1.5px dashed color-mix(in srgb,var(--accent-color),transparent 60%);border-radius:12px;padding:.9rem 1.1rem;display:flex;flex-direction:column;gap:.5rem}
+         .appt-captcha-icon{font-size:1.2rem;color:var(--accent-color)}
+         .appt-captcha-input{max-width:140px;margin-top:.3rem}
+
+         /* Submit button */
+         .appt-submit-btn{width:100%;padding:.85rem;background:var(--accent-color);color:#fff;font-size:1rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:background .25s,transform .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:.4rem}
+         .appt-submit-btn:hover{background:color-mix(in srgb,var(--accent-color),#000 15%);transform:translateY(-2px);box-shadow:0 8px 20px color-mix(in srgb,var(--accent-color),transparent 55%)}
+         .appt-submit-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+
+         @media(max-width:991px){
+            .appt-info-panel{padding:36px 28px}
+            .appt-form-panel{padding:36px 28px}
+         }
+         @media(max-width:575px){
+            .appt-info-panel{padding:28px 20px}
+            .appt-form-panel{padding:28px 20px}
+         }
+      </style>
+
    </section><!-- /Appointment Section -->
 
 
@@ -565,75 +784,73 @@
 
          <div class="row g-0">
 
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-1.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-1.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
-
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-2.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-2.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
-
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-3.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-3.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
-
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-4.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-4.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
-
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-5.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-5.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
-
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-6.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-6.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
-
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-7.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-7.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
-
-            <div class="col-lg-3 col-md-4">
-               <div class="gallery-item">
-                  <a href="{{ asset('website/assets/img/gallery/gallery-8.jpg')}}" class="glightbox" data-gallery="images-gallery">
-                     <img src="{{ asset('website/assets/img/gallery/gallery-8.jpg')}}" alt="" class="img-fluid">
-                  </a>
-               </div>
-            </div><!-- End Gallery Item -->
+            @forelse($pictureItems as $picture)
+               @php
+                  $imgSrc = $picture->storage_type == 1
+                     ? asset('storage/' . $picture->file_path)
+                     : $picture->file_path;
+               @endphp
+               <div class="col-lg-3 col-md-4">
+                  <div class="gallery-item">
+                     <a href="{{ $imgSrc }}" class="glightbox" data-gallery="images-gallery" data-title="{{ $picture->title }}">
+                        <img src="{{ $imgSrc }}" alt="{{ $picture->title }}" class="img-fluid">
+                     </a>
+                  </div>
+               </div><!-- End Gallery Item -->
+            @empty
+               <div class="col-12 text-center py-4 text-muted">No images available.</div>
+            @endforelse
 
          </div>
 
       </div>
 
    </section><!-- /Gallery Section -->
+
+   <!-- Video Gallery Section -->
+   @if(!empty($videoItems) && $videoItems->count())
+   <section id="video-gallery" class="gallery section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+         <h2>Video Gallery</h2>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+         <div class="row g-3">
+            @foreach($videoItems as $video)
+               @php
+                  $src = $video->storage_type == 1
+                     ? asset('storage/' . $video->file_path)
+                     : $video->file_path;
+               @endphp
+               <div class="col-lg-4 col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                     <div class="ratio ratio-16x9">
+                        <iframe
+                           src="{{ $src }}"
+                           title="{{ $video->title }}"
+                           allowfullscreen
+                           frameborder="0"
+                           loading="lazy"
+                        ></iframe>
+                     </div>
+                     @if($video->title)
+                     <div class="card-body py-2 px-3">
+                        <p class="mb-0 fw-semibold small">{{ $video->title }}</p>
+                        @if($video->short_description)
+                           <p class="mb-0 text-muted small">{{ $video->short_description }}</p>
+                        @endif
+                     </div>
+                     @endif
+                  </div>
+               </div>
+            @endforeach
+         </div>
+      </div>
+
+   </section><!-- /Video Gallery Section -->
+   @endif
 
    <!-- Contact Section -->
    <section id="contact" class="contact section">
@@ -645,7 +862,7 @@
       </div><!-- End Section Title -->
 
       <div class="mb-5" data-aos="fade-up" data-aos-delay="200">
-         <iframe src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d116860.20712433645!2d90.30317471858245!3d23.751605755507477!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x3755b8a53849f04b%3A0x8aff35de1b491672!2s152%2C%20152%20Panthapath%2C%20Dhaka%201205!3m2!1d23.7516276!2d90.3855763!5e0!3m2!1sen!2sbd!4v1756055987268!5m2!1sen!2sbd" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.9002970426773!2d90.38418017431287!3d23.750934578669966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b99d90587569%3A0x9f276ae22c464021!2sHealth%20and%20Hope%20Doctor&#39;s%20Chamber!5e0!3m2!1sen!2sbd!4v1775530141075!5m2!1sen!2sbd" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div><!-- End Google Maps -->
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">

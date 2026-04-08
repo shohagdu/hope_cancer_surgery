@@ -19,6 +19,11 @@ class OnlineAppointment extends Model
         'mobile',
         'gender',
         'patient_type',
+        'age',
+        'referer_doctor',
+        'remarks',
+        'message',
+        'status',
         'created_by',
         'created_ip',
         'updated_by',
@@ -26,11 +31,12 @@ class OnlineAppointment extends Model
     ];
 
     protected $casts = [
-        'date_time' => 'datetime',
-        'doctor_id' => 'integer',
+        'date_time'    => 'datetime',
+        'doctor_id'    => 'integer',
         'patient_type' => 'integer',
-        'created_by' => 'integer',
-        'updated_by' => 'integer',
+        'status'       => 'integer',
+        'created_by'   => 'integer',
+        'updated_by'   => 'integer',
     ];
 
     // Optional: Relationship with Doctor

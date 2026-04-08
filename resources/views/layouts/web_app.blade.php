@@ -59,10 +59,14 @@
     <div class="branding d-flex align-items-center">
 
         <div class="container position-relative d-flex align-items-center justify-content-between">
-            <a href="{{ url('/') }}" class="logo d-flex align-items-center me-auto">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
-                <img src="{{ asset('website/assets/img/logo.png') }}" alt="">
-                {{--                <h1 class="sitename">Medilab</h1>--}}
+            <a href="{{ url('/') }}" class="logo d-flex align-items-center me-auto text-decoration-none" style="gap:10px">
+                <img src="{{ asset('website/assets/img/logo.png') }}" alt="Hope Logo" style="height:100px;width:100px;object-fit:contain;flex-shrink:0">
+                <div style="line-height:1.2;border-left:2.5px solid #9E28D7;padding-left:10px">
+                    <div style="font-family:'Poppins',sans-serif;font-size:2rem;font-weight:800;color:#2c4964;letter-spacing:2px;line-height:1">HOPE</div>
+                    <div style="font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;color:#9E28D7;letter-spacing:0.5px;text-transform:uppercase;margin-top:4px">Centre for Cancer Surgery</div>
+                    <div style="font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;color:#2c4964;letter-spacing:0.5px;text-transform:uppercase">&amp; Research</div>
+                    <div style="font-family:'Poppins',sans-serif;font-size:0.6rem;font-weight:400;color:#9E28D7;letter-spacing:1.4px;text-transform:uppercase;margin-top:3px;opacity:0.8">Fight Cancer Together</div>
+                </div>
             </a>
 
             <nav id="navmenu" class="navmenu">
@@ -91,7 +95,7 @@
                     <li class="dropdown"><a href="#"><span>Gallery</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             <li><a href="{{ url('/#gallery') }}">Image</a></li>
-{{--                            <li><a href="#gallery">Viewo</a></li>--}}
+                            <li><a href="{{ url('/#video-gallery') }}">Video</a></li>
                         </ul>
                     </li>
 {{--                    <li><a href="#contact">Article</a></li>--}}

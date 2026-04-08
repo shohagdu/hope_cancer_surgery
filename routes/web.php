@@ -15,9 +15,13 @@ use App\Livewire\OnlineAppointmentManager;
 use App\Livewire\Homepage;
 use App\Livewire\DoctorDetails;
 use App\Livewire\PrescriptionList;
+use App\Livewire\WhyChooseUs;
+use App\Livewire\ServiceDetails;
 
 
 Route::get('/', Homepage::class)->name('home');
+Route::get('/why-choose-us', WhyChooseUs::class)->name('why-choose-us');
+Route::get('/service/{id}/{slug}', ServiceDetails::class)->name('service.details');
 
 Route::get('/home', function () {
     return view('welcome');

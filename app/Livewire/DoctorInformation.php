@@ -11,8 +11,9 @@ class DoctorInformation extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $doctorId, $name, $email, $mobile, $positions, $qualifications, $special_training,$doctor_profile, $display_position, $is_active = 1;
+    public $doctorId, $name, $email, $mobile, $positions, $qualifications, $special_training, $doctor_profile, $display_position, $is_active = 1;
     public $picture, $newPicture;
+    public $facebook, $youtube, $linkedin, $tiktok, $instagram;
     public $showModal = false;
     public $isEdit = false;
 
@@ -26,6 +27,12 @@ class DoctorInformation extends Component
         'doctor_profile' => 'nullable|string',
         'display_position' => 'nullable|integer',
         'is_active' => 'boolean',
+        'newPicture' => 'nullable|image|max:2048',
+        'facebook' => 'nullable|url|max:255',
+        'youtube' => 'nullable|url|max:255',
+        'linkedin' => 'nullable|url|max:255',
+        'tiktok' => 'nullable|url|max:255',
+        'instagram' => 'nullable|url|max:255',
     ];
 
     public function render()
@@ -53,10 +60,16 @@ class DoctorInformation extends Component
             $this->display_position = $doctor->display_position;
             $this->is_active = $doctor->is_active;
             $this->picture = $doctor->picture;
+            $this->facebook = $doctor->facebook;
+            $this->youtube = $doctor->youtube;
+            $this->linkedin = $doctor->linkedin;
+            $this->tiktok = $doctor->tiktok;
+            $this->instagram = $doctor->instagram;
             $this->isEdit = true;
         }
 
         $this->showModal = true;
+        $this->dispatch('init-profile-editor', content: $this->doctor_profile ?? '');
     }
 
     // ---------------- STORE ----------------
@@ -121,6 +134,11 @@ class DoctorInformation extends Component
             'doctor_profile' => $this->doctor_profile,
             'display_position' => $this->display_position,
             'is_active' => $this->is_active,
+            'facebook' => $this->facebook,
+            'youtube' => $this->youtube,
+            'linkedin' => $this->linkedin,
+            'tiktok' => $this->tiktok,
+            'instagram' => $this->instagram,
         ];
     }
 
@@ -138,6 +156,11 @@ class DoctorInformation extends Component
         $this->is_active = 1;
         $this->picture = null;
         $this->newPicture = null;
+        $this->facebook = '';
+        $this->youtube = '';
+        $this->linkedin = '';
+        $this->tiktok = '';
+        $this->instagram = '';
         $this->isEdit = false;
     }
 

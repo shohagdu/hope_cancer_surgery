@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     @livewireStyles
+    <style>[x-cloak] { display: none !important; }</style>
 
 </head>
 <body class="font-sans antialiased">
@@ -45,6 +46,10 @@
 
 @stack('scripts')
 
+
+{{-- Quill Rich Text Editor --}}
+<link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
 
 @livewireScripts
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>

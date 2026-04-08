@@ -1,855 +1,449 @@
-<div class="max-w-7xl mx-auto p-4 bg-white shadow rounded">
-    <div class="flex justify-between items-center mb-4">
+<div class="max-w-7xl mx-auto p-3 bg-white shadow rounded" id="prescription-page">
+
+    {{-- ── Header ──────────────────────────────────────────────────────────── --}}
+    <div class="flex justify-between items-center mb-3 no-print">
         <h2 class="text-xl font-bold text-gray-800">Patient Prescription</h2>
-
-        <div class="flex space-x-2">
-{{--            <button--}}
-{{--                    type="button"--}}
-{{--                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm transition duration-200"--}}
-{{--            >--}}
-{{--                + Add New--}}
-{{--            </button>--}}
-            <a
-                    href="#"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition duration-200"
-
-            >
-                🖨️ Print
-            </a>
-        </div>
+        <button onclick="window.print()"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition">
+            🖨️ Print
+        </button>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 mt-3 bg-gray-100 p-2 rounded font-semibold">
-        <span>Name: harun</span>
-        <span> 17 Years | Male | Date: {{ date('d-m-Y') }}</span>
+    {{-- Patient info bar --}}
+    <div class="grid grid-cols-2 gap-4 mt-2 bg-gray-100 p-2 rounded font-semibold text-sm">
+        <span>Name: {{ $patient?->patient_name ?? '—' }}</span>
+        <span>
+            Date: {{ date('d-m-Y') }}
+            &nbsp;|&nbsp;
+            Next Visit:
+            <input type="date" wire:model.live="next_visit_date"
+                   class="border-b border-gray-400 bg-transparent text-sm focus:outline-none no-print">
+            <span class="print-only">{{ $next_visit_date ? \Carbon\Carbon::parse($next_visit_date)->format('d-m-Y') : '—' }}</span>
+        </span>
     </div>
+
+    {{-- ── Two-column layout ───────────────────────────────────────────────── --}}
     <div class="grid grid-cols-[30%_69%] gap-2 mt-2">
-        <div class="bg-gray-100 p-2 rounded">
-            <div>
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Patient Complaints:</span>
-                        <button wire:click="$set('showLeftBarModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @foreach ($complaints as $index => $item)
-                        <li  >
-                             <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> On Examination: </span>
-                        <button wire:click="$set('showLeftBarModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($onExamination))
-                        @foreach ($onExamination as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Past History:  </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($pastHistory))
-                        @foreach ($pastHistory as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Drug History:  </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($drugHistory))
-                        @foreach ($drugHistory as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Investigations : </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($investigations))
-                        @foreach ($investigations as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Diagnosis : </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($diagnosis))
-                        @foreach ($diagnosis as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Operation Notes: </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($operationNotes))
-                        @foreach ($operationNotes as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Next Plans : </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($nextPlan))
-                        @foreach ($nextPlan as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Hospitalizations : </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($hospitalizations))
-                        @foreach ($hospitalizations as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Advices : </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($advices))
-                        @foreach ($advices as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Next Plans  : </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($nextPlans ))
-                        @foreach ($nextPlans as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
-            <div class="mt-4" >
-                <div class="grid grid-cols-1">
-                    <div >
-                       <span class="font-semibold"> Hospitalizations  : </span>
-                        <button wire:click="$set('showModal', true)"
-                                class="px-3  ">
-                            ➕
-                        </button>
-                    </div>
-                </div>
-                <ul >
-                    @if(!empty($hospitalizations ))
-                        @foreach ($hospitalizations as $index => $item)
-                            <li  >
-                                 <div > <span class="text-gray-700"> {{ $item['label'] }}</span> - <span  class="text-white-700"> {{ $item['Note'] }}</span> <button class="px-1 rounded font-semibold  text-red-500 ">-</button></div>
-                            </li>
-                        @endforeach
-                    @endif
-                </ul>
-            </div>
 
+        {{-- ── LEFT: Clinical sections ─────────────────────────────────────── --}}
+        <div class="bg-gray-50 p-2 rounded text-sm space-y-3">
 
+            @php
+            $sections = [
+                ['key' => 'complaints',      'label' => 'Chief Complaints'],
+                ['key' => 'onExamination',   'label' => 'On Examination'],
+                ['key' => 'pastHistory',     'label' => 'Past History'],
+                ['key' => 'drugHistory',     'label' => 'Drug History'],
+                ['key' => 'investigation',   'label' => 'Investigations'],
+                ['key' => 'diagnosis',       'label' => 'Diagnosis'],
+                ['key' => 'treatmentPlan',   'label' => 'Treatment Plan'],
+                ['key' => 'operationNote',   'label' => 'Operation Notes'],
+                ['key' => 'advice',          'label' => 'Advice'],
+                ['key' => 'nextPlan',        'label' => 'Next Plan'],
+                ['key' => 'hospitalizations','label' => 'Hospitalizations'],
+            ];
+            @endphp
 
-
-
-
-
-
-
-
+            @foreach($sections as $sec)
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold text-gray-700">{{ $sec['label'] }}</span>
+                        <button wire:click="openLeftbarModal('{{ $sec['key'] }}')"
+                                class="text-blue-500 hover:text-blue-700 text-lg leading-none no-print">➕</button>
+                    </div>
+                    <ul class="mt-1 space-y-0.5">
+                        @foreach($this->{$sec['key']} as $i => $item)
+                            <li class="flex items-start justify-between gap-1">
+                                <span>• <strong>{{ $item['label'] }}</strong>
+                                    @if(!empty($item['note'])) — {{ $item['note'] }} @endif
+                                </span>
+                                <button wire:click="removeLeftbarItem('{{ $sec['key'] }}', {{ $i }})"
+                                        class="text-red-400 hover:text-red-600 text-xs no-print flex-shrink-0">✕</button>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endforeach
         </div>
-        <div class="bg-red-100 p-1 rounded">
-            <div class="w-full mx-auto p-2 bg-white shadow rounded-lg">
-                <div class="  flex items-center justify-between mb-2">
-                    <span class="text-2xl font-bold">Rx</span>
-                    <button wire:click="$set('showModal', true)"
-                            class="px-3 py-1 rounded bg-green-500 text-white hover:bg-green-600">
-                        ➕ Add Medicine
-                    </button>
-                </div>
 
+        {{-- ── RIGHT: Rx ───────────────────────────────────────────────────── --}}
+        <div class="bg-white border rounded p-2">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl font-bold text-gray-700">℞</span>
+                <button wire:click="$set('showModal', true)"
+                        class="px-3 py-1 rounded bg-green-500 text-white hover:bg-green-600 text-sm no-print">
+                    ➕ Add Medicine
+                </button>
+            </div>
 
-                <!-- Drag & Drop List -->
-{{--                <ul wire:sortable="updateOrder" class="space-y-2">--}}
-{{--                wire:sortable.item="{{ $med['medicine_serial']?? $med['id'] }}" wire:key="prescription-{{ $med['id'] }}"--}}
-
-                <ul  class="space-y-2">
-                    @foreach ($prescriptionsMedicine as $index => $med)
-                        <li
-                            class="border-b pb-21 cursor-move bg-gray-50 p-2 rounded">
-
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <span class="">
-                                        {{ $index + 1 }}. Tab.
-                                        <span class="font-bold text-gray-800">{{ $med['medicine']['name'] }}  {{ $med['medicine']['strength'] }}</span>
-                                        <i> [{{ $med['medicine']['generic'] }}]</i>
-                                    </span>
-                                    @if(!empty($med['dosages']))
-                                        @foreach($med['dosages'] as  $dosage)
-                                            <div class="grid grid-cols-[30%_50%_17%] gap-4 mt-1">
-                                                <div>
-                                                    @if($dosage['dosage_afternoon']>0)
-                                                        {{ $dosage['dosage_morning']??'0' }} + {{ $dosage['dosage_noon']??'0' }} + {{ $dosage['dosage_afternoon']??'0' }}+ {{ $dosage['dosage_night']??'0' }}
-                                                    @else
-                                                        {{ $dosage['dosage_morning']??'0' }} + {{ $dosage['dosage_noon']??'0' }} + {{ $dosage['dosage_night']??'0' }}
-                                                    @endif
-                                                </div>
-                                                <div>
-                                                    --- {{ $dosage['meal_time_selected']??'' }}
-                                                </div>
-                                                <div > {{ $dosage['duration']??NULL }}</div>
-                                            </div>
-                                            <div >{{ $dosage['instruction']??NULL }}</div>
-                                        @endforeach
-                                    @endif
-                                </div>
-                                <div class="flex gap-2">
-                                    <button wire:click="openEditModal({{ $index }})" class="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 hover:text-blue-800">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                                        </svg>
-                                    </button>
-                                    <button wire:click="remove('{{ $med['id'] }}')"
-                                            class="p-1 rounded-full bg-red-100 hover:bg-red-200 text-red-600">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-
-                                </div>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
-                <div class="flex  mt-10">
-                    <div>
-                        <label class="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap m-1 font-semibold">
-                            Next Follow Date
-                        </label>
-                        <input type="text" wire:model="nextFollowDate"
-                                class="w-full py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value="{{ date('d-m-Y') }}">
-
-                    </div>
-                </div>
-
-
-
-                <!-- Modal -->
-                <div x-data="{ open: @entangle('showModal') }">
-                    <div x-show="open" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                            <div class="bg-white rounded-lg w-full max-w-7xl h-[90vh] flex flex-col shadow-2xl">
-                                <!-- Modal Header -->
-                                <div class="flex items-center justify-between p-4 border-b">
-                                    <h2 class="text-xl font-semibold text-gray-900">Add Medicine</h2>
-                                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 text-2xl">
-                                        ✕
-                                    </button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="flex flex-1 overflow-hidden">
-                                    <!-- Left Sidebar - Commonly Used Drugs -->
-                                    <div class="w-80 bg-gray-50 border-r flex flex-col">
-                                        <div class="p-2 border-b">
-                                            <h3 class="font-medium text-gray-900">Commonly used drugs</h3>
-                                        </div>
-                                        <div class="flex-1 overflow-y-auto p-4 space-y-2">
-
-                                            @foreach($commonDrugs as $drug)
-                                                <button wire:click="addMedicine({{ json_encode($drug) }})"
-                                                        class="text-blue-600 hover:text-blue-800 hover:underline text-left block">
-                                                    {{ $drug['name'] }}  ({{ $drug['type'] }}{{ $drug['strength'] ? ', ' . $drug['strength'] : '' }})
-                                                </button>
-                                            @endforeach
-                                        </div>
+            {{-- Saved prescription medicines --}}
+            <ul class="space-y-2">
+                @forelse ($prescriptionsMedicine as $idx => $med)
+                    <li class="border-b pb-1">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="font-semibold">{{ $idx + 1 }}. {{ $med['medicine']['name'] ?? '' }}</span>
+                                <span class="text-gray-500 text-sm"> {{ $med['medicine']['strength'] ?? '' }}</span>
+                                @if(!empty($med['medicine']['generic']))
+                                    <i class="text-gray-400 text-xs"> [{{ $med['medicine']['generic'] }}]</i>
+                                @endif
+                                @foreach($med['dosages'] ?? [] as $dosage)
+                                    <div class="text-sm mt-0.5 text-gray-700">
+                                        @php
+                                            $parts = array_filter([
+                                                $dosage['dosage_morning']   > 0 ? $dosage['dosage_morning']   : null,
+                                                $dosage['dosage_noon']      > 0 ? $dosage['dosage_noon']      : null,
+                                                $dosage['dosage_afternoon'] > 0 ? $dosage['dosage_afternoon'] : null,
+                                                $dosage['dosage_night']     > 0 ? $dosage['dosage_night']     : null,
+                                            ], fn($v) => $v !== null);
+                                        @endphp
+                                        {{ implode(' + ', $parts ?: ['—']) }}
+                                        @if(!empty($dosage['meal_time_select'])) — {{ $dosage['meal_time_select'] }} @endif
+                                        @if(!empty($dosage['duration'])) — {{ $dosage['duration'] }} {{ $dosage['duration_unit_check'] ?? '' }} @endif
                                     </div>
-
-                                    <!-- Main Content Area -->
-                                    <div class="flex-1 flex flex-col">
-                                        <!-- Medicine Search -->
-                                        <div class="p-4 border-b">
-                                            <div class="flex items-center justify-between ">
-                                                <h3 class="font-medium text-gray-900">Medicine</h3>
-                                                <div class="text-sm">
-                                                    <span class="text-gray-600">Medicine Missing?</span>
-                                                    <button class="text-blue-600 hover:underline ml-1">Add</button>
-                                                </div>
-                                            </div>
-                                            <div class="relative mb-1 mt-1">
-                                                <input
-                                                        wire:model.live="searchTerm"
-                                                        type="text"
-                                                        placeholder="Type medicine name..."
-                                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                                                @if(!empty($medicineSuggestions))
-                                                    <ul class="absolute left-0 w-full z-50 bg-white border border-gray-200 rounded-md mt-1 max-h-60 overflow-y-auto shadow-md">
-                                                        @foreach($medicineSuggestions as $med)
-                                                            <li wire:click="selectMedicine({{ $med->id }})"
-                                                                class="px-4 py-2 cursor-pointer hover:bg-blue-100">
-                                                                <span class="font-bold text-gray-800">{{ $med['name'] }}  ({{ $med['strength'] }})</span>
-                                                                <i> [{{ $med['generic'] }}]</i>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                @endif
-                                            </div>
-
-
-                                        </div>
-
-                                        <!-- Selected Medicines List -->
-                                        <div class="flex-1 overflow-y-auto p-4">
-
-                                            @foreach($selectedMedicines as $index => $medicine)
-                                                <div class="mb-2 p-2 border border-gray-200 rounded-lg bg-white shadow-sm">
-                                                    <div class="flex items-start justify-between">
-                                                        <div class="flex-1">
-                                                            <!-- Medicine Header -->
-                                                            <div class="grid grid-cols-[95%,5%] gap-1 ">
-                                                                <div class="flex items-center mb-3">
-                                                                    <span class="text-gray-600 mr-2">{{ $loop->iteration }}.</span>
-                                                                    <span class="font-medium">{{ $medicine['medicine']['dosage_id'] }}. {{ $medicine['medicine']['name'] }}</span>
-                                                                    @if($medicine['medicine']['strength'])
-                                                                        <span class="text-gray-600 ml-2">{{ $medicine['medicine']['strength'] }}</span>
-                                                                    @endif
-                                                                    @if($medicine['medicine']['generic'])
-                                                                        <div class="text-gray-600 ml-2">[{{ $medicine['medicine']['generic'] }}]</div>
-                                                                    @endif
-                                                                </div>
-                                                                <div>
-{{--                                                                    <button class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded">--}}
-{{--                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">--}}
-{{--                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>--}}
-{{--                                                                        </svg>--}}
-{{--                                                                    </button>--}}
-                                                                    <button wire:click="remove('{{ $medicine['id'] }}')"
-                                                                            class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded">
-                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Instructions Grid -->
-                                                            <div class="grid grid-cols-[35%,20%,43%] gap-2">
-                                                                <!-- Dosage Checkboxes -->
-                                                                <div >
-                                                                    <div class="flex items-center space-x-2 mb-1">
-                                                                        @foreach(['morning' => 'সকাল', 'noon' => 'দুপুর', 'night' => 'রাত', 'before_sleep' => 'বিকাল'] as $key => $label)
-                                                                            <div class="flex items-center space-x-2">
-                                                                                <input type="checkbox" id="{{ $key }}_{{ $index }}"
-                                                                                       {{ isset($medicine['dosage'][$key]) && $medicine['dosage'][$key] > 0 ? 'checked' : '' }}
-                                                                                       class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                                                                                <label for="{{ $key }}_{{ $index }}" class="text-sm">{{ $label }}</label>
-                                                                            </div>
-                                                                        @endforeach
-                                                                    </div>
-                                                                    <div class="flex items-center space-x-2">
-                                                                        <div class="flex">
-                                                                            @foreach(['morning', 'noon', 'night', 'before_sleep'] as $key)
-                                                                                <input wire:model.live="selectedMedicines.{{ $index }}.dosage.{{ $key }}"
-
-                                                                                       type="text" min="0" max="10"
-                                                                                       class="w-12 px-2 py-1 text-center border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                                                                                              {{ $loop->first ? 'rounded-l-md' : '' }}
-                                                                                              {{ $loop->last ? 'rounded-r-md' : 'border-r-0' }}">
-                                                                            @endforeach
-                                                                        </div>
-
-                                                                        <select class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                                            <option value="" selected>N/A</option>
-                                                                            @foreach(['চামচ', 'ফোঁটা', 'মিলি', 'পাফস', 'ইউনিট'] as $option)
-                                                                                <option value="{{ $option }}">{{ $option }}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                    <div>
-                                                                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add more</button>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <!-- Timing Dropdown -->
-                                                                <div>
-                                                                    <select wire:model.live="selectedMedicines.{{ $index }}.timing"
-                                                                            class="w-full py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                                        @foreach(['খাবারের পরে', 'খাবারের আগে', 'খাবারের সাথে'] as $timing)
-                                                                            <option value="{{ $timing }}">{{ $timing }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <label class="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap mt-1">
-                                                                        <input type="checkbox"
-
-                                                                               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                                                        Custom Instruction
-                                                                    </label>
-                                                                </div>
-
-                                                                <!-- Take For and Duration -->
-                                                                <div class=" p-2 border border-gray-200 ">
-                                                                    <!-- Take For Section -->
-                                                                    <div class="flex items-center justify-between mb-2">
-
-                                                                        <div class="flex items-center gap-2">
-                                                                            <span class="text-sm font-semibold text-gray-700">Take For:</span>
-                                                                            @foreach([1, 5, 7, 14, 30] as $days)
-                                                                                <label for="take_for_{{ $days }}_{{ $index }}" class="flex items-center gap-1 text-xs font-medium text-gray-600">
-                                                                                    <input wire:model.live="selectedMedicines.{{ $index }}.take_for.{{ $days }}"
-                                                                                           wire:change="updateTakeFor({{ $index }}, {{ $days }}, $event.target.checked)"
-                                                                                           type="checkbox"
-                                                                                           id="take_for_{{ $days }}_{{ $index }}"
-                                                                                           class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                                                                    {{ $days }}
-                                                                                </label>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <!-- Duration Section -->
-                                                                    <div class="grid grid-cols-[22%,78%] gap-2 items-center">
-                                                                        <input type="text"
-                                                                               wire:model.live="selectedMedicines.{{ $index }}.duration"
-                                                                               placeholder="Duration"
-                                                                               class="w-full px-2 py-1 text-center border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                                                                        <div class="flex items-center gap-2">
-                                                                            @foreach(['দিন', 'মাস', 'চলবে', 'N/A'] as $type)
-                                                                                <label class="flex items-center gap-1 text-sm text-gray-700">
-                                                                                    <input wire:model.live="selectedMedicines.{{ $index }}.duration_type"
-                                                                                           type="radio"
-                                                                                           value="{{ $type }}"
-                                                                                           class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                                                    {{ $type }}
-                                                                                </label>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="mt-1"  style="display: none">
-                                                                <input type="text" wire:model.live="selectedMedicines.{{ $index }}.custom_instruction"
-                                                                       placeholder="Instruction or custom time"
-                                                                       class="rounded border border-gray-300 px-2 py-1 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                            </div>
-
-
-
-                                                        </div>
-
-
-                                                    </div>
-                                                </div>
-                                            @endforeach
-
-                                            @if(empty($selectedMedicines))
-                                                <div class="text-center py-8 text-gray-500">
-                                                    No medicines added yet. Select from the commonly used drugs or search for a medicine.
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <!-- Modal Footer -->
-                                        <div class="border-t p-4 bg-gray-50">
-                                            <div class="flex justify-end space-x-3">
-                                                <button wire:click="saveMedicine()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                    Save Medicines
-                                                </button>
-                                                <button @click="open = false" class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
+                                @if(!empty($med['custom_time_instruction']))
+                                    <div class="text-xs text-blue-600 italic">{{ $med['custom_time_instruction'] }}</div>
+                                @endif
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div x-data="{ open: @entangle('showEditModal') }">
-                     <div x-show="open"
-                          class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"
-                          x-cloak>
-                         <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6">
-
-                             <!-- Header -->
-                             <div class="flex justify-between items-center border-b pb-3">
-                                 <h3 class="text-lg font-semibold">
-                                     Tab. {{ $prescriptionsMedicine[$currentMedicineIndex]['medicine']['name']??null }}
-                                 </h3>
-                                 <button @click="open = false" class="text-gray-400 hover:text-gray-600">✖</button>
-                             </div>
-
-                             @if($currentMedicineIndex !== null)
-                                 @php
-                                     $medicine = $prescriptionsMedicine[$currentMedicineIndex];
-                                     $dosage = $medicine['dosages'][0] ?? [];
-                                 @endphp
-
-                                 <div class="mt-4" >
-                             <!-- Body -->
-                                     <div class="grid grid-cols-[35%,20%,43%] gap-2">
-                                         <!-- Dosage Checkboxes -->
-                                         <div >
-                                             <div class="flex items-center space-x-2 mb-1">
-                                                 @foreach(['morning' => 'সকাল', 'noon' => 'দুপুর', 'night' => 'রাত', 'before_sleep' => 'বিকাল'] as $key => $label)
-                                                     <div class="flex items-center space-x-2">
-                                                         <input type="checkbox"  wire:model="dosage_{{ $key }}"
-                                                                class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                                                         <label for="{{ $key }}_{{ $index }}" class="text-sm">{{ $label }}</label>
-                                                     </div>
-                                                 @endforeach
-                                             </div>
-                                             <div class="flex items-center space-x-2">
-                                                 <div class="flex">
-                                                     @foreach(['morning', 'noon', 'night', 'before_sleep'] as $key)
-                                                         <input wire:model.live="medicineDosage_{{ $key }}"
-
-                                                                type="text" min="0" max="10"
-                                                                class="w-12 px-2 py-1 text-center border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                                                                                                      {{ $loop->first ? 'rounded-l-md' : '' }}
-                                                                                                      {{ $loop->last ? 'rounded-r-md' : 'border-r-0' }}">
-                                                     @endforeach
-                                                 </div>
-
-                                                 <select class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                     <option value="" selected>N/A</option>
-                                                     @foreach(['চামচ', 'ফোঁটা', 'মিলি', 'পাফস', 'ইউনিট'] as $option)
-                                                         <option value="{{ $option }}">{{ $option }}</option>
-                                                     @endforeach
-                                                 </select>
-                                             </div>
-                                             <div>
-                                                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add more</button>
-                                             </div>
-
-                                         </div>
-
-                                         <!-- Timing Dropdown -->
-                                         <div>
-                                             <select wire:model.live="selectedMedicines.{{ $index }}.timing"
-                                                     class="w-full py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                 @foreach(['খাবারের পরে', 'খাবারের আগে', 'খাবারের সাথে'] as $timing)
-                                                     <option value="{{ $timing }}">{{ $timing }}</option>
-                                                 @endforeach
-                                             </select>
-                                             <label class="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap mt-1">
-                                                 <input type="checkbox"
-
-                                                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                                 Custom Instruction
-                                             </label>
-                                         </div>
-
-                                         <!-- Take For and Duration -->
-                                         <div class=" p-2 border border-gray-200 ">
-                                             <!-- Take For Section -->
-                                             <div class="flex items-center justify-between mb-2">
-
-                                                 <div class="flex items-center gap-2">
-                                                     <span class="text-sm font-semibold text-gray-700">Take For:</span>
-                                                     @foreach([1, 5, 7, 14, 30] as $days)
-                                                         <label for="take_for_{{ $days }}_{{ $index }}" class="flex items-center gap-1 text-xs font-medium text-gray-600">
-                                                             <input wire:model.live="selectedMedicines.{{ $index }}.take_for.{{ $days }}"
-                                                                    wire:change="updateTakeFor({{ $index }}, {{ $days }}, $event.target.checked)"
-                                                                    type="checkbox"
-                                                                    id="take_for_{{ $days }}_{{ $index }}"
-                                                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                                             {{ $days }}
-                                                         </label>
-                                                     @endforeach
-                                                 </div>
-                                             </div>
-
-                                             <!-- Duration Section -->
-                                             <div class="grid grid-cols-[22%,78%] gap-2 items-center">
-                                                 <input type="text"
-                                                        wire:model.live="selectedMedicines.{{ $index }}.duration"
-                                                        placeholder="Duration"
-                                                        class="w-full px-2 py-1 text-center border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                                                 <div class="flex items-center gap-2">
-                                                     @foreach(['দিন', 'মাস', 'চলবে', 'N/A'] as $type)
-                                                         <label class="flex items-center gap-1 text-sm text-gray-700">
-                                                             <input wire:model.live="selectedMedicines.{{ $index }}.duration_type"
-                                                                    type="radio"
-                                                                    value="{{ $type }}"
-                                                                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                             {{ $type }}
-                                                         </label>
-                                                     @endforeach
-                                                 </div>
-                                             </div>
-                                         </div>
-                                     </div>
-                                </div>
-                             @endif
-
-                             <!-- Footer -->
-                             <div class="flex justify-end gap-2 mt-6">
-                                 <button @click="open = false" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Close</button>
-                                 <button wire:click="prescriptionMedicineSave()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                                     {{ isset($editId) ? 'Update' : 'Add' }}
-                                 </button>
-                             </div>
-                         </div>
-                     </div>
-                </div>
-
-
-            <div x-data="{ open: @entangle('showLeftBarModal') }">
-                <div
-                        x-show="open"
-                        class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
-                >
-                    <div class="bg-white rounded-2xl w-full max-w-7xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-
-                        <!-- Header -->
-                        <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
-                            <h2 class="text-xl font-semibold text-gray-800">Patient Complaints</h2>
-                            <button
-                                    @click="open = false"
-                                    class="text-gray-400 hover:text-gray-700 text-2xl leading-none"
-                            >
-                                ✕
+                            <button wire:click="removeSavedMedicine({{ $med['id'] }})"
+                                    class="text-red-400 hover:text-red-600 no-print">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
                             </button>
                         </div>
+                    </li>
+                @empty
+                    <li class="text-gray-400 text-sm text-center py-4">No medicines added yet.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
 
-                        <!-- Body -->
-                        <div class="flex flex-1 overflow-hidden">
+    {{-- ════════════════════════════════════════════════════════════════════════
+         MODAL 1: Leftbar Section (Complaints, Examination, etc.)
+         ════════════════════════════════════════════════════════════════════════ --}}
+    @if($showLeftbarModal)
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden flex flex-col max-h-[90vh]">
 
-                            <div class="flex-1 flex flex-col">
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-5 py-3 border-b bg-gray-50">
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        @php
+                            $sectionLabels = [
+                                'complaints'=>'Chief Complaints','onExamination'=>'On Examination',
+                                'pastHistory'=>'Past History','drugHistory'=>'Drug History',
+                                'investigation'=>'Investigations','diagnosis'=>'Diagnosis',
+                                'treatmentPlan'=>'Treatment Plan','operationNote'=>'Operation Notes',
+                                'advice'=>'Advice','nextPlan'=>'Next Plan','hospitalizations'=>'Hospitalizations',
+                            ];
+                        @endphp
+                        {{ $sectionLabels[$modalSection] ?? $modalSection }}
+                    </h3>
+                    <button wire:click="$set('showLeftbarModal', false)" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+                </div>
 
-                                <!-- Search -->
-                                <div class="px-6 py-4 border-b bg-white">
-                                    <input
-                                            wire:model.live="searchLefbarTerm"
-                                            type="text"
-                                            placeholder="Search..."
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
+                <div class="flex-1 overflow-y-auto p-5 space-y-4">
+
+                    {{-- Search + presets --}}
+                    <div>
+                        <input wire:model.live="itemSearch" type="text" placeholder="Search..."
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2">
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($sectionPresets as $preset)
+                                <button wire:click="addPresetItem('{{ addslashes($preset) }}')"
+                                        class="px-2 py-1 text-xs bg-gray-100 hover:bg-blue-100 border rounded-lg">
+                                    {{ $preset }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Add form --}}
+                    <div class="flex gap-2 items-end">
+                        <div class="flex-1">
+                            <label class="text-xs text-gray-500 mb-0.5 block">Item</label>
+                            <input wire:model="newItemLabel" type="text" placeholder="e.g. Fever"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-xs text-gray-500 mb-0.5 block">Note (optional)</label>
+                            <input wire:model="newItemNote" type="text" placeholder="e.g. since 3 days"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        </div>
+                        <button wire:click="addLeftbarItem()"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 whitespace-nowrap">
+                            + Add
+                        </button>
+                    </div>
+
+                    {{-- Current items --}}
+                    @if(count($this->{$modalSection}))
+                        <div class="border rounded-lg divide-y">
+                            @foreach($this->{$modalSection} as $i => $item)
+                                <div class="flex items-center justify-between px-3 py-2">
+                                    <span class="text-sm">
+                                        <strong>{{ $item['label'] }}</strong>
+                                        @if(!empty($item['note'])) — <span class="text-gray-500">{{ $item['note'] }}</span> @endif
+                                    </span>
+                                    <button wire:click="removeLeftbarItem('{{ $modalSection }}', {{ $i }})"
+                                            class="text-red-400 hover:text-red-600 text-sm">✕</button>
                                 </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-400 text-sm text-center py-2">No items added yet.</p>
+                    @endif
+                </div>
 
-                                <!-- Quick Complaint Buttons -->
-                                <div class="px-6 py-4 bg-white border-b overflow-y-auto max-h-48 rounded-lg">
-                                    <div class="flex flex-wrap gap-2">
+                <div class="border-t px-5 py-3 bg-gray-50 flex justify-end">
+                    <button wire:click="$set('showLeftbarModal', false)"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 
-                                        <button
-                                                class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')"
-                                                data-id="111"
-                                        >Headache</button>
+    {{-- ════════════════════════════════════════════════════════════════════════
+         MODAL 2: Add Medicine
+         ════════════════════════════════════════════════════════════════════════ --}}
+    <div x-data="{ open: @entangle('showModal') }">
+        <div x-show="open" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl">
 
-                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="58"
-                                        >Fever</button>
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-5 py-3 border-b">
+                    <h2 class="text-lg font-semibold">Add Medicine</h2>
+                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 text-2xl">✕</button>
+                </div>
 
-                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="116"
-                                        >Cough</button>
+                <div class="flex flex-1 overflow-hidden">
 
-                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="152"
-                                        >Swelling of joints</button>
+                    {{-- Sidebar: common drugs --}}
+                    <div class="w-56 bg-gray-50 border-r flex flex-col">
+                        <div class="p-3 border-b text-sm font-semibold text-gray-700">Commonly Used</div>
+                        <div class="flex-1 overflow-y-auto p-3 space-y-1">
+                            @foreach($commonDrugs as $drug)
+                                <button wire:click="addMedicine({{ json_encode($drug) }})"
+                                        class="text-blue-600 hover:text-blue-800 hover:underline text-left text-sm block w-full">
+                                    {{ $drug['name'] }} ({{ $drug['strength'] }})
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
 
-                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="1703"
-                                        >Worst Headache</button>
+                    {{-- Main area --}}
+                    <div class="flex-1 flex flex-col overflow-hidden">
 
-                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="166"
-                                        >Ear pain</button>
-
-                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="150"
-                                        >Back pain</button>
-
-                                        <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-blue-100 border rounded-lg"
-                                                onclick="generateSidebarModalInputs(this, 'complaints')" data-id="112"
-                                        >Fatigue</button>
-
-                                    </div>
-                                </div>
-
-                                <!-- Selected Complaint Details -->
-                                <div class="px-6 py-4 bg-white overflow-y-auto">
-                                    <div class="grid grid-cols-[24%,1fr] items-center gap-3 p-4 border rounded-lg shadow-sm bg-gray-50">
-                                        <div class="font-medium text-gray-700">Headache</div>
-                                        <input
-                                                type="text"
-                                                wire:model.live="selectedMedicines.{{ $index }}.duration"
-                                                placeholder="Duration"
-                                                class="w-full px-3 py-2 border text-center border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                        >
-                                    </div>
-                                </div>
-
+                        {{-- Search --}}
+                        <div class="p-4 border-b">
+                            <div class="relative">
+                                <input wire:model.live="searchTerm" type="text"
+                                       placeholder="Type medicine name to search..."
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                @if(!empty($medicineSuggestions))
+                                    <ul class="absolute left-0 w-full z-50 bg-white border border-gray-200 rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg">
+                                        @foreach($medicineSuggestions as $med)
+                                            <li wire:click="selectMedicine({{ $med->id }})"
+                                                class="px-4 py-2 cursor-pointer hover:bg-blue-50 text-sm">
+                                                <span class="font-semibold">{{ $med->name }}</span>
+                                                <span class="text-gray-500"> {{ $med->strength }}</span>
+                                                <i class="text-gray-400"> [{{ $med->generic }}]</i>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
                             </div>
                         </div>
 
+                        {{-- Selected medicines --}}
+                        <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                            @forelse($selectedMedicines as $index => $medicine)
+                                @php
+                                    $initDosages  = $medicine['dosages'] ?? [['dosage_morning'=>0,'dosage_noon'=>0,'dosage_afternoon'=>0,'dosage_night'=>0]];
+                                    $initDuration = $medicine['duration'] ?? '';
+                                    $initCustom   = !empty($medicine['custom_instruction']);
+                                @endphp
+                                <div class="p-3 border border-gray-200 rounded-lg bg-white shadow-sm"
+                                     x-data="{
+                                         showCustom: {{ $initCustom ? 'true' : 'false' }},
+                                         dosages: @js($initDosages),
+                                         duration: '{{ $initDuration }}',
+                                         syncDosages() { $wire.set('selectedMedicines.{{ $index }}.dosages', this.dosages); },
+                                         toggleTime(dIdx, key, checked) {
+                                             let cur = Number(this.dosages[dIdx][key]) || 0;
+                                             this.dosages[dIdx][key] = checked ? (cur > 0 ? cur : 1) : 0;
+                                             this.syncDosages();
+                                         },
+                                         setVal(dIdx, key, val) { this.dosages[dIdx][key] = val; this.syncDosages(); },
+                                         addDosage() {
+                                             this.dosages.push({dosage_morning:0,dosage_noon:0,dosage_afternoon:0,dosage_night:0});
+                                             this.syncDosages();
+                                         },
+                                         setTakeFor(days, checked) {
+                                             if (checked) { this.duration = days; $wire.set('selectedMedicines.{{ $index }}.duration', days); }
+                                             else if (this.duration == days) { this.duration = ''; $wire.set('selectedMedicines.{{ $index }}.duration', ''); }
+                                         }
+                                     }">
+
+                                    {{-- Medicine name row --}}
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-gray-500 text-sm">{{ $loop->iteration }}.</span>
+                                            <span class="font-semibold">{{ $medicine['medicine']['name'] }}</span>
+                                            @if(!empty($medicine['medicine']['strength']))
+                                                <span class="text-gray-500 text-sm">{{ $medicine['medicine']['strength'] }}</span>
+                                            @endif
+                                            @if(!empty($medicine['medicine']['generic']))
+                                                <span class="text-gray-400 text-xs italic">[{{ $medicine['medicine']['generic'] }}]</span>
+                                            @endif
+                                        </div>
+                                        <button wire:click="removeMedicine({{ $index }})" class="text-red-400 hover:text-red-600">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    {{-- Dosage grid --}}
+                                    <div class="grid grid-cols-[40%,20%,38%] gap-2">
+
+                                        {{-- Dosage rows --}}
+                                        <div>
+                                            <template x-for="(dosage, dIdx) in dosages" :key="dIdx">
+                                                <div class="mb-2">
+                                                    {{-- Time checkboxes --}}
+                                                    <div class="flex gap-3 mb-1">
+                                                        @foreach(['dosage_morning'=>'সকাল','dosage_noon'=>'দুপুর','dosage_afternoon'=>'বিকাল','dosage_night'=>'রাত'] as $dkey => $dlabel)
+                                                            <label class="flex items-center gap-1 text-xs cursor-pointer">
+                                                                <input type="checkbox"
+                                                                       :checked="Number(dosage.{{ $dkey }}) > 0"
+                                                                       @change="toggleTime(dIdx, '{{ $dkey }}', $event.target.checked)"
+                                                                       class="w-3.5 h-3.5 text-blue-600 rounded border-gray-300">
+                                                                {{ $dlabel }}
+                                                            </label>
+                                                        @endforeach
+                                                    </div>
+                                                    {{-- Quantity inputs --}}
+                                                    <div class="flex gap-1 items-center">
+                                                        <input type="text" :value="dosage.dosage_morning"   @input="setVal(dIdx,'dosage_morning',$event.target.value)"   class="w-10 px-1 py-1 text-center border border-gray-300 rounded-l text-sm">
+                                                        <input type="text" :value="dosage.dosage_noon"      @input="setVal(dIdx,'dosage_noon',$event.target.value)"      class="w-10 px-1 py-1 text-center border-t border-b border-gray-300 text-sm">
+                                                        <input type="text" :value="dosage.dosage_afternoon" @input="setVal(dIdx,'dosage_afternoon',$event.target.value)" class="w-10 px-1 py-1 text-center border-t border-b border-gray-300 text-sm">
+                                                        <input type="text" :value="dosage.dosage_night"     @input="setVal(dIdx,'dosage_night',$event.target.value)"     class="w-10 px-1 py-1 text-center border border-gray-300 rounded-r text-sm">
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <button type="button" @click="addDosage()" class="text-blue-500 hover:text-blue-700 text-xs mt-1">+ Add more</button>
+                                        </div>
+
+                                        {{-- Timing + custom --}}
+                                        <div>
+                                            <select wire:model.live="selectedMedicines.{{ $index }}.timing"
+                                                    class="w-full py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                                                @foreach(['খাবারের পরে','খাবারের আগে','খাবারের সাথে'] as $t)
+                                                    <option value="{{ $t }}">{{ $t }}</option>
+                                                @endforeach
+                                            </select>
+                                            <label class="flex items-center gap-1 text-xs text-gray-600 mt-1.5 cursor-pointer">
+                                                <input type="checkbox" :checked="showCustom"
+                                                       @change="showCustom = $event.target.checked"
+                                                       class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded">
+                                                Custom
+                                            </label>
+                                        </div>
+
+                                        {{-- Take for + duration --}}
+                                        <div class="p-2 border border-gray-200 rounded">
+                                            <div class="flex flex-wrap gap-2 mb-1.5">
+                                                <span class="text-xs font-semibold text-gray-600">Take For:</span>
+                                                @foreach([1,5,7,14,30] as $days)
+                                                    <label class="flex items-center gap-1 text-xs cursor-pointer">
+                                                        <input type="checkbox"
+                                                               :checked="Number(duration) === {{ $days }}"
+                                                               @change="setTakeFor({{ $days }}, $event.target.checked)"
+                                                               class="w-3 h-3 text-blue-600 border-gray-300 rounded">
+                                                        {{ $days }}
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                            <div class="grid grid-cols-[30%,70%] gap-1 items-center">
+                                                <input type="text" x-model="duration"
+                                                       @input="$wire.set('selectedMedicines.{{ $index }}.duration', $event.target.value)"
+                                                       placeholder="Days"
+                                                       class="w-full px-2 py-1 text-center border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                                                <div class="flex gap-1 flex-wrap">
+                                                    @foreach(['দিন','মাস','চলবে','N/A'] as $type)
+                                                        <label class="flex items-center gap-1 text-xs">
+                                                            <input wire:model.live="selectedMedicines.{{ $index }}.duration_type"
+                                                                   type="radio" value="{{ $type }}"
+                                                                   class="w-3 h-3 text-blue-600 border-gray-300">
+                                                            {{ $type }}
+                                                        </label>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Custom instruction --}}
+                                    <div x-show="showCustom" x-cloak class="mt-2">
+                                        <textarea wire:model.live="selectedMedicines.{{ $index }}.custom_instruction"
+                                                  rows="2" placeholder="Custom instruction..."
+                                                  class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-8 text-gray-400 text-sm">
+                                    Search or select a medicine from the left panel.
+                                </div>
+                            @endforelse
+                        </div>
+
+                        {{-- Footer --}}
+                        <div class="border-t p-4 bg-gray-50 flex justify-end gap-3">
+                            <button wire:click="saveMedicine()"
+                                    class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                                Save Prescription
+                            </button>
+                            <button @click="open = false"
+                                    class="px-5 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-
-
-            </div>
-
-
-{{--            <div class="bg-green-100 p-2 rounded">--}}
-{{--                <label class="block">Other</label>--}}
-{{--            </div>--}}
         </div>
+    </div>
+
+
+    {{-- ── SweetAlert ──────────────────────────────────────────────────────────── --}}
+    <script>
+        window.addEventListener('swal:success', e => {
+            Swal.fire({ icon: 'success', title: e.detail[0]?.title ?? e.detail.title, text: e.detail[0]?.text ?? e.detail.text })
+                .then(() => location.reload());
+        });
+        window.addEventListener('swal:error', e => {
+            Swal.fire({ icon: 'error', title: e.detail[0]?.title ?? e.detail.title, text: e.detail[0]?.text ?? e.detail.text });
+        });
+    </script>
+
+    {{-- ── Print styles ────────────────────────────────────────────────────────── --}}
+    <style>
+    @media print {
+        body * { visibility: hidden; }
+        #prescription-page, #prescription-page * { visibility: visible; }
+        #prescription-page { position: fixed; top: 0; left: 0; width: 100%; }
+        .no-print { display: none !important; }
+        .print-only { display: inline !important; }
+        input[type="date"] { display: none !important; }
+    }
+    @media screen {
+        .print-only { display: none; }
+    }
+    </style>
 </div>
-<script>
-    window.addEventListener('swal:success', event => {
-        Swal.fire({
-            icon: 'success',
-            title: event.detail[0].title,
-            text: event.detail[0].text,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            console.log(result);
-            if (result.isConfirmed) {
-                // Close modal (assuming Bootstrap 5 modal)
-                const modalEl = document.getElementById('prescriptionModal');
-                if (modalEl) {
-                    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                    modal.hide();
-                }
-
-                // Option 1: Reload page
-                location.reload();
-
-                // Option 2: Refresh Livewire component dynamically
-                // Livewire.emit('refreshPrescriptions');
-            }
-        });
-    });
-
-    window.addEventListener('swal:error', event => {
-        Swal.fire({
-            icon: 'error',
-            title: event.detail[0].title,
-            text: event.detail[0].text,
-            confirmButtonColor: '#d33',
-            confirmButtonText: 'OK'
-        });
-    });
-</script>

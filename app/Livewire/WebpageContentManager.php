@@ -245,16 +245,21 @@ class WebpageContentManager extends Component
         $this->content_id = null;
     }
 
-    public function helloChange(){
-        if($this->storage_type==1){
-            $this->storage_type == 2 ; // Clear remote path if local file is uploaded
-        }
+    public function updatedStorageType()
+    {
+        $this->file_path_local = null;
+        $this->file_path = '';
     }
+
     public function changeContentType(){
-        if($this->type==7 || $this->type==8 ){
-            $this->showImageVideItem = 2 ; // Clear remote path if local file is uploaded
-        }else {
-            $this->showImageVideItem = 1; // Clear remote path if local file is uploaded
+        $this->file_path_local = null;
+        $this->file_path = '';
+        $this->storage_type = 1;
+
+        if($this->type == 7 || $this->type == 8){
+            $this->showImageVideItem = 2;
+        } else {
+            $this->showImageVideItem = 1;
         }
     }
 
