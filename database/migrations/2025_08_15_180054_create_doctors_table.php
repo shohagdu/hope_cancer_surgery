@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('youtube')->nullable();
             $table->integer('display_position')->nullable()->default(0); // For sorting display order
 
-            $table->json('print_settings')->nullable()->after('youtube');
+            $table->json('print_settings')->nullable();
             $table->json('sidebar_titles')->nullable(); //{[“PatientComplaints”:”Patient Complaints”,”is_active”:”YES”],[“OnExamination”:”On Examination”,”is_active”:”YES”]}
 
             $table->json('prescription_header_options')->nullable(); // {‘text’:’Yes’,’image’:’No’,’empty’:’No’}
