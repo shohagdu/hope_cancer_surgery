@@ -18,6 +18,7 @@ use App\Livewire\DoctorProfile;
 use App\Livewire\PrescriptionSettings;
 use App\Livewire\WhyChooseUs;
 use App\Livewire\ServiceDetails;
+use App\Livewire\MedicineRecord;
 
 
 Route::get('/', Homepage::class)->name('home');
@@ -43,6 +44,7 @@ Route::get('posts', Posts::class)->middleware('auth');
 Route::get('/contents', WebpageContentManager::class)->name('contents.index');
 Route::get('/doctors', DoctorInformation::class)->name('doctors.index');
 Route::get('/organization', OrganizationSetup::class)->name('organization.index');
+Route::get('/medicine-records', MedicineRecord::class)->name('medicine.records');
 Route::get('/onlineAppointment', OnlineAppointmentManager::class)->name('onlineAppointment.index');
 Route::get('/doctor/{id}/{slug}', DoctorDetails::class)->name('doctor.details');
 

@@ -58,6 +58,9 @@
                                 <x-dropdown-link href="{{ route('organization.index') }}">
                                     {{ __('Organization Setup') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link href="{{ route('medicine.records') }}">
+                                    {{ __('Medicine Record') }}
+                                </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     @endif
@@ -165,6 +168,9 @@
                     <div class="block px-4 py-1 text-xs text-gray-400 uppercase tracking-wider">Settings</div>
                     <x-responsive-nav-link href="{{ route('organization.index') }}" :active="request()->routeIs('organization.*')">
                         {{ __('Organization Setup') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link href="{{ route('medicine.records') }}" :active="request()->routeIs('medicine.*')">
+                        {{ __('Medicine Record') }}
                     </x-responsive-nav-link>
                 </div>
             @endif

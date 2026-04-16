@@ -300,15 +300,54 @@ class PrescriptionList extends Component
         $this->medicineSuggestions = [];
     }
 
+    /**
+     * Create a new medicine entry in prescription_medicine_record on-the-fly
+     * using the current searchTerm, then immediately add it to the prescription.
+     */
+    public function addNewMedicineAndSelect(): void
+    {
+        $name = trim($this->searchTerm);
+        if (empty($name)) return;
+
+        // Create or retrieve (handles double-click / race)
+        $medicine = PrescriptionMedicineRecord::firstOrCreate(
+            ['name' => $name],
+            ['strength' => '', 'generic' => '', 'is_active' => 1]
+        );
+
+        $this->addMedicine([
+            'id'       => $medicine->id,
+            'name'     => $medicine->name,
+            'strength' => $medicine->strength ?? '',
+            'generic'  => $medicine->generic  ?? '',
+            'dosage_id'=> $medicine->dosage_id ?? null,
+        ]);
+
+        $this->searchTerm = '';
+        $this->medicineSuggestions = [];
+    }
+
     public function addMedicine(array $drug): void
     {
         // Resolve DB id if commonDrug without id
         if (empty($drug['id'])) {
             $found = PrescriptionMedicineRecord::where('name', $drug['name'])->first();
-            if (!$found) return;
-            $drug['id']      = $found->id;
-            $drug['generic'] = $found->generic;
-            $drug['strength']= $found->strength;
+            if ($found) {
+                $drug['id']      = $found->id;
+                $drug['generic'] = $found->generic;
+                $drug['strength']= $found->strength;
+            } else {
+                // Auto-create if still not found (fallback)
+                $found = PrescriptionMedicineRecord::create([
+                    'name'      => $drug['name'],
+                    'strength'  => $drug['strength'] ?? '',
+                    'generic'   => $drug['generic']  ?? '',
+                    'is_active' => 1,
+                ]);
+                $drug['id']      = $found->id;
+                $drug['generic'] = $found->generic;
+                $drug['strength']= $found->strength;
+            }
         }
 
         // Prevent duplicates

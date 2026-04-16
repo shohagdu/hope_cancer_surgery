@@ -332,16 +332,25 @@
                                 <input wire:model.live="searchTerm" type="text"
                                        placeholder="Type medicine name to search..."
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                @if(!empty($medicineSuggestions))
-                                    <ul class="absolute left-0 w-full z-50 bg-white border border-gray-200 rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg">
-                                        @foreach($medicineSuggestions as $med)
+                                @if(strlen(trim($searchTerm)) >= 1)
+                                    <ul class="absolute left-0 w-full z-50 bg-white border border-gray-200 rounded-lg mt-1 max-h-56 overflow-y-auto shadow-lg">
+                                        @forelse($medicineSuggestions as $med)
                                             <li wire:click="selectMedicine({{ $med->id }})"
                                                 class="px-4 py-2 cursor-pointer hover:bg-blue-50 text-sm">
                                                 <span class="font-semibold">{{ $med->name }}</span>
                                                 <span class="text-gray-500"> {{ $med->strength }}</span>
-                                                <i class="text-gray-400"> [{{ $med->generic }}]</i>
+                                                @if($med->generic)<i class="text-gray-400"> [{{ $med->generic }}]</i>@endif
                                             </li>
-                                        @endforeach
+                                        @empty
+                                        @endforelse
+                                        {{-- Always show "Add new" when typed name not found exactly --}}
+                                        @if(!$medicineSuggestions->contains('name', trim($searchTerm)))
+                                            <li wire:click="addNewMedicineAndSelect()"
+                                                class="px-4 py-2 cursor-pointer hover:bg-green-50 text-sm flex items-center gap-2 border-t border-gray-100">
+                                                <span class="text-green-600 font-bold text-base leading-none">+</span>
+                                                <span>Add <strong>"{{ trim($searchTerm) }}"</strong> as new medicine</span>
+                                            </li>
+                                        @endif
                                     </ul>
                                 @endif
                             </div>

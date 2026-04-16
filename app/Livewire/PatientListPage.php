@@ -74,7 +74,7 @@ class PatientListPage extends Component
             $doctorId = $doctor?->id;
         }
 
-        OnlineAppointment::create([
+        $patient = OnlineAppointment::create([
             'date_time'      => now(),
             'doctor_id'      => $doctorId ?? 0,
             'patient_name'   => $this->newPatient['patient_name'],
@@ -87,6 +87,12 @@ class PatientListPage extends Component
             'patient_type'   => 1,
             'created_by'     => auth()->id(),
         ]);
+
+        // Redirect to prescription page for the new patient (doctor role)
+        if (auth()->user()->isDoctor()) {
+            $this->redirectRoute('prescription.new_patient', ['id' => $patient->id]);
+            return;
+        }
 
         $this->showCreateModal = false;
         $this->reset('newPatient');
