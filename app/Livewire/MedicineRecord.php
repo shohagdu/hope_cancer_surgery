@@ -5,6 +5,8 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\PrescriptionMedicineRecord;
+use App\Models\PrescripDrugManufacturer;
+use App\Models\PrescripDrugType;
 
 class MedicineRecord extends Component
 {
@@ -14,29 +16,33 @@ class MedicineRecord extends Component
 
     // Filters
     public string $search       = '';
-    public string $filterStatus = ''; // '' = all, '1' = active, '0' = inactive
+    public string $filterStatus = '';
 
     // Modal state
-    public bool  $isShowModal = false;
-    public ?int  $editId      = null;
+    public bool $isShowModal = false;
+    public ?int $editId      = null;
 
     // Form fields
-    public string $name      = '';
-    public string $generic   = '';
-    public string $strength  = '';
-    public string $use_for   = '';
-    public string $DAR       = '';
-    public int    $is_active = 1;
+    public string  $name            = '';
+    public string  $generic         = '';
+    public string  $strength        = '';
+    public string  $use_for         = '';
+    public string  $DAR             = '';
+    public int     $is_active       = 1;
+    public ?int    $manufacturer_id = null;
+    public ?int    $dosage_id       = null;
 
     protected function rules(): array
     {
         return [
-            'name'      => 'required|string|max:255|unique:prescription_medicine_record,name' . ($this->editId ? ",{$this->editId}" : ''),
-            'generic'   => 'nullable|string|max:800',
-            'strength'  => 'nullable|string|max:800',
-            'use_for'   => 'nullable|string|max:100',
-            'DAR'       => 'nullable|string|max:100',
-            'is_active' => 'required|in:0,1',
+            'name'            => 'required|string|max:255|unique:prescription_medicine_record,name' . ($this->editId ? ",{$this->editId}" : ''),
+            'generic'         => 'nullable|string|max:800',
+            'strength'        => 'nullable|string|max:800',
+            'use_for'         => 'nullable|string|max:100',
+            'DAR'             => 'nullable|string|max:100',
+            'is_active'       => 'required|in:0,1',
+            'manufacturer_id' => 'nullable|exists:prescrip_drug_manufacturers,id',
+            'dosage_id'       => 'nullable|exists:prescrip_drug_type,id',
         ];
     }
 
@@ -45,15 +51,8 @@ class MedicineRecord extends Component
         $this->isShowModal = false;
     }
 
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterStatus(): void
-    {
-        $this->resetPage();
-    }
+    public function updatingSearch(): void       { $this->resetPage(); }
+    public function updatingFilterStatus(): void { $this->resetPage(); }
 
     public function openCreate(): void
     {
@@ -66,14 +65,16 @@ class MedicineRecord extends Component
     {
         $this->resetValidation();
         $med = PrescriptionMedicineRecord::findOrFail($id);
-        $this->editId    = $med->id;
-        $this->name      = $med->name;
-        $this->generic   = $med->generic  ?? '';
-        $this->strength  = $med->strength ?? '';
-        $this->use_for   = $med->use_for  ?? '';
-        $this->DAR       = $med->DAR      ?? '';
-        $this->is_active = (int) $med->is_active;
-        $this->isShowModal = true;
+        $this->editId          = $med->id;
+        $this->name            = $med->name;
+        $this->generic         = $med->generic        ?? '';
+        $this->strength        = $med->strength       ?? '';
+        $this->use_for         = $med->use_for        ?? '';
+        $this->DAR             = $med->DAR            ?? '';
+        $this->is_active       = (int) $med->is_active;
+        $this->manufacturer_id = $med->manufacturer_id ? (int) $med->manufacturer_id : null;
+        $this->dosage_id       = $med->dosage_id      ? (int) $med->dosage_id       : null;
+        $this->isShowModal     = true;
     }
 
     public function save(): void
@@ -81,12 +82,14 @@ class MedicineRecord extends Component
         $this->validate();
 
         $data = [
-            'name'      => $this->name,
-            'generic'   => $this->generic  ?: null,
-            'strength'  => $this->strength ?: null,
-            'use_for'   => $this->use_for  ?: null,
-            'DAR'       => $this->DAR      ?: null,
-            'is_active' => $this->is_active,
+            'name'            => $this->name,
+            'generic'         => $this->generic        ?: null,
+            'strength'        => $this->strength       ?: null,
+            'use_for'         => $this->use_for        ?: null,
+            'DAR'             => $this->DAR            ?: null,
+            'is_active'       => $this->is_active,
+            'manufacturer_id' => $this->manufacturer_id ?: null,
+            'dosage_id'       => $this->dosage_id       ?: null,
         ];
 
         if ($this->editId) {
@@ -116,18 +119,20 @@ class MedicineRecord extends Component
 
     private function resetForm(): void
     {
-        $this->editId    = null;
-        $this->name      = '';
-        $this->generic   = '';
-        $this->strength  = '';
-        $this->use_for   = '';
-        $this->DAR       = '';
-        $this->is_active = 1;
+        $this->editId          = null;
+        $this->name            = '';
+        $this->generic         = '';
+        $this->strength        = '';
+        $this->use_for         = '';
+        $this->DAR             = '';
+        $this->is_active       = 1;
+        $this->manufacturer_id = null;
+        $this->dosage_id       = null;
     }
 
     public function render()
     {
-        $records = PrescriptionMedicineRecord::query()
+        $records = PrescriptionMedicineRecord::with(['manufacturer', 'drugType'])
             ->when($this->search, fn($q) =>
                 $q->where('name', 'like', "%{$this->search}%")
                   ->orWhere('generic', 'like', "%{$this->search}%")
@@ -139,6 +144,9 @@ class MedicineRecord extends Component
             ->orderBy('name')
             ->paginate(20);
 
-        return view('livewire.medicine-record', ['records' => $records]);
+        $manufacturers = PrescripDrugManufacturer::where('is_active', 1)->orderBy('name')->get();
+        $drugTypes     = PrescripDrugType::where('is_active', 1)->orderBy('name')->get();
+
+        return view('livewire.medicine-record', compact('records', 'manufacturers', 'drugTypes'));
     }
 }

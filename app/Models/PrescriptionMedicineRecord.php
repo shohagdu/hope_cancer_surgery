@@ -22,4 +22,14 @@ class PrescriptionMedicineRecord extends Model
         'DAR',
         'is_active',
     ];
+
+    public function manufacturer()
+    {
+        return $this->belongsTo(PrescripDrugManufacturer::class, 'manufacturer_id');
+    }
+
+    public function drugType()
+    {
+        return $this->belongsTo(PrescripDrugType::class, 'dosage_id');
+    }
 }

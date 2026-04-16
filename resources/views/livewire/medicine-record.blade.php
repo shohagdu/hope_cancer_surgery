@@ -28,26 +28,28 @@
         <table class="min-w-full bg-white border rounded text-sm">
             <thead>
                 <tr class="bg-gray-100 text-gray-700">
-                    <th class="px-4 py-2 border text-left">#</th>
-                    <th class="px-4 py-2 border text-left">Name</th>
-                    <th class="px-4 py-2 border text-left">Generic</th>
-                    <th class="px-4 py-2 border text-left">Strength</th>
-                    <th class="px-4 py-2 border text-left">Use For</th>
-                    <th class="px-4 py-2 border text-left">DAR</th>
-                    <th class="px-4 py-2 border text-center">Status</th>
-                    <th class="px-4 py-2 border text-center">Actions</th>
+                    <th class="px-3 py-2 border text-left">#</th>
+                    <th class="px-3 py-2 border text-left">Name</th>
+                    <th class="px-3 py-2 border text-left">Generic</th>
+                    <th class="px-3 py-2 border text-left">Strength</th>
+                    <th class="px-3 py-2 border text-left">Manufacturer</th>
+                    <th class="px-3 py-2 border text-left">Drug Type</th>
+                    <th class="px-3 py-2 border text-left">Use For</th>
+                    <th class="px-3 py-2 border text-center">Status</th>
+                    <th class="px-3 py-2 border text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($records as $i => $med)
                     <tr class="hover:bg-gray-50 {{ $med->is_active ? '' : 'opacity-60' }}">
-                        <td class="px-4 py-2 border text-gray-500">{{ $records->firstItem() + $i }}</td>
-                        <td class="px-4 py-2 border font-medium">{{ $med->name }}</td>
-                        <td class="px-4 py-2 border text-gray-600">{{ $med->generic ?? '—' }}</td>
-                        <td class="px-4 py-2 border text-gray-600">{{ $med->strength ?? '—' }}</td>
-                        <td class="px-4 py-2 border text-gray-600">{{ $med->use_for ?? '—' }}</td>
-                        <td class="px-4 py-2 border text-gray-600">{{ $med->DAR ?? '—' }}</td>
-                        <td class="px-4 py-2 border text-center">
+                        <td class="px-3 py-2 border text-gray-500">{{ $records->firstItem() + $i }}</td>
+                        <td class="px-3 py-2 border font-medium">{{ $med->name }}</td>
+                        <td class="px-3 py-2 border text-gray-600">{{ $med->generic ?? '—' }}</td>
+                        <td class="px-3 py-2 border text-gray-600">{{ $med->strength ?? '—' }}</td>
+                        <td class="px-3 py-2 border text-gray-600">{{ $med->manufacturer?->name ?? '—' }}</td>
+                        <td class="px-3 py-2 border text-gray-600">{{ $med->drugType?->name ?? '—' }}</td>
+                        <td class="px-3 py-2 border text-gray-600">{{ $med->use_for ?? '—' }}</td>
+                        <td class="px-3 py-2 border text-center">
                             <button wire:click="toggleStatus({{ $med->id }})"
                                     class="px-2 py-0.5 rounded-full text-xs font-semibold
                                            {{ $med->is_active
@@ -56,7 +58,7 @@
                                 {{ $med->is_active ? 'Active' : 'Inactive' }}
                             </button>
                         </td>
-                        <td class="px-4 py-2 border text-center space-x-1">
+                        <td class="px-3 py-2 border text-center space-x-1 whitespace-nowrap">
                             <button wire:click="openEdit({{ $med->id }})"
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-xs">
                                 Edit
@@ -70,7 +72,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-4 py-6 text-center text-gray-400">No medicines found.</td>
+                        <td colspan="9" class="px-4 py-6 text-center text-gray-400">No medicines found.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -78,13 +80,11 @@
     </div>
 
     {{-- Pagination --}}
-    <div class="mt-3">
-        {{ $records->links() }}
-    </div>
+    <div class="mt-3">{{ $records->links() }}</div>
 
     {{-- Modal --}}
     @if($isShowModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 overflow-y-auto py-8">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
                 <h3 class="text-lg font-bold mb-4 text-gray-800">
                     {{ $editId ? 'Edit Medicine' : 'Add New Medicine' }}
@@ -92,6 +92,7 @@
 
                 <form wire:submit.prevent="save" class="space-y-3">
 
+                    {{-- Name --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Medicine Name <span class="text-red-500">*</span>
@@ -101,6 +102,7 @@
                         @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
+                    {{-- Generic + Strength --}}
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Generic Name</label>
@@ -116,6 +118,33 @@
                         </div>
                     </div>
 
+                    {{-- Manufacturer + Drug Type --}}
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Manufacturer</label>
+                            <select wire:model="manufacturer_id"
+                                    class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-300 focus:outline-none">
+                                <option value="">— Select Manufacturer —</option>
+                                @foreach($manufacturers as $mfr)
+                                    <option value="{{ $mfr->id }}">{{ $mfr->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('manufacturer_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Drug Type</label>
+                            <select wire:model="dosage_id"
+                                    class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-300 focus:outline-none">
+                                <option value="">— Select Drug Type —</option>
+                                @foreach($drugTypes as $dt)
+                                    <option value="{{ $dt->id }}">{{ $dt->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('dosage_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    {{-- Use For + DAR --}}
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Use For</label>
@@ -131,6 +160,7 @@
                         </div>
                     </div>
 
+                    {{-- Status --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                         <select wire:model="is_active"
@@ -140,6 +170,7 @@
                         </select>
                     </div>
 
+                    {{-- Buttons --}}
                     <div class="flex gap-2 pt-2">
                         <button type="submit"
                                 class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded text-sm font-medium">
