@@ -8,12 +8,14 @@ use App\Models\OnlineAppointment;
 use App\Models\Patient_medicine;
 use App\Models\PatientPrescriptionRecord;
 use App\Models\PatientMedicineDosage;
+use App\Models\Doctors;
 
 class PrescriptionList extends Component
 {
     // Patient & prescription IDs
     public $id, $prescription_id;
     public $patient = null;
+    public $doctor  = null;
 
     // Prescription header
     public $visit_date;
@@ -42,6 +44,30 @@ class PrescriptionList extends Component
     // Medicine modal
     public bool $showModal     = false;
     public bool $showEditModal = false;
+
+    // Settings modal
+    public bool $showSettingsModal = false;
+    public array $pdfSettings = [
+        'margin_top'     => 1.0,
+        'margin_bottom'  => 1.0,
+        'margin_left'    => 1.0,
+        'medicine_width' => 69,
+        'font_family'    => 'serif',
+        'font_size'      => 13,
+    ];
+    public array $sectionVisibility = [
+        'complaints'      => true,
+        'onExamination'   => true,
+        'pastHistory'     => true,
+        'drugHistory'     => true,
+        'investigation'   => true,
+        'diagnosis'       => true,
+        'treatmentPlan'   => true,
+        'operationNote'   => true,
+        'advice'          => true,
+        'nextPlan'        => true,
+        'hospitalizations'=> true,
+    ];
 
     // Medicine search
     public string $searchTerm         = '';
@@ -81,12 +107,27 @@ class PrescriptionList extends Component
     public function mount($id = null)
     {
         $this->visit_date = date('Y-m-d');
+        $this->doctor = Doctors::where('user_id', auth()->id())->first()
+                     ?? Doctors::first();
 
         if (!empty($id)) {
             $this->id      = $id;
             $this->patient = OnlineAppointment::find($id);
 
-            $prescription           = PatientPrescriptionRecord::where('patient_id', $id)->orderBy('id', 'DESC')->first();
+            // Support ?fresh=1 (start a brand-new prescription)
+            // Support ?prescriptionId=X (open a specific historical prescription)
+            $specificId = request()->query('prescriptionId');
+            $fresh      = request()->boolean('fresh');
+
+            if ($fresh) {
+                // Leave prescription_id null — saveMedicine() will create a new record
+                return;
+            }
+
+            $prescription = $specificId
+                ? PatientPrescriptionRecord::where('patient_id', $id)->find($specificId)
+                : PatientPrescriptionRecord::where('patient_id', $id)->orderBy('id', 'DESC')->first();
+
             $this->prescription_id  = $prescription?->id;
 
             if ($prescription) {
@@ -112,8 +153,47 @@ class PrescriptionList extends Component
 
             $medicines = $prescriptionInfo?->patient_medicine_record ?? collect();
             $this->prescriptionsMedicine = $medicines->toArray();
-            $this->selectedMedicines     = $medicines->toArray();
+            $this->selectedMedicines     = array_map(fn($m) => $this->normalizeMedicine($m), $medicines->toArray());
         }
+    }
+
+    /**
+     * Normalize a medicine record from DB structure to the flat structure
+     * expected by the blade modal (timing, duration, duration_type at top level).
+     */
+    private function normalizeMedicine(array $med): array
+    {
+        $dosages = array_map(fn($d) => [
+            'dosage_morning'   => $d['dosage_morning']    ?? 0,
+            'dosage_noon'      => $d['dosage_noon']       ?? 0,
+            'dosage_afternoon' => $d['dosage_afternoon']  ?? 0,
+            'dosage_night'     => $d['dosage_night']      ?? 0,
+            'timing'           => $d['meal_time_select']  ?? ($d['timing']        ?? 'খাবারের পরে'),
+            'duration'         => $d['duration']          ?? ($d['duration']      ?? ''),
+            'duration_type'    => $d['duration_unit_check'] ?? ($d['duration_type'] ?? 'দিন'),
+        ], $med['dosages'] ?? []);
+
+        if (empty($dosages)) {
+            $dosages = [[
+                'dosage_morning'=>0,'dosage_noon'=>0,'dosage_afternoon'=>0,'dosage_night'=>0,
+                'timing'=>'খাবারের পরে','duration'=>'','duration_type'=>'দিন',
+            ]];
+        }
+
+        return [
+            'id'                 => $med['id'],
+            'serial_number'      => $med['medicine_serial'] ?? ($med['serial_number'] ?? null),
+            'medicine'           => $med['medicine'] ?? [],
+            'dosages'            => $dosages,
+            'custom_instruction' => $med['custom_instruction'] ?? $med['custom_time_instruction'] ?? '',
+        ];
+    }
+
+    public function updatedNextVisitDate(): void
+    {
+        if (!$this->prescription_id) return;
+        PatientPrescriptionRecord::where('id', $this->prescription_id)
+            ->update(['next_visit_date' => $this->next_visit_date ?: null]);
     }
 
     // ─── Leftbar Modal ────────────────────────────────────────────────────────
@@ -252,10 +332,10 @@ class PrescriptionList extends Component
                 'dosage_noon'      => 0,
                 'dosage_afternoon' => 0,
                 'dosage_night'     => 0,
+                'timing'           => 'খাবারের পরে',
+                'duration'         => '',
+                'duration_type'    => 'দিন',
             ]],
-            'timing'             => 'খাবারের পরে',
-            'duration'           => '',
-            'duration_type'      => 'দিন',
             'custom_instruction' => '',
         ];
     }
@@ -323,29 +403,23 @@ class PrescriptionList extends Component
                     ]
                 );
 
-                $dosages = $medicine['dosages'] ?? [];
-                foreach ($dosages as $dosage) {
-                    $existing = PatientMedicineDosage::where('patient_medicine_id', $patientMed->id)->first();
-                    $dosageData = [
-                        'dosage_morning'   => $dosage['dosage_morning']   ?? 0,
-                        'dosage_noon'      => $dosage['dosage_noon']      ?? 0,
-                        'dosage_afternoon' => $dosage['dosage_afternoon'] ?? 0,
-                        'dosage_night'     => $dosage['dosage_night']     ?? 0,
-                        'meal_time_select' => $medicine['timing']         ?? null,
-                        'duration'         => $medicine['duration']       ?? null,
-                        'duration_unit_check' => $medicine['duration_type'] ?? null,
-                        'updated_by'  => auth()->id(),
-                        'updated_ip'  => request()->ip(),
-                    ];
-                    if ($existing) {
-                        $existing->update($dosageData);
-                    } else {
-                        PatientMedicineDosage::create(array_merge($dosageData, [
-                            'patient_medicine_id' => $patientMed->id,
-                            'created_by' => auth()->id(),
-                            'created_ip' => request()->ip(),
-                        ]));
-                    }
+                // Delete existing dosages and recreate to support multiple dosages per medicine
+                PatientMedicineDosage::where('patient_medicine_id', $patientMed->id)->delete();
+                foreach ($medicine['dosages'] ?? [] as $dosage) {
+                    PatientMedicineDosage::create([
+                        'patient_medicine_id' => $patientMed->id,
+                        'dosage_morning'      => $dosage['dosage_morning']   ?? 0,
+                        'dosage_noon'         => $dosage['dosage_noon']      ?? 0,
+                        'dosage_afternoon'    => $dosage['dosage_afternoon'] ?? 0,
+                        'dosage_night'        => $dosage['dosage_night']     ?? 0,
+                        'meal_time_select'    => $dosage['timing']           ?? null,
+                        'duration'            => ($dosage['duration'] ?? '') !== '' ? (int)$dosage['duration'] : null,
+                        'duration_unit_check' => $dosage['duration_type']    ?? null,
+                        'created_by'          => auth()->id(),
+                        'updated_by'          => auth()->id(),
+                        'created_ip'          => request()->ip(),
+                        'updated_ip'          => request()->ip(),
+                    ]);
                 }
             }
 
@@ -354,10 +428,14 @@ class PrescriptionList extends Component
                 ->find($this->prescription_id);
             $meds = $info?->patient_medicine_record ?? collect();
             $this->prescriptionsMedicine = $meds->toArray();
-            $this->selectedMedicines     = $meds->toArray();
+            $this->selectedMedicines     = array_map(fn($m) => $this->normalizeMedicine($m), $meds->toArray());
             $this->showModal = false;
 
-            $this->dispatch('swal:success', ['title' => 'Saved!', 'text' => 'Prescription saved successfully.']);
+            $this->dispatch('swal:success', [
+                'title'    => 'Saved!',
+                'text'     => 'Prescription saved successfully.',
+                'redirect' => route('prescription.new_patient', $this->id),
+            ]);
         } catch (\Exception $e) {
             $this->dispatch('swal:error', ['title' => 'Error!', 'text' => $e->getMessage()]);
         }
@@ -371,6 +449,27 @@ class PrescriptionList extends Component
         PatientMedicineDosage::where('patient_medicine_id', $id)->delete();
         $this->prescriptionsMedicine = collect($this->prescriptionsMedicine)
             ->reject(fn($m) => $m['id'] == $id)->values()->toArray();
+    }
+
+    // ─── PDF / Print Settings ─────────────────────────────────────────────────
+
+    public function loadSettings(array $data): void
+    {
+        if (!empty($data['pdfSettings'])) {
+            $this->pdfSettings = array_merge($this->pdfSettings, $data['pdfSettings']);
+        }
+        if (!empty($data['sectionVisibility'])) {
+            $this->sectionVisibility = array_merge($this->sectionVisibility, $data['sectionVisibility']);
+        }
+    }
+
+    public function saveSettings(): void
+    {
+        $this->dispatch('rx-settings-saved', [
+            'pdfSettings'       => $this->pdfSettings,
+            'sectionVisibility' => $this->sectionVisibility,
+        ]);
+        $this->showSettingsModal = false;
     }
 
     public function render()

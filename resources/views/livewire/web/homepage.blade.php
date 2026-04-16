@@ -572,51 +572,238 @@
 
 
    <!-- Faq Section -->
-   <section id="faq" class="faq section light-background">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-         <h2>Frequently Asked Questions</h2>
-         <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
+   <!-- FAQ Section -->
+   <section id="faq" class="hfaq-section">
 
       <div class="container">
 
-         <div class="row justify-content-center">
+         {{-- Section Header --}}
+         <div class="hfaq-header" data-aos="fade-up">
+            <span class="hfaq-badge">Got Questions?</span>
+            <h2 class="hfaq-title">Frequently Asked Questions</h2>
+            <p class="hfaq-subtitle">Everything you need to know about our services and care.</p>
+         </div>
 
-            <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
+         @php
+            $faqItems = $faqInfo && count($faqInfo) ? $faqInfo : collect([]);
+         @endphp
 
-               <div class="faq-container">
-                  @if($faqInfo)
-                     @foreach($faqInfo as $key=> $faqRow)
-                        <div class="faq-item {{ $key==0?"faq-active":'' }} ">
-                           <h3>{{ $faqRow->title??'' }}</h3>
-                           <div class="faq-content">
-                              <p>{{ $faqRow->description??'' }}</p>
-                           </div>
-                           <i class="faq-toggle bi bi-chevron-right"></i>
-                        </div>
-                     @endforeach
-                  @else
-                     <div class="faq-item faq-active">
-                        <h3>Non consectetur a erat nam at lectus urna duis?</h3>
-                        <div class="faq-content">
-                           <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.</p>
-                        </div>
-                        <i class="faq-toggle bi bi-chevron-right"></i>
-                     </div><!-- End Faq item-->
-                  @endif
+         @if($faqItems->isNotEmpty())
+         <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+
+            {{-- Split into two columns --}}
+            @php
+               $col1 = $faqItems->filter(fn($v,$k) => $k % 2 === 0)->values();
+               $col2 = $faqItems->filter(fn($v,$k) => $k % 2 !== 0)->values();
+            @endphp
+
+            <div class="col-lg-6">
+               @foreach($col1 as $idx => $faqRow)
+               <div class="hfaq-item" data-aos="fade-up" data-aos-delay="{{ $idx * 60 }}">
+                  <button class="hfaq-question {{ $idx === 0 ? 'hfaq-open' : '' }}"
+                          onclick="hfaqToggle(this)" type="button">
+                     <span class="hfaq-q-icon">
+                        <i class="bi bi-question-lg"></i>
+                     </span>
+                     <span class="hfaq-q-text">{{ $faqRow->title ?? '' }}</span>
+                     <span class="hfaq-chevron">
+                        <i class="bi bi-chevron-down"></i>
+                     </span>
+                  </button>
+                  <div class="hfaq-answer {{ $idx === 0 ? 'hfaq-answer-open' : '' }}">
+                     <p>{{ $faqRow->description ?? '' }}</p>
+                  </div>
                </div>
+               @endforeach
+            </div>
 
-            </div><!-- End Faq Column-->
+            <div class="col-lg-6">
+               @foreach($col2 as $idx => $faqRow)
+               <div class="hfaq-item" data-aos="fade-up" data-aos-delay="{{ ($idx * 60) + 30 }}">
+                  <button class="hfaq-question"
+                          onclick="hfaqToggle(this)" type="button">
+                     <span class="hfaq-q-icon">
+                        <i class="bi bi-question-lg"></i>
+                     </span>
+                     <span class="hfaq-q-text">{{ $faqRow->title ?? '' }}</span>
+                     <span class="hfaq-chevron">
+                        <i class="bi bi-chevron-down"></i>
+                     </span>
+                  </button>
+                  <div class="hfaq-answer">
+                     <p>{{ $faqRow->description ?? '' }}</p>
+                  </div>
+               </div>
+               @endforeach
+            </div>
 
          </div>
+         @else
+            <p class="text-center text-muted py-4">No FAQs available at the moment.</p>
+         @endif
 
       </div>
 
-   </section><!-- /Faq Section -->
+      {{-- Styles --}}
+      <style>
+         .hfaq-section {
+            padding: 80px 0;
+            background: linear-gradient(160deg,
+               color-mix(in srgb, var(--accent-color), transparent 95%) 0%,
+               #f8f9fc 40%,
+               #fff 100%);
+         }
+         .hfaq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+         }
+         .hfaq-badge {
+            display: inline-block;
+            background: color-mix(in srgb, var(--accent-color), transparent 85%);
+            color: var(--accent-color);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: .28rem .9rem;
+            border-radius: 50px;
+            margin-bottom: .7rem;
+         }
+         .hfaq-title {
+            font-family: var(--heading-font, inherit);
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 800;
+            color: var(--heading-color);
+            margin-bottom: .5rem;
+         }
+         .hfaq-subtitle {
+            color: color-mix(in srgb, var(--default-color), transparent 30%);
+            font-size: .97rem;
+            max-width: 480px;
+            margin: 0 auto;
+         }
+
+         /* Card */
+         .hfaq-item {
+            background: #fff;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px rgba(44,73,100,.07);
+            border: 1.5px solid color-mix(in srgb, var(--heading-color), transparent 90%);
+            overflow: hidden;
+            transition: box-shadow .25s, border-color .25s;
+         }
+         .hfaq-item:hover {
+            box-shadow: 0 6px 24px color-mix(in srgb, var(--accent-color), transparent 82%);
+            border-color: color-mix(in srgb, var(--accent-color), transparent 70%);
+         }
+
+         /* Question button */
+         .hfaq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: .85rem;
+            padding: 1.1rem 1.3rem;
+            cursor: pointer;
+            text-align: left;
+         }
+         .hfaq-q-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: color-mix(in srgb, var(--accent-color), transparent 88%);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: .85rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            transition: background .25s;
+         }
+         .hfaq-open .hfaq-q-icon,
+         .hfaq-question.hfaq-open .hfaq-q-icon {
+            background: var(--accent-color);
+            color: #fff;
+         }
+         .hfaq-q-text {
+            flex: 1;
+            font-size: .93rem;
+            font-weight: 600;
+            color: var(--heading-color);
+            line-height: 1.4;
+         }
+         .hfaq-chevron {
+            flex-shrink: 0;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--heading-color), transparent 92%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem;
+            color: var(--heading-color);
+            transition: transform .3s, background .25s;
+         }
+         .hfaq-question.hfaq-open .hfaq-chevron {
+            transform: rotate(180deg);
+            background: color-mix(in srgb, var(--accent-color), transparent 85%);
+            color: var(--accent-color);
+         }
+
+         /* Answer */
+         .hfaq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .35s ease, padding .3s ease;
+            padding: 0 1.3rem 0 calc(1.3rem + 32px + .85rem);
+         }
+         .hfaq-answer.hfaq-answer-open {
+            max-height: 400px;
+            padding-bottom: 1.1rem;
+         }
+         .hfaq-answer p {
+            font-size: .88rem;
+            color: color-mix(in srgb, var(--default-color), transparent 15%);
+            line-height: 1.75;
+            margin: 0;
+         }
+
+         /* Open state border accent */
+         .hfaq-item:has(.hfaq-open) {
+            border-color: color-mix(in srgb, var(--accent-color), transparent 65%);
+            border-left: 3px solid var(--accent-color);
+         }
+
+         @media (max-width: 576px) {
+            .hfaq-section { padding: 50px 0; }
+            .hfaq-answer { padding-left: 1.3rem; }
+         }
+      </style>
+
+      {{-- Toggle script --}}
+      <script>
+         function hfaqToggle(btn) {
+            const item   = btn.closest('.hfaq-item');
+            const answer = item.querySelector('.hfaq-answer');
+            const isOpen = btn.classList.contains('hfaq-open');
+
+            // Close all in the same column
+            const col = item.closest('.col-lg-6');
+            col.querySelectorAll('.hfaq-question.hfaq-open').forEach(b => {
+               b.classList.remove('hfaq-open');
+               b.closest('.hfaq-item').querySelector('.hfaq-answer').classList.remove('hfaq-answer-open');
+            });
+
+            if (!isOpen) {
+               btn.classList.add('hfaq-open');
+               answer.classList.add('hfaq-answer-open');
+            }
+         }
+      </script>
+
+   </section><!-- /FAQ Section -->
 
    <!-- Testimonials Section -->
+   @if(!empty($testimonials))
    <section id="testimonials" class="testimonials section">
 
       <div class="container">
@@ -624,141 +811,75 @@
          <div class="row align-items-center">
 
             <div class="col-lg-5 info" data-aos="fade-up" data-aos-delay="100">
-               <h3>Testimonials</h3>
-               <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-               </p>
+               <h3>{{ $testimonialsHeading ?: 'Testimonials' }}</h3>
+               @if($testimonialsSubtext)
+                  <p>{{ $testimonialsSubtext }}</p>
+               @endif
             </div>
 
             <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
 
                <div class="swiper init-swiper">
                   <script type="application/json" class="swiper-config">
-                            {
-                              "loop": true,
-                              "speed": 600,
-                              "autoplay": {
-                                "delay": 5000
-                              },
-                              "slidesPerView": "auto",
-                              "pagination": {
-                                "el": ".swiper-pagination",
-                                "type": "bullets",
-                                "clickable": true
-                              }
-                            }
-                        </script>
+                     {
+                       "loop": true,
+                       "speed": 600,
+                       "autoplay": { "delay": 5000 },
+                       "slidesPerView": "auto",
+                       "pagination": {
+                         "el": ".swiper-pagination",
+                         "type": "bullets",
+                         "clickable": true
+                       }
+                     }
+                  </script>
                   <div class="swiper-wrapper">
-                     @if(!empty($testimonial))
-                        @foreach($testimonial as $testimonialRow)
-                           <div class="swiper-slide">
-                              <div class="testimonial-item">
-                                 <div class="d-flex">
-                                    @if(!empty($testimonialRow->picture_url))
-                                       <img src="{{ $testimonialRow->picture_url }}" class="testimonial-img flex-shrink-0" alt="">
-                                    @else
-                                     <img src="{{ asset('website/assets/img/testimonials/testimonials-1.jpg')}}" class="testimonial-img flex-shrink-0" alt="">
-                                    @endif
-                                    <div>
-                                       <h3>{{ $testimonialRow->title??'-' }}</h3>
-                                       <h4>{{ $testimonialRow->short_description??'-' }}</h4>
-                                       <div class="stars">
-                                          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                       </div>
+                     @foreach($testimonials as $t)
+                        @php
+                           $tName    = $t['name']        ?? '';
+                           $tRole    = $t['role']        ?? '';
+                           $tPhotoRaw = $t['picture_url'] ?? '';
+                           $tPhoto    = $tPhotoRaw
+                               ? (str_starts_with($tPhotoRaw, 'http') ? $tPhotoRaw : asset('storage/' . $tPhotoRaw))
+                               : '';
+                           $tRating  = (int)($t['rating'] ?? 5);
+                           $tMsg     = $t['message']     ?? '';
+                        @endphp
+                        <div class="swiper-slide">
+                           <div class="testimonial-item">
+                              <div class="d-flex">
+                                 @if($tPhoto)
+                                    <img src="{{ $tPhoto }}" class="testimonial-img flex-shrink-0" alt="{{ $tName }}">
+                                 @else
+                                    <div class="testimonial-img flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white fs-4 fw-bold"
+                                         style="width:60px;height:60px;">
+                                       {{ strtoupper(substr($tName, 0, 1)) }}
+                                    </div>
+                                 @endif
+                                 <div>
+                                    <h3>{{ $tName }}</h3>
+                                    @if($tRole)<h4>{{ $tRole }}</h4>@endif
+                                    <div class="stars">
+                                       @for($s = 1; $s <= 5; $s++)
+                                          @if($s <= $tRating)
+                                             <i class="bi bi-star-fill"></i>
+                                          @else
+                                             <i class="bi bi-star"></i>
+                                          @endif
+                                       @endfor
                                     </div>
                                  </div>
-                                 <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>{{ $testimonialRow->description??'-' }}</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                 </p>
                               </div>
+                              @if($tMsg)
+                              <p>
+                                 <i class="bi bi-quote quote-icon-left"></i>
+                                 <span>{{ $tMsg }}</span>
+                                 <i class="bi bi-quote quote-icon-right"></i>
+                              </p>
+                              @endif
                            </div>
-                        @endforeach
-                     @endif
-                     <!-- End testimonial item -->
-
-{{--                     <div class="swiper-slide">--}}
-{{--                        <div class="testimonial-item">--}}
-{{--                           <div class="d-flex">--}}
-{{--                              <img src="{{ asset('website/assets/img/testimonials/testimonials-2.jpg')}}" class="testimonial-img flex-shrink-0" alt="">--}}
-{{--                              <div>--}}
-{{--                                 <h3>Sara Wilsson</h3>--}}
-{{--                                 <h4>Designer</h4>--}}
-{{--                                 <div class="stars">--}}
-{{--                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>--}}
-{{--                                 </div>--}}
-{{--                              </div>--}}
-{{--                           </div>--}}
-{{--                           <p>--}}
-{{--                              <i class="bi bi-quote quote-icon-left"></i>--}}
-{{--                              <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>--}}
-{{--                              <i class="bi bi-quote quote-icon-right"></i>--}}
-{{--                           </p>--}}
-{{--                        </div>--}}
-{{--                     </div><!-- End testimonial item -->--}}
-
-{{--                     <div class="swiper-slide">--}}
-{{--                        <div class="testimonial-item">--}}
-{{--                           <div class="d-flex">--}}
-{{--                              <img src="{{ asset('website/assets/img/testimonials/testimonials-3.jpg')}}" class="testimonial-img flex-shrink-0" alt="">--}}
-{{--                              <div>--}}
-{{--                                 <h3>Jena Karlis</h3>--}}
-{{--                                 <h4>Store Owner</h4>--}}
-{{--                                 <div class="stars">--}}
-{{--                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>--}}
-{{--                                 </div>--}}
-{{--                              </div>--}}
-{{--                           </div>--}}
-{{--                           <p>--}}
-{{--                              <i class="bi bi-quote quote-icon-left"></i>--}}
-{{--                              <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>--}}
-{{--                              <i class="bi bi-quote quote-icon-right"></i>--}}
-{{--                           </p>--}}
-{{--                        </div>--}}
-{{--                     </div><!-- End testimonial item -->--}}
-
-{{--                     <div class="swiper-slide">--}}
-{{--                        <div class="testimonial-item">--}}
-{{--                           <div class="d-flex">--}}
-{{--                              <img src="{{ asset('website/assets/img/testimonials/testimonials-4.jpg')}}" class="testimonial-img flex-shrink-0" alt="">--}}
-{{--                              <div>--}}
-{{--                                 <h3>Matt Brandon</h3>--}}
-{{--                                 <h4>Freelancer</h4>--}}
-{{--                                 <div class="stars">--}}
-{{--                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>--}}
-{{--                                 </div>--}}
-{{--                              </div>--}}
-{{--                           </div>--}}
-{{--                           <p>--}}
-{{--                              <i class="bi bi-quote quote-icon-left"></i>--}}
-{{--                              <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>--}}
-{{--                              <i class="bi bi-quote quote-icon-right"></i>--}}
-{{--                           </p>--}}
-{{--                        </div>--}}
-{{--                     </div><!-- End testimonial item -->--}}
-
-{{--                     <div class="swiper-slide">--}}
-{{--                        <div class="testimonial-item">--}}
-{{--                           <div class="d-flex">--}}
-{{--                              <img src="{{ asset('website/assets/img/testimonials/testimonials-5.jpg')}}" class="testimonial-img flex-shrink-0" alt="">--}}
-{{--                              <div>--}}
-{{--                                 <h3>John Larson</h3>--}}
-{{--                                 <h4>Entrepreneur</h4>--}}
-{{--                                 <div class="stars">--}}
-{{--                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>--}}
-{{--                                 </div>--}}
-{{--                              </div>--}}
-{{--                           </div>--}}
-{{--                           <p>--}}
-{{--                              <i class="bi bi-quote quote-icon-left"></i>--}}
-{{--                              <span>Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.</span>--}}
-{{--                              <i class="bi bi-quote quote-icon-right"></i>--}}
-{{--                           </p>--}}
-{{--                        </div>--}}
-{{--                     </div><!-- End testimonial item -->--}}
-
+                        </div><!-- End testimonial item -->
+                     @endforeach
                   </div>
                   <div class="swiper-pagination"></div>
                </div>
@@ -770,6 +891,7 @@
       </div>
 
    </section><!-- /Testimonials Section -->
+   @endif
 
    <!-- Gallery Section -->
    <section id="gallery" class="gallery section">
@@ -857,82 +979,255 @@
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-         <h2>Contact</h2>
-         <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
+         <h2>Contact Us</h2>
+         <p>Find us on the map or reach out directly — we're here to help.</p>
+      </div>
 
-      <div class="mb-5" data-aos="fade-up" data-aos-delay="200">
-         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.9002970426773!2d90.38418017431287!3d23.750934578669966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b99d90587569%3A0x9f276ae22c464021!2sHealth%20and%20Hope%20Doctor&#39;s%20Chamber!5e0!3m2!1sen!2sbd!4v1775530141075!5m2!1sen!2sbd" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div><!-- End Google Maps -->
+      @php
+         $mapEmbed = $organizationInfo->google_map_embed ?? null;
+         $mapLink  = $organizationInfo->google_map_link  ?? null;
+         // fallback hardcoded embed if admin hasn't set one yet
+         $fallbackEmbed = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.9002970426773!2d90.38418017431287!3d23.750934578669966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b99d90587569%3A0x9f276ae22c464021!2sHealth%20and%20Hope%20Doctor%27s%20Chamber!5e0!3m2!1sen!2sbd!4v1775530141075!5m2!1sen!2sbd';
+         $embedSrc = $mapEmbed ?: $fallbackEmbed;
+      @endphp
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+      {{-- ── Map + Location Card ── --}}
+      <div class="container mb-4" data-aos="fade-up" data-aos-delay="100">
+         <div class="loc-map-wrap">
 
-         <div class="row gy-4">
+            {{-- Google Map iframe --}}
+            <div class="loc-map-frame">
+               <iframe
+                  src="{{ $embedSrc }}"
+                  style="border:0; width:100%; height:100%;"
+                  allowfullscreen=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade">
+               </iframe>
+            </div>
 
-            <div class="col-lg-4">
+            {{-- Location Details Card --}}
+            <div class="loc-info-card">
+
+               {{-- Header --}}
+               <div class="loc-card-header">
+                  <span class="loc-pin-icon">
+                     <i class="bi bi-geo-alt-fill"></i>
+                  </span>
+                  <div>
+                     <p class="loc-card-label">Find Us Here</p>
+                     <h5 class="loc-card-title">Our Location</h5>
+                  </div>
+               </div>
+
+               {{-- Org name --}}
+               @if(!empty($organizationInfo->name))
+                  <p class="loc-org-name">{{ $organizationInfo->name }}</p>
+               @endif
+
+               {{-- Address --}}
+               @php $displayAddress = $organizationInfo->address ?? '152/2/G Panthapath, Dhaka-1205'; @endphp
+               <div class="loc-detail-row">
+                  <span class="loc-detail-icon"><i class="bi bi-map"></i></span>
+                  <span class="loc-detail-text">{{ $displayAddress }}</span>
+               </div>
+
+               {{-- Divider --}}
+               <div class="loc-divider"></div>
+
+               {{-- Phone --}}
+               @if(!empty($organizationInfo->mobile))
+               <div class="loc-detail-row">
+                  <span class="loc-detail-icon"><i class="bi bi-telephone-fill"></i></span>
+                  <a href="tel:{{ $organizationInfo->mobile }}" class="loc-detail-link">{{ $organizationInfo->mobile }}</a>
+               </div>
+               @endif
+
+               {{-- Email --}}
+               @if(!empty($organizationInfo->email))
+               <div class="loc-detail-row mt-1">
+                  <span class="loc-detail-icon"><i class="bi bi-envelope-fill"></i></span>
+                  <a href="mailto:{{ $organizationInfo->email }}" class="loc-detail-link">{{ $organizationInfo->email }}</a>
+               </div>
+               @endif
+
+               {{-- Open in Maps button --}}
+               @php
+                  $mapsHref = $mapLink ?: 'https://maps.google.com/?q=' . urlencode($displayAddress);
+               @endphp
+               <a href="{{ $mapsHref }}" target="_blank" rel="noopener" class="loc-open-btn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
+                  Open in Google Maps
+                  <i class="bi bi-arrow-up-right-square ms-1" style="font-size:.75rem;"></i>
+               </a>
+
+            </div>
+         </div>
+      </div>
+
+      <style>
+         .loc-map-wrap {
+            display: flex;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(44,73,100,.13);
+            min-height: 380px;
+         }
+         .loc-map-frame {
+            flex: 1 1 0;
+            min-height: 380px;
+         }
+         .loc-info-card {
+            width: 300px;
+            flex-shrink: 0;
+            background: #fff;
+            border-left: 4px solid var(--accent-color);
+            padding: 2rem 1.6rem;
+            display: flex;
+            flex-direction: column;
+         }
+         .loc-card-header {
+            display: flex;
+            align-items: center;
+            gap: .85rem;
+            margin-bottom: 1.2rem;
+         }
+         .loc-pin-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: color-mix(in srgb, var(--accent-color), transparent 88%);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+         }
+         .loc-card-label {
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            margin: 0 0 .1rem;
+         }
+         .loc-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--heading-color);
+            margin: 0;
+         }
+         .loc-org-name {
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin-bottom: .5rem;
+            padding: .4rem .75rem;
+            background: color-mix(in srgb, var(--heading-color), transparent 93%);
+            border-radius: 6px;
+         }
+         .loc-detail-row {
+            display: flex;
+            align-items: flex-start;
+            gap: .65rem;
+            margin-bottom: .6rem;
+         }
+         .loc-detail-icon {
+            width: 26px; height: 26px;
+            border-radius: 6px;
+            background: color-mix(in srgb, var(--accent-color), transparent 90%);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: .78rem;
+            color: var(--accent-color);
+            margin-top: .1rem;
+         }
+         .loc-detail-text {
+            font-size: .83rem;
+            color: var(--default-color);
+            line-height: 1.55;
+         }
+         .loc-detail-link {
+            font-size: .83rem;
+            color: var(--default-color);
+            text-decoration: none;
+            transition: color .2s;
+         }
+         .loc-detail-link:hover { color: var(--accent-color); }
+         .loc-divider {
+            height: 1px;
+            background: color-mix(in srgb, var(--heading-color), transparent 88%);
+            margin: .9rem 0;
+         }
+         .loc-open-btn {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            padding: .6rem 1rem;
+            border-radius: 8px;
+            background: var(--accent-color);
+            color: #fff !important;
+            font-size: .82rem;
+            font-weight: 600;
+            text-decoration: none !important;
+            transition: background .25s, transform .2s, box-shadow .25s;
+            box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color), transparent 55%);
+         }
+         .loc-open-btn:hover {
+            background: color-mix(in srgb, var(--accent-color), #000 15%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-color), transparent 40%);
+         }
+         @media (max-width: 768px) {
+            .loc-map-wrap { flex-direction: column; }
+            .loc-map-frame { min-height: 260px; }
+            .loc-info-card { width: 100%; border-left: none; border-top: 4px solid var(--accent-color); }
+         }
+      </style>
+
+      {{-- ── Info Items Row ── --}}
+      <div class="container" data-aos="fade-up" data-aos-delay="200">
+         <div class="row gy-4 justify-content-center">
+
+            @if(!empty($organizationInfo->address))
+            <div class="col-lg-4 col-md-6">
                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
                   <i class="bi bi-geo-alt flex-shrink-0"></i>
                   <div>
-
                      <h3>Address</h3>
-
-                     <p>Health & Hope Hospital <br/> 152/2/G Panthapath, Dhaka-1205</p>
-
+                     <p>{{ $organizationInfo->address }}</p>
                   </div>
-               </div><!-- End Info Item -->
+               </div>
+            </div>
+            @endif
 
+            @if(!empty($organizationInfo->mobile))
+            <div class="col-lg-4 col-md-6">
                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
                   <i class="bi bi-telephone flex-shrink-0"></i>
                   <div>
                      <h3>Call Us</h3>
-                     <p>{{ $organizationInfo->mobile??'' }}</p>
+                     <p><a href="tel:{{ $organizationInfo->mobile }}" style="color:inherit;">{{ $organizationInfo->mobile }}</a></p>
                   </div>
-               </div><!-- End Info Item -->
+               </div>
+            </div>
+            @endif
 
+            @if(!empty($organizationInfo->email))
+            <div class="col-lg-4 col-md-6">
                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
                   <i class="bi bi-envelope flex-shrink-0"></i>
                   <div>
                      <h3>Email Us</h3>
-                     <p>{{ $organizationInfo->email??'' }}</p>
+                     <p><a href="mailto:{{ $organizationInfo->email }}" style="color:inherit;">{{ $organizationInfo->email }}</a></p>
                   </div>
-               </div><!-- End Info Item -->
-
+               </div>
             </div>
-
-            <div class="col-lg-8">
-               <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
-                  <div class="row gy-4">
-
-                     <div class="col-md-6">
-                        <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                     </div>
-
-                     <div class="col-md-6 ">
-                        <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                     </div>
-
-                     <div class="col-md-12">
-                        <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                     </div>
-
-                     <div class="col-md-12">
-                        <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                     </div>
-
-                     <div class="col-md-12 text-center">
-                        <div class="loading">Loading</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                        <button type="submit">Send Message</button>
-                     </div>
-
-                  </div>
-               </form>
-            </div><!-- End Contact Form -->
+            @endif
 
          </div>
-
       </div>
 
    </section><!-- /Contact Section -->

@@ -17,6 +17,11 @@ class OrganizationInfo extends Model
         'slug',
         'logo',
         'address',
+        'google_map_embed',
+        'google_map_link',
+        'testimonials',
+        'testimonials_heading',
+        'testimonials_subtext',
         'mobile',
         'email',
         'fb',
@@ -32,7 +37,8 @@ class OrganizationInfo extends Model
 
     // Cast types
     protected $casts = [
-        'created_by' => 'integer',
-        'updated_by' => 'integer',
+        'created_by'   => 'integer',
+        'updated_by'   => 'integer',
+        'testimonials' => 'array',
     ];
 }

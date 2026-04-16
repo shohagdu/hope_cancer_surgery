@@ -39,9 +39,8 @@ class Homepage extends Component
         $faqInfo = Webpage_content::where(['type' => 5, 'is_active' => 1])
             ->orderBy('display_position', 'Asc')
             ->get();
-        $testimonial = Webpage_content::where(['type' => 6, 'is_active' => 1])
-            ->orderBy('display_position', 'Asc')
-            ->get();
+        // Testimonials are now stored in company_infos.testimonials JSON field
+        // (legacy Webpage_content type=6 is no longer used for this section)
         $organizationInfo = OrganizationInfo::orderBy('id', 'DESC')->first();
         $pictureItems = Webpage_content::where(['type' => 7, 'is_active' => 1])
             ->orderBy('display_position', 'Asc')
@@ -60,7 +59,9 @@ class Homepage extends Component
                 'service_treatment' => $service_treatment,
                 'service_emergency' => $service_emergency,
                 'faqInfo' => $faqInfo,
-                'testimonial' => $testimonial,
+                'testimonials' => $organizationInfo?->testimonials ?? [],
+                'testimonialsHeading' => $organizationInfo?->testimonials_heading ?? 'Testimonials',
+                'testimonialsSubtext' => $organizationInfo?->testimonials_subtext ?? '',
                 'organizationInfo' => $organizationInfo,
                 'pictureItems' => $pictureItems,
                 'videoItems' => $videoItems,

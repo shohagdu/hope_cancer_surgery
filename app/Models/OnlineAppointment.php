@@ -21,6 +21,7 @@ class OnlineAppointment extends Model
         'patient_type',
         'age',
         'referer_doctor',
+        'address',
         'remarks',
         'message',
         'status',
@@ -50,6 +51,6 @@ class OnlineAppointment extends Model
     }
     public function patientPrescriptionRecords()
     {
-        return $this->hasMany(PatientPrescriptionRecord::class, 'patient_id', 'patient_id');
+        return $this->hasMany(PatientPrescriptionRecord::class, 'patient_id', 'id');
     }
 }

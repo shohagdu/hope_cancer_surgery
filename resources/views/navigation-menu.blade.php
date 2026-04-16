@@ -12,36 +12,55 @@
 
                 <!-- Desktop Navigation Links -->
                 <div class="hidden sm:flex space-x-2 sm:-my-px sm:ms-6 items-center">
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('contents.index') }}" :active="request()->routeIs('contents.*')">
-                        {{ __('Content Manager') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('doctors.index') }}" :active="request()->routeIs('doctors.*')">
-                        {{ __('Doctor Record') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('onlineAppointment.index') }}" :active="request()->routeIs('onlineAppointment.*')">
-                        {{ __('Appointment') }}
-                    </x-nav-link>
-
-                    <x-dropdown>
-                        <x-slot name="trigger">
-                            <span class="inline-flex rounded-md">
-                                <button type="button" class="inline-flex items-center px-3 py-1.5 rounded-md border-b-2 border-transparent text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 focus:outline-none transition ease-in-out duration-150">
-                                    Settings
-                                    <svg class="ms-1.5 -me-0.5 size-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                    </svg>
-                                </button>
-                            </span>
-                        </x-slot>
-                        <x-slot name="content">
-                            <x-dropdown-link href="{{ route('organization.index') }}">
-                                {{ __('Organization Setup') }}
-                            </x-dropdown-link>
-                        </x-slot>
-                    </x-dropdown>
+                    @if(Auth::user()->isDoctor())
+                        {{-- Doctor navigation --}}
+                        <x-nav-link href="{{ route('doctor.dashboard') }}" :active="request()->routeIs('doctor.dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('doctor.patients') }}" :active="request()->routeIs('doctor.patients') || request()->routeIs('patient.*') || request()->routeIs('prescription.*')">
+                            {{ __('Patients') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('doctor.profile') }}" :active="request()->routeIs('doctor.profile')">
+                            {{ __('My Profile') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('doctor.settings') }}" :active="request()->routeIs('doctor.settings')">
+                            {{ __('Settings') }}
+                        </x-nav-link>
+                    @else
+                        {{-- Admin navigation --}}
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('contents.index') }}" :active="request()->routeIs('contents.*')">
+                            {{ __('Content Manager') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('doctors.index') }}" :active="request()->routeIs('doctors.*')">
+                            {{ __('Doctor Record') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('onlineAppointment.index') }}" :active="request()->routeIs('onlineAppointment.*')">
+                            {{ __('Appointment') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('patients.index') }}" :active="request()->routeIs('patients.*') || request()->routeIs('patient.*')">
+                            {{ __('Patients') }}
+                        </x-nav-link>
+                        <x-dropdown>
+                            <x-slot name="trigger">
+                                <span class="inline-flex rounded-md">
+                                    <button type="button" class="inline-flex items-center px-3 py-1.5 rounded-md border-b-2 border-transparent text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 focus:outline-none transition ease-in-out duration-150">
+                                        Settings
+                                        <svg class="ms-1.5 -me-0.5 size-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </button>
+                                </span>
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-dropdown-link href="{{ route('organization.index') }}">
+                                    {{ __('Organization Setup') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    @endif
                 </div>
             </div>
 
@@ -109,26 +128,46 @@
 
         <!-- Mobile Nav Links -->
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('contents.index') }}" :active="request()->routeIs('contents.*')">
-                {{ __('Content Manager') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('doctors.index') }}" :active="request()->routeIs('doctors.*')">
-                {{ __('Doctor Record') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('onlineAppointment.index') }}" :active="request()->routeIs('onlineAppointment.*')">
-                {{ __('Online Appointment') }}
-            </x-responsive-nav-link>
-
-            <!-- Settings sub-links -->
-            <div class="border-t border-gray-200 pt-1">
-                <div class="block px-4 py-1 text-xs text-gray-400 uppercase tracking-wider">Settings</div>
-                <x-responsive-nav-link href="{{ route('organization.index') }}" :active="request()->routeIs('organization.*')">
-                    {{ __('Organization Setup') }}
+            @if(Auth::user()->isDoctor())
+                {{-- Doctor mobile navigation --}}
+                <x-responsive-nav-link href="{{ route('doctor.dashboard') }}" :active="request()->routeIs('doctor.dashboard')">
+                    {{ __('Dashboard') }}
                 </x-responsive-nav-link>
-            </div>
+                <x-responsive-nav-link href="{{ route('doctor.patients') }}" :active="request()->routeIs('doctor.patients') || request()->routeIs('patient.*') || request()->routeIs('prescription.*')">
+                    {{ __('Patients') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('doctor.profile') }}" :active="request()->routeIs('doctor.profile')">
+                    {{ __('My Profile') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('doctor.settings') }}" :active="request()->routeIs('doctor.settings')">
+                    {{ __('Settings') }}
+                </x-responsive-nav-link>
+            @else
+                {{-- Admin mobile navigation --}}
+                <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('contents.index') }}" :active="request()->routeIs('contents.*')">
+                    {{ __('Content Manager') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('doctors.index') }}" :active="request()->routeIs('doctors.*')">
+                    {{ __('Doctor Record') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('onlineAppointment.index') }}" :active="request()->routeIs('onlineAppointment.*')">
+                    {{ __('Online Appointment') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('patients.index') }}" :active="request()->routeIs('patients.*') || request()->routeIs('patient.*')">
+                    {{ __('Patients') }}
+                </x-responsive-nav-link>
+
+                <!-- Settings sub-links -->
+                <div class="border-t border-gray-200 pt-1">
+                    <div class="block px-4 py-1 text-xs text-gray-400 uppercase tracking-wider">Settings</div>
+                    <x-responsive-nav-link href="{{ route('organization.index') }}" :active="request()->routeIs('organization.*')">
+                        {{ __('Organization Setup') }}
+                    </x-responsive-nav-link>
+                </div>
+            @endif
         </div>
 
         <!-- Mobile User Info + Account Links -->
